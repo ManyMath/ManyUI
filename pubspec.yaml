@@ -1,0 +1,16 @@
+name: manyui_workspace
+description: Workspace root for the manyui Flutter UI library and sibling packages.
+publish_to: none
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+workspace:
+  - manyui
+  - manyui_assets
+  - manyui_board
+  - manyui_cli
+  - manyui_compat_forui
+  - manyui_hooks
+  - manyui_riverpod
+  - manyui_testing
