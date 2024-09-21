@@ -1,0 +1,21 @@
+name: manyui_compat_forui
+description: Optional F* → M* re-export shim for migrating projects from forui to manyui. Not required for new code.
+version: 0.1.0-dev
+homepage: https://github.com/sneurlax/manyui
+repository: https://github.com/sneurlax/manyui
+
+environment:
+  flutter: ">=3.24.0"
+  sdk: ">=3.5.0 <4.0.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  manyui: ^0.1.0-dev
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter

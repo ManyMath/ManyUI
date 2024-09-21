@@ -1,0 +1,21 @@
+name: manyui_cli
+description: Developer CLI for manyui. Theme codegen from YAML or Dart config. Output is hand-editable Dart, not a .g.dart partial.
+version: 0.1.0-dev
+homepage: https://github.com/sneurlax/manyui
+repository: https://github.com/sneurlax/manyui
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+resolution: workspace
+
+executables:
+  manyui:
+
+dependencies:
+  args: ^2.5.0
+  yaml: ^3.1.2
+
+dev_dependencies:
+  lints: ^5.0.0
+  test: ^1.25.0

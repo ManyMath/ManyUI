@@ -1,0 +1,22 @@
+name: manyui_hooks
+description: flutter_hooks adapters for manyui controllers. Never required by core manyui.
+version: 0.1.0-dev
+homepage: https://github.com/sneurlax/manyui
+repository: https://github.com/sneurlax/manyui
+
+environment:
+  flutter: ">=3.24.0"
+  sdk: ">=3.5.0 <4.0.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_hooks: ^0.20.5
+  manyui: ^0.1.0-dev
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter

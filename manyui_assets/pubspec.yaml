@@ -1,0 +1,21 @@
+name: manyui_assets
+description: Optional fonts (Inter, Geist) and icons for manyui. Opt-in — core manyui ships with no required font.
+version: 0.1.0-dev
+homepage: https://github.com/sneurlax/manyui
+repository: https://github.com/sneurlax/manyui
+
+environment:
+  flutter: ">=3.24.0"
+  sdk: ">=3.5.0 <4.0.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: false

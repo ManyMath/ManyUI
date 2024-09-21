@@ -1,0 +1,14 @@
+Mozilla Public License Version 2.0
+==================================
+
+This package ports source files from the appflowy_board package
+(https://github.com/AppFlowy-IO/appflowy-board), originally licensed
+under MPL-2.0 / AGPL-3.0 dual. manyui_board re-licenses those files
+under MPL-2.0 only, retaining attribution to AppFlowy contributors.
+
+The full MPL-2.0 text is available at:
+https://www.mozilla.org/en-US/MPL/2.0/
+
+MPL-2.0 is file-level copyleft: modifications to MPL-licensed files
+must be released under MPL-2.0, but the rest of the manyui workspace
+(MIT) is unaffected.
