@@ -8,3 +8,5 @@
 /// import 'package:manyui/manyui.dart';
 /// ```
 library;
+
+export 'src/theme/color_scheme.dart';
