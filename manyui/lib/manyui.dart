@@ -10,3 +10,4 @@
 library;
 
 export 'src/theme/color_scheme.dart';
+export 'src/theme/typography.dart';
