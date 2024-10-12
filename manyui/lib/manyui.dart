@@ -11,5 +11,6 @@ library;
 
 export 'src/theme/color_scheme.dart';
 export 'src/theme/focus_ring_style.dart';
+export 'src/theme/theme.dart';
 export 'src/theme/theme_data.dart';
 export 'src/theme/typography.dart';
