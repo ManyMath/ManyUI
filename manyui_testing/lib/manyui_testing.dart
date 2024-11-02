@@ -2,3 +2,5 @@
 /// matchers tuned for `M*` widgets. Use this as a dev dependency in
 /// any package that tests against manyui.
 library;
+
+export 'src/pump_many_app.dart';
