@@ -5,8 +5,8 @@ homepage: https://github.com/sneurlax/manyui
 repository: https://github.com/sneurlax/manyui
 
 environment:
-  flutter: ">=3.24.0"
-  sdk: ">=3.5.0 <4.0.0"
+  flutter: ">=3.27.0"
+  sdk: ">=3.6.0 <4.0.0"
 
 resolution: workspace
 

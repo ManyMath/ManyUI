@@ -15,7 +15,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.24.x
+          flutter-version-file: .fvmrc
       - run: flutter --version
       - run: dart pub get
       - run: dart analyze --fatal-infos
@@ -28,7 +28,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.24.x
+          flutter-version-file: .fvmrc
       - run: dart pub get
       - run: flutter test
         working-directory: manyui
@@ -61,20 +61,20 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.24.x
+          flutter-version-file: .fvmrc
       - run: dart pub get
       - run: dart pub publish --dry-run
         working-directory: ${{ matrix.package }}
 
   floor_check:
-    name: Verify against SDK floor (3.24)
+    name: Verify against SDK floor (3.27)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.24.x
+          flutter-version: 3.27.x
       - run: flutter --version
       - run: dart pub get
       - run: dart analyze
