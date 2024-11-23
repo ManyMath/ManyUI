@@ -17,3 +17,6 @@ export 'src/theme/focus_ring_style.dart';
 export 'src/theme/theme.dart';
 export 'src/theme/theme_data.dart';
 export 'src/theme/typography.dart';
+export 'src/widgets/button/button.dart';
+export 'src/widgets/button/button_style.dart';
+export 'src/widgets/button/button_styles.dart';

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../widgets/button/button_styles.dart';
 import 'color_scheme.dart';
 import 'focus_ring_style.dart';
 import 'typography.dart';
@@ -21,10 +22,12 @@ class MThemeData {
     required this.colors,
     MTypography? typography,
     MFocusRingStyle? focusRing,
+    MButtonStyles? button,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
         focusRing = focusRing ?? const MFocusRingStyle(),
+        button = button ?? const MButtonStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -52,6 +55,13 @@ class MThemeData {
   /// The focus-ring shape used by `MFocusRing`.
   final MFocusRingStyle focusRing;
 
+  /// The resolution table for [MButton] visual styles.
+  ///
+  /// Exposed as `theme.button.resolve(variant: ..., size: ..., modality: ...)`.
+  /// Replace the default `MButtonStyles()` to re-skin every button in the
+  /// tree with a different mapping from tokens to styles.
+  final MButtonStyles button;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -71,6 +81,7 @@ class MThemeData {
     MColorScheme? colors,
     MTypography? typography,
     MFocusRingStyle? focusRing,
+    MButtonStyles? button,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -78,6 +89,7 @@ class MThemeData {
       colors: colors ?? this.colors,
       typography: typography ?? this.typography,
       focusRing: focusRing ?? this.focusRing,
+      button: button ?? this.button,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -90,11 +102,12 @@ class MThemeData {
         other.colors == colors &&
         other.typography == typography &&
         other.focusRing == focusRing &&
+        other.button == button &&
         other.radius == radius &&
         other.platform == platform;
   }
 
   @override
   int get hashCode =>
-      Object.hash(colors, typography, focusRing, radius, platform);
+      Object.hash(colors, typography, focusRing, button, radius, platform);
 }
