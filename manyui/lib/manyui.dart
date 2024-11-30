@@ -20,3 +20,6 @@ export 'src/theme/typography.dart';
 export 'src/widgets/button/button.dart';
 export 'src/widgets/button/button_style.dart';
 export 'src/widgets/button/button_styles.dart';
+export 'src/widgets/card/card.dart';
+export 'src/widgets/card/card_style.dart';
+export 'src/widgets/card/card_styles.dart';

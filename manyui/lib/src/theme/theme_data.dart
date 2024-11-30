@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../widgets/button/button_styles.dart';
+import '../widgets/card/card_styles.dart';
 import 'color_scheme.dart';
 import 'focus_ring_style.dart';
 import 'typography.dart';
@@ -23,11 +24,13 @@ class MThemeData {
     MTypography? typography,
     MFocusRingStyle? focusRing,
     MButtonStyles? button,
+    MCardStyles? card,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
         focusRing = focusRing ?? const MFocusRingStyle(),
         button = button ?? const MButtonStyles(),
+        card = card ?? const MCardStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -62,6 +65,12 @@ class MThemeData {
   /// tree with a different mapping from tokens to styles.
   final MButtonStyles button;
 
+  /// The resolution table for [MCard] visual styles.
+  ///
+  /// Exposed as `theme.card.resolve(colors: ..., radius: ...)`. Replace the
+  /// default `MCardStyles()` to re-skin every card in the tree.
+  final MCardStyles card;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -82,6 +91,7 @@ class MThemeData {
     MTypography? typography,
     MFocusRingStyle? focusRing,
     MButtonStyles? button,
+    MCardStyles? card,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -90,6 +100,7 @@ class MThemeData {
       typography: typography ?? this.typography,
       focusRing: focusRing ?? this.focusRing,
       button: button ?? this.button,
+      card: card ?? this.card,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -103,11 +114,19 @@ class MThemeData {
         other.typography == typography &&
         other.focusRing == focusRing &&
         other.button == button &&
+        other.card == card &&
         other.radius == radius &&
         other.platform == platform;
   }
 
   @override
-  int get hashCode =>
-      Object.hash(colors, typography, focusRing, button, radius, platform);
+  int get hashCode => Object.hash(
+        colors,
+        typography,
+        focusRing,
+        button,
+        card,
+        radius,
+        platform,
+      );
 }
