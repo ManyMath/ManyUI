@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../widgets/button/button_styles.dart';
 import '../widgets/card/card_styles.dart';
+import '../widgets/divider/divider_styles.dart';
 import 'color_scheme.dart';
 import 'focus_ring_style.dart';
 import 'typography.dart';
@@ -25,12 +26,14 @@ class MThemeData {
     MFocusRingStyle? focusRing,
     MButtonStyles? button,
     MCardStyles? card,
+    MDividerStyles? divider,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
         focusRing = focusRing ?? const MFocusRingStyle(),
         button = button ?? const MButtonStyles(),
         card = card ?? const MCardStyles(),
+        divider = divider ?? const MDividerStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -71,6 +74,11 @@ class MThemeData {
   /// default `MCardStyles()` to re-skin every card in the tree.
   final MCardStyles card;
 
+  /// The resolution table for [MDivider] visual styles.
+  ///
+  /// Exposed as `theme.divider.resolve(colors: ...)`.
+  final MDividerStyles divider;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -92,6 +100,7 @@ class MThemeData {
     MFocusRingStyle? focusRing,
     MButtonStyles? button,
     MCardStyles? card,
+    MDividerStyles? divider,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -101,6 +110,7 @@ class MThemeData {
       focusRing: focusRing ?? this.focusRing,
       button: button ?? this.button,
       card: card ?? this.card,
+      divider: divider ?? this.divider,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -115,6 +125,7 @@ class MThemeData {
         other.focusRing == focusRing &&
         other.button == button &&
         other.card == card &&
+        other.divider == divider &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -126,6 +137,7 @@ class MThemeData {
         focusRing,
         button,
         card,
+        divider,
         radius,
         platform,
       );
