@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../widgets/badge/badge_styles.dart';
 import '../widgets/button/button_styles.dart';
 import '../widgets/card/card_styles.dart';
 import '../widgets/divider/divider_styles.dart';
@@ -27,6 +28,7 @@ class MThemeData {
     MButtonStyles? button,
     MCardStyles? card,
     MDividerStyles? divider,
+    MBadgeStyles? badge,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -34,6 +36,7 @@ class MThemeData {
         button = button ?? const MButtonStyles(),
         card = card ?? const MCardStyles(),
         divider = divider ?? const MDividerStyles(),
+        badge = badge ?? const MBadgeStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -79,6 +82,11 @@ class MThemeData {
   /// Exposed as `theme.divider.resolve(colors: ...)`.
   final MDividerStyles divider;
 
+  /// The resolution table for [MBadge] visual styles.
+  ///
+  /// Exposed as `theme.badge.resolve(variant: ..., colors: ..., typography: ...)`.
+  final MBadgeStyles badge;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -101,6 +109,7 @@ class MThemeData {
     MButtonStyles? button,
     MCardStyles? card,
     MDividerStyles? divider,
+    MBadgeStyles? badge,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -111,6 +120,7 @@ class MThemeData {
       button: button ?? this.button,
       card: card ?? this.card,
       divider: divider ?? this.divider,
+      badge: badge ?? this.badge,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -126,19 +136,21 @@ class MThemeData {
         other.button == button &&
         other.card == card &&
         other.divider == divider &&
+        other.badge == badge &&
         other.radius == radius &&
         other.platform == platform;
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll(<Object>[
         colors,
         typography,
         focusRing,
         button,
         card,
         divider,
+        badge,
         radius,
         platform,
-      );
+      ]);
 }
