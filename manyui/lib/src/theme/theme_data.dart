@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../widgets/avatar/avatar_styles.dart';
 import '../widgets/badge/badge_styles.dart';
 import '../widgets/button/button_styles.dart';
 import '../widgets/card/card_styles.dart';
@@ -29,6 +30,7 @@ class MThemeData {
     MCardStyles? card,
     MDividerStyles? divider,
     MBadgeStyles? badge,
+    MAvatarStyles? avatar,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -37,6 +39,7 @@ class MThemeData {
         card = card ?? const MCardStyles(),
         divider = divider ?? const MDividerStyles(),
         badge = badge ?? const MBadgeStyles(),
+        avatar = avatar ?? const MAvatarStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -87,6 +90,11 @@ class MThemeData {
   /// Exposed as `theme.badge.resolve(variant: ..., colors: ..., typography: ...)`.
   final MBadgeStyles badge;
 
+  /// The resolution table for [MAvatar] visual styles.
+  ///
+  /// Exposed as `theme.avatar.resolve(colors: ..., typography: ..., radius: ...)`.
+  final MAvatarStyles avatar;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -110,6 +118,7 @@ class MThemeData {
     MCardStyles? card,
     MDividerStyles? divider,
     MBadgeStyles? badge,
+    MAvatarStyles? avatar,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -121,6 +130,7 @@ class MThemeData {
       card: card ?? this.card,
       divider: divider ?? this.divider,
       badge: badge ?? this.badge,
+      avatar: avatar ?? this.avatar,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -137,6 +147,7 @@ class MThemeData {
         other.card == card &&
         other.divider == divider &&
         other.badge == badge &&
+        other.avatar == avatar &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -150,6 +161,7 @@ class MThemeData {
         card,
         divider,
         badge,
+        avatar,
         radius,
         platform,
       ]);
