@@ -10,6 +10,7 @@
 library;
 
 export 'src/app/widgets_app.dart';
+export 'src/foundation/controller.dart';
 export 'src/foundation/focus_ring.dart';
 export 'src/foundation/input_modality.dart';
 export 'src/theme/color_scheme.dart';
