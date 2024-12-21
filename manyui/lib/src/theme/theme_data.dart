@@ -4,6 +4,7 @@ import '../widgets/avatar/avatar_styles.dart';
 import '../widgets/badge/badge_styles.dart';
 import '../widgets/button/button_styles.dart';
 import '../widgets/card/card_styles.dart';
+import '../widgets/checkbox/checkbox_styles.dart';
 import '../widgets/divider/divider_styles.dart';
 import 'color_scheme.dart';
 import 'focus_ring_style.dart';
@@ -31,6 +32,7 @@ class MThemeData {
     MDividerStyles? divider,
     MBadgeStyles? badge,
     MAvatarStyles? avatar,
+    MCheckboxStyles? checkbox,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -40,6 +42,7 @@ class MThemeData {
         divider = divider ?? const MDividerStyles(),
         badge = badge ?? const MBadgeStyles(),
         avatar = avatar ?? const MAvatarStyles(),
+        checkbox = checkbox ?? const MCheckboxStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -95,6 +98,11 @@ class MThemeData {
   /// Exposed as `theme.avatar.resolve(colors: ..., typography: ..., radius: ...)`.
   final MAvatarStyles avatar;
 
+  /// The resolution table for [MCheckbox] visual styles.
+  ///
+  /// Exposed as `theme.checkbox.resolve(modality: ..., colors: ..., radius: ...)`.
+  final MCheckboxStyles checkbox;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -119,6 +127,7 @@ class MThemeData {
     MDividerStyles? divider,
     MBadgeStyles? badge,
     MAvatarStyles? avatar,
+    MCheckboxStyles? checkbox,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -131,6 +140,7 @@ class MThemeData {
       divider: divider ?? this.divider,
       badge: badge ?? this.badge,
       avatar: avatar ?? this.avatar,
+      checkbox: checkbox ?? this.checkbox,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -148,6 +158,7 @@ class MThemeData {
         other.divider == divider &&
         other.badge == badge &&
         other.avatar == avatar &&
+        other.checkbox == checkbox &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -162,6 +173,7 @@ class MThemeData {
         divider,
         badge,
         avatar,
+        checkbox,
         radius,
         platform,
       ]);
