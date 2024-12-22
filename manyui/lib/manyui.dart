@@ -36,3 +36,6 @@ export 'src/widgets/checkbox/checkbox_styles.dart';
 export 'src/widgets/divider/divider.dart';
 export 'src/widgets/divider/divider_style.dart';
 export 'src/widgets/divider/divider_styles.dart';
+export 'src/widgets/switch/switch.dart';
+export 'src/widgets/switch/switch_style.dart';
+export 'src/widgets/switch/switch_styles.dart';

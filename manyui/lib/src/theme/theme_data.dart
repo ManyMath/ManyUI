@@ -6,6 +6,7 @@ import '../widgets/button/button_styles.dart';
 import '../widgets/card/card_styles.dart';
 import '../widgets/checkbox/checkbox_styles.dart';
 import '../widgets/divider/divider_styles.dart';
+import '../widgets/switch/switch_styles.dart';
 import 'color_scheme.dart';
 import 'focus_ring_style.dart';
 import 'typography.dart';
@@ -33,6 +34,7 @@ class MThemeData {
     MBadgeStyles? badge,
     MAvatarStyles? avatar,
     MCheckboxStyles? checkbox,
+    MSwitchStyles? switch_,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -43,6 +45,7 @@ class MThemeData {
         badge = badge ?? const MBadgeStyles(),
         avatar = avatar ?? const MAvatarStyles(),
         checkbox = checkbox ?? const MCheckboxStyles(),
+        switch_ = switch_ ?? const MSwitchStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -103,6 +106,12 @@ class MThemeData {
   /// Exposed as `theme.checkbox.resolve(modality: ..., colors: ..., radius: ...)`.
   final MCheckboxStyles checkbox;
 
+  /// The resolution table for [MSwitch] visual styles.
+  ///
+  /// Exposed as `theme.switch_.resolve(modality: ..., colors: ...)`. The field
+  /// is named `switch_` because `switch` is a Dart reserved keyword.
+  final MSwitchStyles switch_;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -128,6 +137,7 @@ class MThemeData {
     MBadgeStyles? badge,
     MAvatarStyles? avatar,
     MCheckboxStyles? checkbox,
+    MSwitchStyles? switch_,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -141,6 +151,7 @@ class MThemeData {
       badge: badge ?? this.badge,
       avatar: avatar ?? this.avatar,
       checkbox: checkbox ?? this.checkbox,
+      switch_: switch_ ?? this.switch_,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -159,6 +170,7 @@ class MThemeData {
         other.badge == badge &&
         other.avatar == avatar &&
         other.checkbox == checkbox &&
+        other.switch_ == switch_ &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -174,6 +186,7 @@ class MThemeData {
         badge,
         avatar,
         checkbox,
+        switch_,
         radius,
         platform,
       ]);
