@@ -7,6 +7,7 @@ import '../widgets/card/card_styles.dart';
 import '../widgets/checkbox/checkbox_styles.dart';
 import '../widgets/divider/divider_styles.dart';
 import '../widgets/radio/radio_styles.dart';
+import '../widgets/slider/slider_styles.dart';
 import '../widgets/switch/switch_styles.dart';
 import 'color_scheme.dart';
 import 'focus_ring_style.dart';
@@ -37,6 +38,7 @@ class MThemeData {
     MCheckboxStyles? checkbox,
     MSwitchStyles? switch_,
     MRadioStyles? radio,
+    MSliderStyles? slider,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -49,6 +51,7 @@ class MThemeData {
         checkbox = checkbox ?? const MCheckboxStyles(),
         switch_ = switch_ ?? const MSwitchStyles(),
         radio = radio ?? const MRadioStyles(),
+        slider = slider ?? const MSliderStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -120,6 +123,11 @@ class MThemeData {
   /// Exposed as `theme.radio.resolve(modality: ..., colors: ...)`.
   final MRadioStyles radio;
 
+  /// The resolution table for [MSlider] visual styles.
+  ///
+  /// Exposed as `theme.slider.resolve(modality: ..., colors: ...)`.
+  final MSliderStyles slider;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -147,6 +155,7 @@ class MThemeData {
     MCheckboxStyles? checkbox,
     MSwitchStyles? switch_,
     MRadioStyles? radio,
+    MSliderStyles? slider,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -162,6 +171,7 @@ class MThemeData {
       checkbox: checkbox ?? this.checkbox,
       switch_: switch_ ?? this.switch_,
       radio: radio ?? this.radio,
+      slider: slider ?? this.slider,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -182,6 +192,7 @@ class MThemeData {
         other.checkbox == checkbox &&
         other.switch_ == switch_ &&
         other.radio == radio &&
+        other.slider == slider &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -199,6 +210,7 @@ class MThemeData {
         checkbox,
         switch_,
         radio,
+        slider,
         radius,
         platform,
       ]);
