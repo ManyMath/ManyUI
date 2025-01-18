@@ -8,6 +8,7 @@ import '../widgets/checkbox/checkbox_styles.dart';
 import '../widgets/divider/divider_styles.dart';
 import '../widgets/label/label_styles.dart';
 import '../widgets/radio/radio_styles.dart';
+import '../widgets/select/select_styles.dart';
 import '../widgets/slider/slider_styles.dart';
 import '../widgets/switch/switch_styles.dart';
 import 'color_scheme.dart';
@@ -41,6 +42,7 @@ class MThemeData {
     MRadioStyles? radio,
     MSliderStyles? slider,
     MLabelStyles? label,
+    MSelectStyles? select,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -55,6 +57,7 @@ class MThemeData {
         radio = radio ?? const MRadioStyles(),
         slider = slider ?? const MSliderStyles(),
         label = label ?? const MLabelStyles(),
+        select = select ?? const MSelectStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -136,6 +139,12 @@ class MThemeData {
   /// Exposed as `theme.label.resolve(colors: ..., typography: ...)`.
   final MLabelStyles label;
 
+  /// The resolution table for [MSelect] visual styles.
+  ///
+  /// Exposed as
+  /// `theme.select.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
+  final MSelectStyles select;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -165,6 +174,7 @@ class MThemeData {
     MRadioStyles? radio,
     MSliderStyles? slider,
     MLabelStyles? label,
+    MSelectStyles? select,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -182,6 +192,7 @@ class MThemeData {
       radio: radio ?? this.radio,
       slider: slider ?? this.slider,
       label: label ?? this.label,
+      select: select ?? this.select,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -204,6 +215,7 @@ class MThemeData {
         other.radio == radio &&
         other.slider == slider &&
         other.label == label &&
+        other.select == select &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -223,6 +235,7 @@ class MThemeData {
         radio,
         slider,
         label,
+        select,
         radius,
         platform,
       ]);
