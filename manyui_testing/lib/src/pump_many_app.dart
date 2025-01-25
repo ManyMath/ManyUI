@@ -12,7 +12,12 @@ import 'package:manyui/manyui.dart';
 ///
 /// Pass [viewport] to size the test surface — defaults to 800×600. Pass
 /// [modality] to force a specific input modality. Pass [theme] for non-
-/// default theming; omitted [theme] uses `MThemeData.light()`.
+/// default theming; omitted [theme] uses `MThemeData.light()`. Pass
+/// [installOverlay] to wrap [child] in a minimal [Overlay] — required for
+/// widgets that use [OverlayPortal] (`MSelect`, `MDateField`) or whose
+/// internals reach for an ambient overlay (`EditableText`'s magnifier in
+/// `MTextField`). Defaults to false so the bulk of widgets that don't need
+/// one don't pay for an extra layer.
 ///
 /// ```dart
 /// testWidgets('MButton renders', (tester) async {
@@ -31,11 +36,20 @@ Future<void> pumpManyApp(
   Size? viewport,
   MInputModality? modality,
   TextDirection textDirection = TextDirection.ltr,
+  bool installOverlay = false,
 }) async {
   final MThemeData resolvedTheme = theme ?? MThemeData.light();
   final Size resolvedViewport = viewport ?? const Size(800, 600);
   final MInputModality resolvedModality = modality ??
       MInputModality.defaultForPlatform(resolvedTheme.platform);
+
+  final Widget hosted = installOverlay
+      ? Overlay(
+          initialEntries: <OverlayEntry>[
+            OverlayEntry(builder: (BuildContext _) => child),
+          ],
+        )
+      : child;
 
   await tester.pumpWidget(
     MediaQuery(
@@ -50,7 +64,7 @@ Future<void> pumpManyApp(
               style: resolvedTheme.typography.body.copyWith(
                 color: resolvedTheme.colors.foreground,
               ),
-              child: child,
+              child: hosted,
             ),
           ),
         ),

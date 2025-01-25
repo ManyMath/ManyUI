@@ -63,5 +63,36 @@ void main() {
       expect(captured!.fontSize, 14);
       expect(captured!.color, const MColorScheme.light().foreground);
     });
+
+    testWidgets('installOverlay defaults to no ambient Overlay',
+        (WidgetTester tester) async {
+      OverlayState? seen;
+      await pumpManyApp(
+        tester,
+        Builder(
+          builder: (BuildContext context) {
+            seen = Overlay.maybeOf(context);
+            return const SizedBox.shrink();
+          },
+        ),
+      );
+      expect(seen, isNull);
+    });
+
+    testWidgets('installOverlay: true exposes an ambient Overlay',
+        (WidgetTester tester) async {
+      OverlayState? seen;
+      await pumpManyApp(
+        tester,
+        Builder(
+          builder: (BuildContext context) {
+            seen = Overlay.maybeOf(context);
+            return const SizedBox.shrink();
+          },
+        ),
+        installOverlay: true,
+      );
+      expect(seen, isNotNull);
+    });
   });
 }

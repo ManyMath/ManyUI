@@ -4,19 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:manyui/manyui.dart';
 import 'package:manyui_testing/manyui_testing.dart';
 
-/// Wraps [child] in a sized box inside a minimal Overlay so OverlayPortal
-/// inside the widget can find an ambient Overlay. pumpManyApp doesn't install
-/// one by default.
+/// Wraps [child] in a sized box for the select's anchor. Tests pump this via
+/// `pumpManyApp(..., installOverlay: true)` so the ambient Overlay is provided
+/// by the test harness, not by a per-test helper.
 Widget _overlayed(Widget child) {
-  return Overlay(
-    initialEntries: <OverlayEntry>[
-      OverlayEntry(
-        builder: (BuildContext _) => Center(
-          child: SizedBox(width: 240, child: child),
-        ),
-      ),
-    ],
-  );
+  return Center(child: SizedBox(width: 240, child: child));
 }
 
 const List<MSelectItem<String>> _fruits = <MSelectItem<String>>[
@@ -50,6 +42,7 @@ Future<void> _pumpSelect(
       autofocus: autofocus,
     )),
     modality: modality,
+    installOverlay: true,
   );
   // First frame mounts the select and the controller's initial value; pump a
   // second frame so postFrameCallbacks (focus requests) settle.
@@ -387,6 +380,7 @@ void main() {
           stateRef: harnessState,
           external: external,
         )),
+        installOverlay: true,
       );
       expect(find.text('Apple'), findsOneWidget);
 
@@ -407,6 +401,7 @@ void main() {
           items: _fruits,
           semanticLabel: 'Fruit',
         )),
+        installOverlay: true,
       );
 
       final Semantics root = tester.widget(find
@@ -498,6 +493,7 @@ void main() {
           style: MSelectStyleDelta(minHeight: 64),
         )),
         modality: MInputModality.mouse,
+        installOverlay: true,
       );
 
       final ConstrainedBox box = tester.widget(find

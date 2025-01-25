@@ -4,19 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:manyui/manyui.dart';
 import 'package:manyui_testing/manyui_testing.dart';
 
-/// Wraps [child] in a bounded SizedBox + a minimal Overlay so EditableText's
-/// interactive-selection magnifier path has a host. pumpManyApp doesn't
-/// install either by default and MTextField sizes itself to its parent.
+/// Wraps [child] in a bounded SizedBox so MTextField (which expands to its
+/// parent) gets a deterministic width. Tests pump this via
+/// `pumpManyApp(..., installOverlay: true)` so EditableText's
+/// interactive-selection magnifier path finds an ambient Overlay.
 Widget _hosted(Widget child, {double width = 240}) {
-  return Overlay(
-    initialEntries: <OverlayEntry>[
-      OverlayEntry(
-        builder: (BuildContext _) => Center(
-          child: SizedBox(width: width, child: child),
-        ),
-      ),
-    ],
-  );
+  return Center(child: SizedBox(width: width, child: child));
 }
 
 Future<void> _pumpField(
@@ -56,6 +49,7 @@ Future<void> _pumpField(
       autofocus: autofocus,
     )),
     modality: modality,
+    installOverlay: true,
   );
   // Second pump so any focus postFrameCallbacks settle.
   await tester.pump();
@@ -268,6 +262,7 @@ void main() {
           external: external,
           initialInternal: 'internal',
         )),
+        installOverlay: true,
       );
       expect(find.text('internal'), findsOneWidget);
 
@@ -409,6 +404,7 @@ void main() {
           style: MTextFieldStyleDelta(minHeight: 60),
         )),
         modality: MInputModality.mouse,
+        installOverlay: true,
       );
 
       final ConstrainedBox box = tester.widget(find
