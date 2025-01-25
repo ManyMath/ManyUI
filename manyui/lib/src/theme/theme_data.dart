@@ -11,6 +11,7 @@ import '../widgets/radio/radio_styles.dart';
 import '../widgets/select/select_styles.dart';
 import '../widgets/slider/slider_styles.dart';
 import '../widgets/switch/switch_styles.dart';
+import '../widgets/text_field/text_field_styles.dart';
 import 'color_scheme.dart';
 import 'focus_ring_style.dart';
 import 'typography.dart';
@@ -43,6 +44,7 @@ class MThemeData {
     MSliderStyles? slider,
     MLabelStyles? label,
     MSelectStyles? select,
+    MTextFieldStyles? textField,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -58,6 +60,7 @@ class MThemeData {
         slider = slider ?? const MSliderStyles(),
         label = label ?? const MLabelStyles(),
         select = select ?? const MSelectStyles(),
+        textField = textField ?? const MTextFieldStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -145,6 +148,12 @@ class MThemeData {
   /// `theme.select.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
   final MSelectStyles select;
 
+  /// The resolution table for [MTextField] visual styles.
+  ///
+  /// Exposed as
+  /// `theme.textField.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
+  final MTextFieldStyles textField;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -175,6 +184,7 @@ class MThemeData {
     MSliderStyles? slider,
     MLabelStyles? label,
     MSelectStyles? select,
+    MTextFieldStyles? textField,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -193,6 +203,7 @@ class MThemeData {
       slider: slider ?? this.slider,
       label: label ?? this.label,
       select: select ?? this.select,
+      textField: textField ?? this.textField,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -216,6 +227,7 @@ class MThemeData {
         other.slider == slider &&
         other.label == label &&
         other.select == select &&
+        other.textField == textField &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -236,6 +248,7 @@ class MThemeData {
         slider,
         label,
         select,
+        textField,
         radius,
         platform,
       ]);

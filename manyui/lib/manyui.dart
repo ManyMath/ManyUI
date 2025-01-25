@@ -51,3 +51,6 @@ export 'src/widgets/slider/slider_styles.dart';
 export 'src/widgets/switch/switch.dart';
 export 'src/widgets/switch/switch_style.dart';
 export 'src/widgets/switch/switch_styles.dart';
+export 'src/widgets/text_field/text_field.dart';
+export 'src/widgets/text_field/text_field_style.dart';
+export 'src/widgets/text_field/text_field_styles.dart';
