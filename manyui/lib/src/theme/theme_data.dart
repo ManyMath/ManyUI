@@ -5,6 +5,7 @@ import '../widgets/badge/badge_styles.dart';
 import '../widgets/button/button_styles.dart';
 import '../widgets/card/card_styles.dart';
 import '../widgets/checkbox/checkbox_styles.dart';
+import '../widgets/date_field/date_field_styles.dart';
 import '../widgets/divider/divider_styles.dart';
 import '../widgets/label/label_styles.dart';
 import '../widgets/radio/radio_styles.dart';
@@ -45,6 +46,7 @@ class MThemeData {
     MLabelStyles? label,
     MSelectStyles? select,
     MTextFieldStyles? textField,
+    MDateFieldStyles? dateField,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -61,6 +63,7 @@ class MThemeData {
         label = label ?? const MLabelStyles(),
         select = select ?? const MSelectStyles(),
         textField = textField ?? const MTextFieldStyles(),
+        dateField = dateField ?? const MDateFieldStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -154,6 +157,12 @@ class MThemeData {
   /// `theme.textField.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
   final MTextFieldStyles textField;
 
+  /// The resolution table for [MDateField] visual styles.
+  ///
+  /// Exposed as
+  /// `theme.dateField.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
+  final MDateFieldStyles dateField;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -185,6 +194,7 @@ class MThemeData {
     MLabelStyles? label,
     MSelectStyles? select,
     MTextFieldStyles? textField,
+    MDateFieldStyles? dateField,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -204,6 +214,7 @@ class MThemeData {
       label: label ?? this.label,
       select: select ?? this.select,
       textField: textField ?? this.textField,
+      dateField: dateField ?? this.dateField,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -228,6 +239,7 @@ class MThemeData {
         other.label == label &&
         other.select == select &&
         other.textField == textField &&
+        other.dateField == dateField &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -249,6 +261,7 @@ class MThemeData {
         label,
         select,
         textField,
+        dateField,
         radius,
         platform,
       ]);
