@@ -1,0 +1,6 @@
+tags:
+  golden:
+    description: |
+      Tests that compare a pumped widget against a checked-in PNG golden.
+      Runs under FVM-pinned Flutter for deterministic rendering. Skip with
+      `--exclude-tags=golden` when the toolchain doesn't match the pin.
