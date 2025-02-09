@@ -8,6 +8,7 @@ import '../widgets/checkbox/checkbox_styles.dart';
 import '../widgets/date_field/date_field_styles.dart';
 import '../widgets/divider/divider_styles.dart';
 import '../widgets/label/label_styles.dart';
+import '../widgets/otp_field/otp_field_styles.dart';
 import '../widgets/radio/radio_styles.dart';
 import '../widgets/select/select_styles.dart';
 import '../widgets/slider/slider_styles.dart';
@@ -47,6 +48,7 @@ class MThemeData {
     MSelectStyles? select,
     MTextFieldStyles? textField,
     MDateFieldStyles? dateField,
+    MOTPFieldStyles? otpField,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -64,6 +66,7 @@ class MThemeData {
         select = select ?? const MSelectStyles(),
         textField = textField ?? const MTextFieldStyles(),
         dateField = dateField ?? const MDateFieldStyles(),
+        otpField = otpField ?? const MOTPFieldStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -163,6 +166,12 @@ class MThemeData {
   /// `theme.dateField.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
   final MDateFieldStyles dateField;
 
+  /// The resolution table for [MOTPField] visual styles.
+  ///
+  /// Exposed as
+  /// `theme.otpField.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
+  final MOTPFieldStyles otpField;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -195,6 +204,7 @@ class MThemeData {
     MSelectStyles? select,
     MTextFieldStyles? textField,
     MDateFieldStyles? dateField,
+    MOTPFieldStyles? otpField,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -215,6 +225,7 @@ class MThemeData {
       select: select ?? this.select,
       textField: textField ?? this.textField,
       dateField: dateField ?? this.dateField,
+      otpField: otpField ?? this.otpField,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -240,6 +251,7 @@ class MThemeData {
         other.select == select &&
         other.textField == textField &&
         other.dateField == dateField &&
+        other.otpField == otpField &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -262,6 +274,7 @@ class MThemeData {
         select,
         textField,
         dateField,
+        otpField,
         radius,
         platform,
       ]);
