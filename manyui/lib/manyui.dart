@@ -13,6 +13,7 @@ export 'src/app/widgets_app.dart';
 export 'src/foundation/controller.dart';
 export 'src/foundation/focus_ring.dart';
 export 'src/foundation/input_modality.dart';
+export 'src/foundation/overlay_anchor.dart';
 export 'src/theme/color_scheme.dart';
 export 'src/theme/focus_ring_style.dart';
 export 'src/theme/theme.dart';
