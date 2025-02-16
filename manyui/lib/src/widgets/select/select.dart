@@ -4,16 +4,12 @@ import 'package:flutter/widgets.dart';
 import '../../foundation/controller.dart';
 import '../../foundation/focus_ring.dart';
 import '../../foundation/input_modality.dart';
+import '../../foundation/overlay_anchor.dart';
 import '../../theme/theme.dart';
 import '../../theme/theme_data.dart';
 import 'select_style.dart';
 
 /// One row in an [MSelect]'s popover.
-///
-/// A small value object so [MSelect] owns the row's visual (focused,
-/// selected, disabled states) rather than the caller. Pair [value] (the
-/// payload written into the [MController] on activation) with [label] (the
-/// string shown in the row and used by type-to-search).
 @immutable
 class MSelectItem<T> {
   /// Builds an item.
@@ -28,17 +24,10 @@ class MSelectItem<T> {
   /// The payload this item writes into the select's controller when chosen.
   final T value;
 
-  /// The string shown for this row.
-  ///
-  /// Also drives type-to-search: pressing a letter advances focus to the
-  /// first item whose label starts with the typed buffer.
+  /// The string shown for this row. Also used for type-to-search.
   final String label;
 
   /// Whether this row responds to user interaction.
-  ///
-  /// Disabled rows render dimmed, ignore taps, and are skipped by arrow-key
-  /// navigation. They still occupy a slot in the list so screen readers
-  /// announce them as part of the option set.
   final bool enabled;
 
   /// An optional widget placed before [label] (typically an icon).
@@ -145,10 +134,8 @@ class _MSelectState<T> extends State<MSelect<T>> {
   late MController<T?> _controller;
   bool _ownsController = false;
 
-  final OverlayPortalController _portal = OverlayPortalController();
-  final LayerLink _link = LayerLink();
-  final FocusScopeNode _popoverScope =
-      FocusScopeNode(debugLabel: 'MSelect popover');
+  final MOverlayAnchorController _anchor =
+      MOverlayAnchorController(debugLabel: 'MSelect popover');
 
   FocusNode? _ownedAnchorNode;
   bool _anchorFocused = false;
@@ -234,7 +221,7 @@ class _MSelectState<T> extends State<MSelect<T>> {
   void dispose() {
     _unbindController();
     _ownedAnchorNode?.dispose();
-    _popoverScope.dispose();
+    _anchor.dispose();
     super.dispose();
   }
 
@@ -273,10 +260,7 @@ class _MSelectState<T> extends State<MSelect<T>> {
       _focusedIndex = initialFocus;
       _searchBuffer = '';
     });
-    _portal.show();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _popoverScope.requestFocus();
-    });
+    _anchor.open(anchorFocusNode: _anchorNode);
   }
 
   void _closePopover({required bool commit, T? committedValue}) {
@@ -292,9 +276,8 @@ class _MSelectState<T> extends State<MSelect<T>> {
       _focusedIndex = -1;
       _searchBuffer = '';
     });
-    _portal.hide();
-    // Return focus to the anchor so keyboard users keep their place.
-    if (mounted) _anchorNode.requestFocus();
+    // Helper handles hide + return-focus-to-anchor.
+    _anchor.close();
   }
 
   void _moveFocus(int direction) {
@@ -429,14 +412,14 @@ class _MSelectState<T> extends State<MSelect<T>> {
       ),
     );
 
-    final Widget portal = OverlayPortal(
-      controller: _portal,
-      overlayChildBuilder: (BuildContext overlayContext) =>
+    final Widget portal = MOverlayAnchor(
+      controller: _anchor,
+      anchor: anchorDetector,
+      overlayOffset: Offset(0, resolved.minHeight + resolved.popoverGap),
+      onDismiss: () => _closePopover(commit: false),
+      onKeyEvent: _onPopoverKey,
+      overlayBuilder: (BuildContext overlayContext) =>
           _buildOverlay(overlayContext, resolved, theme),
-      child: CompositedTransformTarget(
-        link: _link,
-        child: anchorDetector,
-      ),
     );
 
     return Semantics(
@@ -574,37 +557,7 @@ class _MSelectState<T> extends State<MSelect<T>> {
       ),
     );
 
-    final Widget positioned = CompositedTransformFollower(
-      link: _link,
-      showWhenUnlinked: false,
-      offset: Offset(0, s.minHeight + s.popoverGap),
-      child: Align(
-        alignment: AlignmentDirectional.topStart,
-        child: popoverBody,
-      ),
-    );
-
-    return Stack(
-      children: <Widget>[
-        // Modal barrier: catches clicks outside the popover and closes it
-        // without committing.
-        Positioned.fill(
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () => _closePopover(commit: false),
-          ),
-        ),
-        FocusScope(
-          node: _popoverScope,
-          onKeyEvent: _onPopoverKey,
-          child: Semantics(
-            scopesRoute: true,
-            explicitChildNodes: true,
-            child: positioned,
-          ),
-        ),
-      ],
-    );
+    return popoverBody;
   }
 }
 

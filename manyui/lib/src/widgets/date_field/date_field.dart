@@ -4,31 +4,24 @@ import 'package:flutter/widgets.dart';
 import '../../foundation/controller.dart';
 import '../../foundation/focus_ring.dart';
 import '../../foundation/input_modality.dart';
+import '../../foundation/overlay_anchor.dart';
 import '../../theme/theme.dart';
 import '../../theme/theme_data.dart';
 import 'date_field_style.dart';
 import 'parse.dart';
 
-/// A masked-input date field with an optional popover calendar.
+/// A text-input date field with an optional popover calendar.
 ///
-/// `MDateField` sits at the intersection of `MTextField` (text input shape)
-/// and `MSelect` (overlay shape). The anchor wraps Flutter's [EditableText]
-/// and bridges manyui's `MController<DateTime?>` to a primitive
-/// [TextEditingController]; the trailing calendar-icon button toggles a
-/// popover calendar anchored by the same `OverlayPortal` + `LayerLink`
-/// pattern every other floating widget in v0.1 uses.
+/// Bridges manyui's `MController<DateTime?>` to a primitive
+/// [TextEditingController]; the trailing calendar-icon button opens a
+/// popover calendar via [MOverlayAnchor].
 ///
-/// Accepted typed input (v0.1, no `intl`):
+/// Accepted typed input (no `intl` dependency):
+/// ISO (`2026-05-13`), US slash (`5/13/2026`), and English month names
+/// (`May 13 2026`, `13 May 2026`).
 ///
-/// - ISO: `2026-05-13`
-/// - US slash: `5/13/2026`, `05/13/2026`
-/// - English month names: `May 13 2026`, `May 13, 2026`, `13 May 2026`
-///
-/// On commit (Enter or focus loss when the displayed text differs from the
-/// canonical format), a successful parse normalizes the displayed text to
-/// `YYYY-MM-DD` and updates the controller. Unparseable text triggers a
-/// shake (visually unchanged in v0.1; the caller's [onSubmitted] still
-/// fires with the controller's current value).
+/// On commit (Enter or focus-loss), a successful parse normalizes the text
+/// to `YYYY-MM-DD` and updates the controller.
 ///
 /// ```dart
 /// MDateField(
@@ -135,10 +128,8 @@ class _MDateFieldState extends State<MDateField> {
   bool _focused = false;
   bool _syncing = false;
 
-  final OverlayPortalController _portal = OverlayPortalController();
-  final LayerLink _link = LayerLink();
-  final FocusScopeNode _popoverScope =
-      FocusScopeNode(debugLabel: 'MDateField popover');
+  final MOverlayAnchorController _anchor =
+      MOverlayAnchorController(debugLabel: 'MDateField popover');
 
   bool _open = false;
   // Year/month currently shown in the calendar header.
@@ -245,7 +236,7 @@ class _MDateFieldState extends State<MDateField> {
     _unbindController();
     _focusNode.removeListener(_onFocusNodeChanged);
     _ownedFocusNode?.dispose();
-    _popoverScope.dispose();
+    _anchor.dispose();
     super.dispose();
   }
 
@@ -303,10 +294,7 @@ class _MDateFieldState extends State<MDateField> {
       _viewMonth = focused.month;
       _focusedDay = DateTime.utc(focused.year, focused.month, focused.day);
     });
-    _portal.show();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _popoverScope.requestFocus();
-    });
+    _anchor.open(anchorFocusNode: _focusNode);
   }
 
   void _closePopover({DateTime? committedValue}) {
@@ -322,8 +310,7 @@ class _MDateFieldState extends State<MDateField> {
       _open = false;
       _focusedDay = null;
     });
-    _portal.hide();
-    if (mounted) _focusNode.requestFocus();
+    _anchor.close();
   }
 
   void _shiftMonth(int delta) {
@@ -543,11 +530,14 @@ class _MDateFieldState extends State<MDateField> {
 
     final Widget ringed = MFocusRing(focused: _focused, child: tappable);
 
-    final Widget portal = OverlayPortal(
-      controller: _portal,
-      overlayChildBuilder: (BuildContext overlayContext) =>
+    final Widget portal = MOverlayAnchor(
+      controller: _anchor,
+      anchor: ringed,
+      overlayOffset: Offset(0, resolved.minHeight + resolved.popoverGap),
+      onDismiss: _closePopover,
+      onKeyEvent: _onPopoverKey,
+      overlayBuilder: (BuildContext overlayContext) =>
           _buildOverlay(overlayContext, resolved, theme),
-      child: CompositedTransformTarget(link: _link, child: ringed),
     );
 
     return Semantics(
@@ -613,35 +603,7 @@ class _MDateFieldState extends State<MDateField> {
       ),
     );
 
-    final Widget positioned = CompositedTransformFollower(
-      link: _link,
-      showWhenUnlinked: false,
-      offset: Offset(0, s.minHeight + s.popoverGap),
-      child: Align(
-        alignment: AlignmentDirectional.topStart,
-        child: IntrinsicWidth(child: popoverBody),
-      ),
-    );
-
-    return Stack(
-      children: <Widget>[
-        Positioned.fill(
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () => _closePopover(),
-          ),
-        ),
-        FocusScope(
-          node: _popoverScope,
-          onKeyEvent: _onPopoverKey,
-          child: Semantics(
-            scopesRoute: true,
-            explicitChildNodes: true,
-            child: positioned,
-          ),
-        ),
-      ],
-    );
+    return IntrinsicWidth(child: popoverBody);
   }
 
   Widget _buildHeader(MDateFieldStyle s) {
