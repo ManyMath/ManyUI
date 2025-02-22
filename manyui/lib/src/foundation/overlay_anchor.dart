@@ -1,17 +1,12 @@
 import 'package:flutter/widgets.dart';
 
-/// Owns the lifecycle of a sibling-anchored overlay: the [OverlayPortal]
-/// controller, the [LayerLink] threaded between anchor and follower, and the
-/// [FocusScopeNode] that hosts the overlay's keyboard focus.
+/// Lifecycle owner for a sibling-anchored overlay.
 ///
-/// Hold one in [State] (not in [build] — see [OverlayPortalController]),
-/// dispose it in [State.dispose], and hand it to a sibling [MOverlayAnchor]
-/// widget. Call [open] and [close] to drive the overlay; [isOpen] reports
-/// current state for `setState`-driven flags (e.g. accessibility `expanded`).
-///
-/// On [close], if [anchorFocusNode] was set when [open] was called, focus
-/// returns to it so keyboard users keep their place. This is opt-in because
-/// non-modal overlays (tooltips) typically have no anchor focus to return to.
+/// Holds the [OverlayPortalController], [LayerLink], and [FocusScopeNode].
+/// Hold one in [State] (not in [build]), dispose in [State.dispose], and
+/// pass it to a sibling [MOverlayAnchor]. On [close], focus returns to
+/// [anchorFocusNode] if it was supplied to [open] -- opt-in because
+/// non-modal overlays (tooltips) have no anchor focus to restore.
 class MOverlayAnchorController {
   /// Creates a controller.
   MOverlayAnchorController({String? debugLabel})
@@ -29,23 +24,24 @@ class MOverlayAnchorController {
 
   /// Show the overlay.
   ///
-  /// After the next frame, focus is moved into the overlay's [FocusScope] so
-  /// keyboard navigation can pick up immediately. Pass [anchorFocusNode] so
-  /// [close] can return focus to it on dismiss.
-  void open({FocusNode? anchorFocusNode}) {
+  /// When [autofocus] is true (the default), focus moves into the overlay's
+  /// [FocusScope] on the next frame. Pass false for non-modal surfaces
+  /// (tooltips) to avoid stealing focus. Pass [anchorFocusNode] so [close]
+  /// can restore focus on dismiss.
+  void open({FocusNode? anchorFocusNode, bool autofocus = true}) {
     if (_open) return;
     _open = true;
     _anchorFocusNode = anchorFocusNode;
     _portal.show();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scope.parent != null) _scope.requestFocus();
-    });
+    if (autofocus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scope.parent != null) _scope.requestFocus();
+      });
+    }
   }
 
-  /// Hide the overlay.
-  ///
-  /// If [open] was called with an `anchorFocusNode`, focus is returned to it
-  /// so keyboard users keep their place. Safe to call when [isOpen] is false.
+  /// Hide the overlay. Returns focus to the anchor node if one was set.
+  /// Safe to call when already closed.
   void close() {
     if (!_open) return;
     _open = false;
@@ -63,36 +59,14 @@ class MOverlayAnchorController {
 
 /// Wraps an anchor widget so it can host a follower overlay.
 ///
-/// Installs the [CompositedTransformTarget] around [anchor] and an
-/// [OverlayPortal] whose child is the user-supplied [overlayBuilder] result,
-/// positioned by a [CompositedTransformFollower] linked to the anchor.
-///
-/// The standard popover stack (modal barrier behind, focus-scoped popover in
-/// front) is built automatically. Set [modalBarrier] to false for non-modal
-/// overlays (tooltips, hover surfaces); the caller is then responsible for
-/// listening to outside taps via the gesture router if dismiss-on-tap is
-/// wanted.
-///
-/// Place an instance of [MOverlayAnchor] anywhere a normal widget can go —
-/// it needs an ambient [Overlay] (provided by `MWidgetsApp`, or by
-/// `pumpManyApp(installOverlay: true)` in tests).
+/// Installs a [CompositedTransformTarget] around [anchor] and an
+/// [OverlayPortal] whose child is positioned by a
+/// [CompositedTransformFollower]. When [modalBarrier] is true (default), a
+/// full-screen dismiss barrier and route-scope semantics are installed.
+/// Requires an ambient [Overlay] -- provided by [MWidgetsApp] or
+/// `pumpManyApp(installOverlay: true)` in tests.
 class MOverlayAnchor extends StatelessWidget {
   /// Creates an overlay anchor.
-  ///
-  /// [controller] owns the open/close lifecycle. [anchor] is rendered in its
-  /// normal sibling position. [overlayBuilder] is called every time the
-  /// overlay rebuilds; its return value is placed at [overlayOffset] from
-  /// the anchor's top-left.
-  ///
-  /// When [modalBarrier] is true (default), a full-screen translucent gesture
-  /// detector behind the overlay calls [onDismiss] on tap, and the popover
-  /// surface is wrapped in `Semantics(scopesRoute: true,
-  /// explicitChildNodes: true)`. When false, no barrier is installed and no
-  /// route-scope semantics are emitted — tooltip-style overlays should pass
-  /// false and listen for outside taps themselves.
-  ///
-  /// [onKeyEvent] is wired to the overlay's [FocusScope.onKeyEvent]. Use it
-  /// to handle Escape, arrow keys, type-ahead, etc.
   const MOverlayAnchor({
     required this.controller,
     required this.anchor,
@@ -114,9 +88,6 @@ class MOverlayAnchor extends StatelessWidget {
   final WidgetBuilder overlayBuilder;
 
   /// The offset applied to the follower, in the anchor's coordinate space.
-  ///
-  /// Typically `Offset(0, anchorHeight + gap)` to place the overlay just
-  /// below the anchor with a small gap.
   final Offset overlayOffset;
 
   /// Called when the modal barrier is tapped. Ignored when [modalBarrier] is
@@ -126,8 +97,7 @@ class MOverlayAnchor extends StatelessWidget {
   /// Handler for keyboard events while the overlay holds focus.
   final FocusOnKeyEventCallback? onKeyEvent;
 
-  /// Whether to install a full-screen translucent dismiss barrier and emit
-  /// route-scope semantics.
+  /// Install a full-screen dismiss barrier and route-scope semantics.
   final bool modalBarrier;
 
   @override
