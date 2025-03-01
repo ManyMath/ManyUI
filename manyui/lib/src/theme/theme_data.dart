@@ -14,6 +14,7 @@ import '../widgets/select/select_styles.dart';
 import '../widgets/slider/slider_styles.dart';
 import '../widgets/switch/switch_styles.dart';
 import '../widgets/text_field/text_field_styles.dart';
+import '../widgets/tooltip/tooltip_styles.dart';
 import 'color_scheme.dart';
 import 'focus_ring_style.dart';
 import 'typography.dart';
@@ -49,6 +50,7 @@ class MThemeData {
     MTextFieldStyles? textField,
     MDateFieldStyles? dateField,
     MOTPFieldStyles? otpField,
+    MTooltipStyles? tooltip,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -67,6 +69,7 @@ class MThemeData {
         textField = textField ?? const MTextFieldStyles(),
         dateField = dateField ?? const MDateFieldStyles(),
         otpField = otpField ?? const MOTPFieldStyles(),
+        tooltip = tooltip ?? const MTooltipStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -172,6 +175,12 @@ class MThemeData {
   /// `theme.otpField.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
   final MOTPFieldStyles otpField;
 
+  /// The resolution table for [MTooltip] visual styles.
+  ///
+  /// Exposed as
+  /// `theme.tooltip.resolve(colors: ..., typography: ..., radius: ...)`.
+  final MTooltipStyles tooltip;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -205,6 +214,7 @@ class MThemeData {
     MTextFieldStyles? textField,
     MDateFieldStyles? dateField,
     MOTPFieldStyles? otpField,
+    MTooltipStyles? tooltip,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -226,6 +236,7 @@ class MThemeData {
       textField: textField ?? this.textField,
       dateField: dateField ?? this.dateField,
       otpField: otpField ?? this.otpField,
+      tooltip: tooltip ?? this.tooltip,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -252,6 +263,7 @@ class MThemeData {
         other.textField == textField &&
         other.dateField == dateField &&
         other.otpField == otpField &&
+        other.tooltip == tooltip &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -275,6 +287,7 @@ class MThemeData {
         textField,
         dateField,
         otpField,
+        tooltip,
         radius,
         platform,
       ]);
