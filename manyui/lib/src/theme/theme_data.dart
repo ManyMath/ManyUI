@@ -9,6 +9,7 @@ import '../widgets/date_field/date_field_styles.dart';
 import '../widgets/divider/divider_styles.dart';
 import '../widgets/label/label_styles.dart';
 import '../widgets/otp_field/otp_field_styles.dart';
+import '../widgets/popover/popover_styles.dart';
 import '../widgets/radio/radio_styles.dart';
 import '../widgets/select/select_styles.dart';
 import '../widgets/slider/slider_styles.dart';
@@ -50,6 +51,7 @@ class MThemeData {
     MTextFieldStyles? textField,
     MDateFieldStyles? dateField,
     MOTPFieldStyles? otpField,
+    MPopoverStyles? popover,
     MTooltipStyles? tooltip,
     this.radius = 6,
     TargetPlatform? platform,
@@ -69,6 +71,7 @@ class MThemeData {
         textField = textField ?? const MTextFieldStyles(),
         dateField = dateField ?? const MDateFieldStyles(),
         otpField = otpField ?? const MOTPFieldStyles(),
+        popover = popover ?? const MPopoverStyles(),
         tooltip = tooltip ?? const MTooltipStyles(),
         platform = platform ?? defaultTargetPlatform;
 
@@ -175,6 +178,12 @@ class MThemeData {
   /// `theme.otpField.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
   final MOTPFieldStyles otpField;
 
+  /// The resolution table for [MPopover] visual styles.
+  ///
+  /// Exposed as
+  /// `theme.popover.resolve(colors: ..., typography: ..., radius: ...)`.
+  final MPopoverStyles popover;
+
   /// The resolution table for [MTooltip] visual styles.
   ///
   /// Exposed as
@@ -214,6 +223,7 @@ class MThemeData {
     MTextFieldStyles? textField,
     MDateFieldStyles? dateField,
     MOTPFieldStyles? otpField,
+    MPopoverStyles? popover,
     MTooltipStyles? tooltip,
     double? radius,
     TargetPlatform? platform,
@@ -236,6 +246,7 @@ class MThemeData {
       textField: textField ?? this.textField,
       dateField: dateField ?? this.dateField,
       otpField: otpField ?? this.otpField,
+      popover: popover ?? this.popover,
       tooltip: tooltip ?? this.tooltip,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
@@ -263,6 +274,7 @@ class MThemeData {
         other.textField == textField &&
         other.dateField == dateField &&
         other.otpField == otpField &&
+        other.popover == popover &&
         other.tooltip == tooltip &&
         other.radius == radius &&
         other.platform == platform;
@@ -287,6 +299,7 @@ class MThemeData {
         textField,
         dateField,
         otpField,
+        popover,
         tooltip,
         radius,
         platform,
