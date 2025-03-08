@@ -6,6 +6,7 @@ import '../widgets/button/button_styles.dart';
 import '../widgets/card/card_styles.dart';
 import '../widgets/checkbox/checkbox_styles.dart';
 import '../widgets/date_field/date_field_styles.dart';
+import '../widgets/dialog/dialog_styles.dart';
 import '../widgets/divider/divider_styles.dart';
 import '../widgets/label/label_styles.dart';
 import '../widgets/otp_field/otp_field_styles.dart';
@@ -53,6 +54,7 @@ class MThemeData {
     MOTPFieldStyles? otpField,
     MPopoverStyles? popover,
     MTooltipStyles? tooltip,
+    MDialogStyles? dialog,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -73,6 +75,7 @@ class MThemeData {
         otpField = otpField ?? const MOTPFieldStyles(),
         popover = popover ?? const MPopoverStyles(),
         tooltip = tooltip ?? const MTooltipStyles(),
+        dialog = dialog ?? const MDialogStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -190,6 +193,12 @@ class MThemeData {
   /// `theme.tooltip.resolve(colors: ..., typography: ..., radius: ...)`.
   final MTooltipStyles tooltip;
 
+  /// The resolution table for [MDialog] visual styles.
+  ///
+  /// Exposed as
+  /// `theme.dialog.resolve(colors: ..., typography: ..., radius: ...)`.
+  final MDialogStyles dialog;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -225,6 +234,7 @@ class MThemeData {
     MOTPFieldStyles? otpField,
     MPopoverStyles? popover,
     MTooltipStyles? tooltip,
+    MDialogStyles? dialog,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -248,6 +258,7 @@ class MThemeData {
       otpField: otpField ?? this.otpField,
       popover: popover ?? this.popover,
       tooltip: tooltip ?? this.tooltip,
+      dialog: dialog ?? this.dialog,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -276,6 +287,7 @@ class MThemeData {
         other.otpField == otpField &&
         other.popover == popover &&
         other.tooltip == tooltip &&
+        other.dialog == dialog &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -301,6 +313,7 @@ class MThemeData {
         otpField,
         popover,
         tooltip,
+        dialog,
         radius,
         platform,
       ]);
