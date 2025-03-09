@@ -13,6 +13,7 @@ import '../widgets/otp_field/otp_field_styles.dart';
 import '../widgets/popover/popover_styles.dart';
 import '../widgets/radio/radio_styles.dart';
 import '../widgets/select/select_styles.dart';
+import '../widgets/sheet/sheet_styles.dart';
 import '../widgets/slider/slider_styles.dart';
 import '../widgets/switch/switch_styles.dart';
 import '../widgets/text_field/text_field_styles.dart';
@@ -55,6 +56,7 @@ class MThemeData {
     MPopoverStyles? popover,
     MTooltipStyles? tooltip,
     MDialogStyles? dialog,
+    MSheetStyles? sheet,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -76,6 +78,7 @@ class MThemeData {
         popover = popover ?? const MPopoverStyles(),
         tooltip = tooltip ?? const MTooltipStyles(),
         dialog = dialog ?? const MDialogStyles(),
+        sheet = sheet ?? const MSheetStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -199,6 +202,12 @@ class MThemeData {
   /// `theme.dialog.resolve(colors: ..., typography: ..., radius: ...)`.
   final MDialogStyles dialog;
 
+  /// The resolution table for [MSheet] visual styles.
+  ///
+  /// Exposed as
+  /// `theme.sheet.resolve(colors: ..., typography: ..., radius: ...)`.
+  final MSheetStyles sheet;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -235,6 +244,7 @@ class MThemeData {
     MPopoverStyles? popover,
     MTooltipStyles? tooltip,
     MDialogStyles? dialog,
+    MSheetStyles? sheet,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -259,6 +269,7 @@ class MThemeData {
       popover: popover ?? this.popover,
       tooltip: tooltip ?? this.tooltip,
       dialog: dialog ?? this.dialog,
+      sheet: sheet ?? this.sheet,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -288,6 +299,7 @@ class MThemeData {
         other.popover == popover &&
         other.tooltip == tooltip &&
         other.dialog == dialog &&
+        other.sheet == sheet &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -314,6 +326,7 @@ class MThemeData {
         popover,
         tooltip,
         dialog,
+        sheet,
         radius,
         platform,
       ]);
