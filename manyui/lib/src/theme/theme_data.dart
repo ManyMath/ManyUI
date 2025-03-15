@@ -17,6 +17,7 @@ import '../widgets/sheet/sheet_styles.dart';
 import '../widgets/slider/slider_styles.dart';
 import '../widgets/switch/switch_styles.dart';
 import '../widgets/text_field/text_field_styles.dart';
+import '../widgets/toast/toast_styles.dart';
 import '../widgets/tooltip/tooltip_styles.dart';
 import 'color_scheme.dart';
 import 'focus_ring_style.dart';
@@ -57,6 +58,7 @@ class MThemeData {
     MTooltipStyles? tooltip,
     MDialogStyles? dialog,
     MSheetStyles? sheet,
+    MToastStyles? toast,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -79,6 +81,7 @@ class MThemeData {
         tooltip = tooltip ?? const MTooltipStyles(),
         dialog = dialog ?? const MDialogStyles(),
         sheet = sheet ?? const MSheetStyles(),
+        toast = toast ?? const MToastStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -208,6 +211,12 @@ class MThemeData {
   /// `theme.sheet.resolve(colors: ..., typography: ..., radius: ...)`.
   final MSheetStyles sheet;
 
+  /// The resolution table for [MToast] visual styles.
+  ///
+  /// Exposed as
+  /// `theme.toast.resolve(colors: ..., typography: ..., radius: ...)`.
+  final MToastStyles toast;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -245,6 +254,7 @@ class MThemeData {
     MTooltipStyles? tooltip,
     MDialogStyles? dialog,
     MSheetStyles? sheet,
+    MToastStyles? toast,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -270,6 +280,7 @@ class MThemeData {
       tooltip: tooltip ?? this.tooltip,
       dialog: dialog ?? this.dialog,
       sheet: sheet ?? this.sheet,
+      toast: toast ?? this.toast,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -300,6 +311,7 @@ class MThemeData {
         other.tooltip == tooltip &&
         other.dialog == dialog &&
         other.sheet == sheet &&
+        other.toast == toast &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -327,6 +339,7 @@ class MThemeData {
         tooltip,
         dialog,
         sheet,
+        toast,
         radius,
         platform,
       ]);
