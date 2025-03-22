@@ -16,6 +16,7 @@ import '../widgets/select/select_styles.dart';
 import '../widgets/sheet/sheet_styles.dart';
 import '../widgets/slider/slider_styles.dart';
 import '../widgets/switch/switch_styles.dart';
+import '../widgets/tabs/tabs_styles.dart';
 import '../widgets/text_field/text_field_styles.dart';
 import '../widgets/toast/toast_styles.dart';
 import '../widgets/tooltip/tooltip_styles.dart';
@@ -59,6 +60,7 @@ class MThemeData {
     MDialogStyles? dialog,
     MSheetStyles? sheet,
     MToastStyles? toast,
+    MTabsStyles? tabs,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -82,6 +84,7 @@ class MThemeData {
         dialog = dialog ?? const MDialogStyles(),
         sheet = sheet ?? const MSheetStyles(),
         toast = toast ?? const MToastStyles(),
+        tabs = tabs ?? const MTabsStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -217,6 +220,12 @@ class MThemeData {
   /// `theme.toast.resolve(colors: ..., typography: ..., radius: ...)`.
   final MToastStyles toast;
 
+  /// The resolution table for [MTabs] visual styles.
+  ///
+  /// Exposed as
+  /// `theme.tabs.resolve(modality: ..., colors: ..., typography: ...)`.
+  final MTabsStyles tabs;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -255,6 +264,7 @@ class MThemeData {
     MDialogStyles? dialog,
     MSheetStyles? sheet,
     MToastStyles? toast,
+    MTabsStyles? tabs,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -281,6 +291,7 @@ class MThemeData {
       dialog: dialog ?? this.dialog,
       sheet: sheet ?? this.sheet,
       toast: toast ?? this.toast,
+      tabs: tabs ?? this.tabs,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -312,6 +323,7 @@ class MThemeData {
         other.dialog == dialog &&
         other.sheet == sheet &&
         other.toast == toast &&
+        other.tabs == tabs &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -340,6 +352,7 @@ class MThemeData {
         dialog,
         sheet,
         toast,
+        tabs,
         radius,
         platform,
       ]);
