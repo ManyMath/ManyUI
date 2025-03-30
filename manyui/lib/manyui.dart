@@ -46,6 +46,7 @@ export 'src/widgets/divider/divider_styles.dart';
 export 'src/widgets/label/label.dart';
 export 'src/widgets/label/label_style.dart';
 export 'src/widgets/label/label_styles.dart';
+export 'src/widgets/menu/menu_item.dart';
 export 'src/widgets/menu_bar/menu_bar.dart';
 export 'src/widgets/menu_bar/menu_bar_style.dart';
 export 'src/widgets/menu_bar/menu_bar_styles.dart';

@@ -7,47 +7,10 @@ import '../../foundation/input_modality.dart';
 import '../../foundation/overlay_anchor.dart';
 import '../../theme/theme.dart';
 import '../../theme/theme_data.dart';
+import '../menu/menu_item.dart';
 import 'menu_bar_style.dart';
 
-/// A single item rendered inside an open [MMenu]'s popover.
-@immutable
-class MMenuItem {
-  /// Builds a menu item declaration.
-  const MMenuItem({
-    required this.id,
-    required this.title,
-    this.onTap,
-    this.trailing,
-    this.enabled = true,
-  });
-
-  /// Stable identifier for this item within its enclosing [MMenu].
-  ///
-  /// Must be unique within the menu it lives in. Used for focus bookkeeping
-  /// and to key tests.
-  final String id;
-
-  /// The widget rendered inside the item, typically a [Text].
-  final Widget title;
-
-  /// Invoked when the user activates the item. After it runs the enclosing
-  /// menu is closed and focus returns to the menu's title.
-  ///
-  /// When null, activation still closes the menu — useful for "no-op /
-  /// coming soon" items that should still dismiss.
-  final VoidCallback? onTap;
-
-  /// An optional trailing widget rendered after [title], typically a
-  /// keyboard-shortcut hint like `Text('⌘S')`. Wrapped in a
-  /// [DefaultTextStyle] that uses [MMenuBarStyle.itemTrailingForegroundColor].
-  final Widget? trailing;
-
-  /// Whether the item responds to user interaction.
-  ///
-  /// Disabled items render dimmed, refuse pointer and keyboard activation,
-  /// and are skipped by Up/Down navigation inside the open popover.
-  final bool enabled;
-}
+export '../menu/menu_item.dart' show MMenuItem;
 
 /// A single menu declaration consumed by [MMenuBar].
 ///
@@ -74,25 +37,15 @@ class MMenu {
   final List<MMenuItem> items;
 
   /// Whether this menu responds to user interaction.
-  ///
-  /// Disabled menus render dimmed, cannot open, and are skipped by Left/Right
-  /// keyboard navigation. Programmatic assignment via
-  /// `controller.value = '<disabled id>'` is still allowed — controllers are
-  /// authoritative.
   final bool enabled;
 }
 
-/// The controller for an [MMenuBar].
-///
-/// Stores the id of the currently-open menu, or `null` when no menu is open.
-/// Pass an instance into `MMenuBar(controller: ...)` to own its lifecycle, or
-/// omit it and let the bar create one seeded with `null`.
+/// Controller for [MMenuBar]; stores the open menu id or null.
 ///
 /// ```dart
 /// final MMenuBarController menus = MMenuBarController();
-/// menus.addListener(() => print('open menu = ${menus.value}'));
-/// menus.value = 'file';   // opens "File"
-/// menus.value = null;     // closes everything
+/// menus.value = 'file';  // opens "File"
+/// menus.value = null;    // closes everything
 /// ```
 class MMenuBarController extends MController<String?> {
   /// Builds a controller seeded with the supplied menu [id] (or `null` for
