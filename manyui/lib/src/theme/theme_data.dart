@@ -5,6 +5,7 @@ import '../widgets/badge/badge_styles.dart';
 import '../widgets/button/button_styles.dart';
 import '../widgets/card/card_styles.dart';
 import '../widgets/checkbox/checkbox_styles.dart';
+import '../widgets/context_menu/context_menu_styles.dart';
 import '../widgets/date_field/date_field_styles.dart';
 import '../widgets/dialog/dialog_styles.dart';
 import '../widgets/divider/divider_styles.dart';
@@ -63,6 +64,7 @@ class MThemeData {
     MToastStyles? toast,
     MTabsStyles? tabs,
     MMenuBarStyles? menuBar,
+    MContextMenuStyles? contextMenu,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -88,6 +90,7 @@ class MThemeData {
         toast = toast ?? const MToastStyles(),
         tabs = tabs ?? const MTabsStyles(),
         menuBar = menuBar ?? const MMenuBarStyles(),
+        contextMenu = contextMenu ?? const MContextMenuStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -235,6 +238,12 @@ class MThemeData {
   /// `theme.menuBar.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
   final MMenuBarStyles menuBar;
 
+  /// The resolution table for [MContextMenu] visual styles.
+  ///
+  /// Exposed as
+  /// `theme.contextMenu.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
+  final MContextMenuStyles contextMenu;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -275,6 +284,7 @@ class MThemeData {
     MToastStyles? toast,
     MTabsStyles? tabs,
     MMenuBarStyles? menuBar,
+    MContextMenuStyles? contextMenu,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -303,6 +313,7 @@ class MThemeData {
       toast: toast ?? this.toast,
       tabs: tabs ?? this.tabs,
       menuBar: menuBar ?? this.menuBar,
+      contextMenu: contextMenu ?? this.contextMenu,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -336,6 +347,7 @@ class MThemeData {
         other.toast == toast &&
         other.tabs == tabs &&
         other.menuBar == menuBar &&
+        other.contextMenu == contextMenu &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -366,6 +378,7 @@ class MThemeData {
         toast,
         tabs,
         menuBar,
+        contextMenu,
         radius,
         platform,
       ]);
