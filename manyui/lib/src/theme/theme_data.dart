@@ -5,6 +5,7 @@ import '../widgets/badge/badge_styles.dart';
 import '../widgets/button/button_styles.dart';
 import '../widgets/card/card_styles.dart';
 import '../widgets/checkbox/checkbox_styles.dart';
+import '../widgets/command_palette/command_palette_styles.dart';
 import '../widgets/context_menu/context_menu_styles.dart';
 import '../widgets/date_field/date_field_styles.dart';
 import '../widgets/dialog/dialog_styles.dart';
@@ -65,6 +66,7 @@ class MThemeData {
     MTabsStyles? tabs,
     MMenuBarStyles? menuBar,
     MContextMenuStyles? contextMenu,
+    MCommandPaletteStyles? commandPalette,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -91,6 +93,7 @@ class MThemeData {
         tabs = tabs ?? const MTabsStyles(),
         menuBar = menuBar ?? const MMenuBarStyles(),
         contextMenu = contextMenu ?? const MContextMenuStyles(),
+        commandPalette = commandPalette ?? const MCommandPaletteStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -244,6 +247,12 @@ class MThemeData {
   /// `theme.contextMenu.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
   final MContextMenuStyles contextMenu;
 
+  /// The resolution table for [MCommandPalette] visual styles.
+  ///
+  /// Exposed as
+  /// `theme.commandPalette.resolve(colors: ..., typography: ..., radius: ...)`.
+  final MCommandPaletteStyles commandPalette;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -285,6 +294,7 @@ class MThemeData {
     MTabsStyles? tabs,
     MMenuBarStyles? menuBar,
     MContextMenuStyles? contextMenu,
+    MCommandPaletteStyles? commandPalette,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -314,6 +324,7 @@ class MThemeData {
       tabs: tabs ?? this.tabs,
       menuBar: menuBar ?? this.menuBar,
       contextMenu: contextMenu ?? this.contextMenu,
+      commandPalette: commandPalette ?? this.commandPalette,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -348,6 +359,7 @@ class MThemeData {
         other.tabs == tabs &&
         other.menuBar == menuBar &&
         other.contextMenu == contextMenu &&
+        other.commandPalette == commandPalette &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -379,6 +391,7 @@ class MThemeData {
         tabs,
         menuBar,
         contextMenu,
+        commandPalette,
         radius,
         platform,
       ]);
