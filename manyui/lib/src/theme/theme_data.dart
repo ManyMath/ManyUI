@@ -14,6 +14,7 @@ import '../widgets/label/label_styles.dart';
 import '../widgets/menu_bar/menu_bar_styles.dart';
 import '../widgets/otp_field/otp_field_styles.dart';
 import '../widgets/popover/popover_styles.dart';
+import '../widgets/progress/progress_styles.dart';
 import '../widgets/radio/radio_styles.dart';
 import '../widgets/select/select_styles.dart';
 import '../widgets/sheet/sheet_styles.dart';
@@ -67,6 +68,7 @@ class MThemeData {
     MMenuBarStyles? menuBar,
     MContextMenuStyles? contextMenu,
     MCommandPaletteStyles? commandPalette,
+    MProgressStyles? progress,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -94,6 +96,7 @@ class MThemeData {
         menuBar = menuBar ?? const MMenuBarStyles(),
         contextMenu = contextMenu ?? const MContextMenuStyles(),
         commandPalette = commandPalette ?? const MCommandPaletteStyles(),
+        progress = progress ?? const MProgressStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -253,6 +256,12 @@ class MThemeData {
   /// `theme.commandPalette.resolve(colors: ..., typography: ..., radius: ...)`.
   final MCommandPaletteStyles commandPalette;
 
+  /// The resolution table for [MProgress] and [MCircularProgress] visual
+  /// styles.
+  ///
+  /// Exposed as `theme.progress.resolve(colors: ...)`.
+  final MProgressStyles progress;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -295,6 +304,7 @@ class MThemeData {
     MMenuBarStyles? menuBar,
     MContextMenuStyles? contextMenu,
     MCommandPaletteStyles? commandPalette,
+    MProgressStyles? progress,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -325,6 +335,7 @@ class MThemeData {
       menuBar: menuBar ?? this.menuBar,
       contextMenu: contextMenu ?? this.contextMenu,
       commandPalette: commandPalette ?? this.commandPalette,
+      progress: progress ?? this.progress,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -360,6 +371,7 @@ class MThemeData {
         other.menuBar == menuBar &&
         other.contextMenu == contextMenu &&
         other.commandPalette == commandPalette &&
+        other.progress == progress &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -392,6 +404,7 @@ class MThemeData {
         menuBar,
         contextMenu,
         commandPalette,
+        progress,
         radius,
         platform,
       ]);
