@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../widgets/accordion/accordion_styles.dart';
 import '../widgets/avatar/avatar_styles.dart';
 import '../widgets/badge/badge_styles.dart';
 import '../widgets/button/button_styles.dart';
@@ -69,6 +70,7 @@ class MThemeData {
     MContextMenuStyles? contextMenu,
     MCommandPaletteStyles? commandPalette,
     MProgressStyles? progress,
+    MAccordionStyles? accordion,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -97,6 +99,7 @@ class MThemeData {
         contextMenu = contextMenu ?? const MContextMenuStyles(),
         commandPalette = commandPalette ?? const MCommandPaletteStyles(),
         progress = progress ?? const MProgressStyles(),
+        accordion = accordion ?? const MAccordionStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -262,6 +265,12 @@ class MThemeData {
   /// Exposed as `theme.progress.resolve(colors: ...)`.
   final MProgressStyles progress;
 
+  /// The resolution table for [MAccordion] visual styles.
+  ///
+  /// Exposed as
+  /// `theme.accordion.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
+  final MAccordionStyles accordion;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -305,6 +314,7 @@ class MThemeData {
     MContextMenuStyles? contextMenu,
     MCommandPaletteStyles? commandPalette,
     MProgressStyles? progress,
+    MAccordionStyles? accordion,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -336,6 +346,7 @@ class MThemeData {
       contextMenu: contextMenu ?? this.contextMenu,
       commandPalette: commandPalette ?? this.commandPalette,
       progress: progress ?? this.progress,
+      accordion: accordion ?? this.accordion,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -372,6 +383,7 @@ class MThemeData {
         other.contextMenu == contextMenu &&
         other.commandPalette == commandPalette &&
         other.progress == progress &&
+        other.accordion == accordion &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -405,6 +417,7 @@ class MThemeData {
         contextMenu,
         commandPalette,
         progress,
+        accordion,
         radius,
         platform,
       ]);
