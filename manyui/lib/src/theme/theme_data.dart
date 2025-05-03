@@ -17,6 +17,7 @@ import '../widgets/otp_field/otp_field_styles.dart';
 import '../widgets/popover/popover_styles.dart';
 import '../widgets/progress/progress_styles.dart';
 import '../widgets/radio/radio_styles.dart';
+import '../widgets/resizable/resizable_styles.dart';
 import '../widgets/select/select_styles.dart';
 import '../widgets/sheet/sheet_styles.dart';
 import '../widgets/slider/slider_styles.dart';
@@ -71,6 +72,7 @@ class MThemeData {
     MCommandPaletteStyles? commandPalette,
     MProgressStyles? progress,
     MAccordionStyles? accordion,
+    MResizableStyles? resizable,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -100,6 +102,7 @@ class MThemeData {
         commandPalette = commandPalette ?? const MCommandPaletteStyles(),
         progress = progress ?? const MProgressStyles(),
         accordion = accordion ?? const MAccordionStyles(),
+        resizable = resizable ?? const MResizableStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -271,6 +274,11 @@ class MThemeData {
   /// `theme.accordion.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
   final MAccordionStyles accordion;
 
+  /// The resolution table for [MResizable] visual styles.
+  ///
+  /// Exposed as `theme.resizable.resolve(modality: ..., colors: ...)`.
+  final MResizableStyles resizable;
+
   /// The default corner radius for cards, buttons, and inputs.
   ///
   /// Individual widget styles may override this; v0.1 ships a single scalar
@@ -315,6 +323,7 @@ class MThemeData {
     MCommandPaletteStyles? commandPalette,
     MProgressStyles? progress,
     MAccordionStyles? accordion,
+    MResizableStyles? resizable,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -347,6 +356,7 @@ class MThemeData {
       commandPalette: commandPalette ?? this.commandPalette,
       progress: progress ?? this.progress,
       accordion: accordion ?? this.accordion,
+      resizable: resizable ?? this.resizable,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -384,6 +394,7 @@ class MThemeData {
         other.commandPalette == commandPalette &&
         other.progress == progress &&
         other.accordion == accordion &&
+        other.resizable == resizable &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -418,6 +429,7 @@ class MThemeData {
         commandPalette,
         progress,
         accordion,
+        resizable,
         radius,
         platform,
       ]);
