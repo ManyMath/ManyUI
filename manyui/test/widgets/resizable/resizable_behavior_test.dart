@@ -171,9 +171,9 @@ void main() {
         tester,
         _scene(MResizable(
           controller: c,
-          children: <MResizableChild>[
-            const MResizableChild(minSize: 0.2, child: SizedBox.expand()),
-            const MResizableChild(minSize: 0.3, child: SizedBox.expand()),
+          children: const <MResizableChild>[
+            MResizableChild(minSize: 0.2, child: SizedBox.expand()),
+            MResizableChild(minSize: 0.3, child: SizedBox.expand()),
           ],
         )),
       );
@@ -299,9 +299,9 @@ void main() {
         tester,
         _scene(MResizable(
           controller: c,
-          children: <MResizableChild>[
-            const MResizableChild(minSize: 0.1, child: SizedBox.expand()),
-            const MResizableChild(minSize: 0.2, child: SizedBox.expand()),
+          children: const <MResizableChild>[
+            MResizableChild(minSize: 0.1, child: SizedBox.expand()),
+            MResizableChild(minSize: 0.2, child: SizedBox.expand()),
           ],
         )),
       );
@@ -322,9 +322,9 @@ void main() {
         tester,
         _scene(MResizable(
           controller: c,
-          children: <MResizableChild>[
-            const MResizableChild(minSize: 0.1, child: SizedBox.expand()),
-            const MResizableChild(minSize: 0.2, child: SizedBox.expand()),
+          children: const <MResizableChild>[
+            MResizableChild(minSize: 0.1, child: SizedBox.expand()),
+            MResizableChild(minSize: 0.2, child: SizedBox.expand()),
           ],
         )),
       );

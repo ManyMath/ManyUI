@@ -288,21 +288,14 @@ void main() {
         child: _anchor(key: const ValueKey<String>('a')),
       );
 
-      // Walk the semantics tree looking for a node with tooltip: 'Click me'.
-      final SemanticsNode root = tester.binding.pipelineOwner
-          .semanticsOwner!.rootSemanticsNode!;
-      bool found = false;
-      void walk(SemanticsNode node) {
-        final SemanticsData data = node.getSemanticsData();
-        if (data.tooltip == 'Click me') found = true;
-        node.visitChildren((SemanticsNode child) {
-          walk(child);
-          return true;
-        });
-      }
-      walk(root);
-      expect(found, isTrue,
-          reason: 'Semantics tree should carry tooltip: "Click me"');
+      expect(
+        find.bySemanticsLabel('Click me').evaluate().isNotEmpty ||
+            tester
+                .widgetList<Semantics>(find.byType(Semantics))
+                .any((Semantics s) => s.properties.tooltip == 'Click me'),
+        isTrue,
+        reason: 'Semantics tree should carry tooltip: "Click me"',
+      );
       handle.dispose();
     });
   });

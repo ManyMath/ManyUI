@@ -344,10 +344,10 @@ void main() {
         (WidgetTester tester) async {
       await pumpManyApp(
         tester,
-        MRadioGroup<String>(
+        const MRadioGroup<String>(
           initialValue: 'a',
           child: Row(
-            children: const <Widget>[
+            children: <Widget>[
               MRadio<String>(value: 'a', semanticLabel: 'Option A'),
               MRadio<String>(value: 'b'),
             ],
@@ -457,9 +457,9 @@ void main() {
         (WidgetTester tester) async {
       await pumpManyApp(
         tester,
-        MRadioGroup<String>(
+        const MRadioGroup<String>(
           initialValue: 'a',
-          child: const MRadio<String>(
+          child: MRadio<String>(
             value: 'a',
             style: MRadioStyleDelta(size: 40),
           ),

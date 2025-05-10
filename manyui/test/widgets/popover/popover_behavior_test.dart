@@ -13,7 +13,7 @@ Widget _anchor({Key? key, String label = 'Open'}) {
   );
 }
 
-Widget _content({String text = 'Popover body', VoidCallback? onCommit}) {
+Widget _content({String text = 'Popover body'}) {
   return SizedBox(
     width: 200,
     height: 80,

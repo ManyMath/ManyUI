@@ -189,10 +189,10 @@ void main() {
       await tester.tap(find.byType(CustomPaint).first);
       await tester.pump();
       await tester.pump();
-      expect(find.text('${_currentMonthLabel()}'), findsOneWidget);
+      expect(find.text(_currentMonthLabel()), findsOneWidget);
 
       await _press(tester, LogicalKeyboardKey.escape);
-      expect(find.text('${_currentMonthLabel()}'), findsNothing);
+      expect(find.text(_currentMonthLabel()), findsNothing);
       expect(reported, isNull);
       expect(controller.value, isNull);
     });
