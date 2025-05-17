@@ -18,6 +18,7 @@ import '../widgets/popover/popover_styles.dart';
 import '../widgets/progress/progress_styles.dart';
 import '../widgets/radio/radio_styles.dart';
 import '../widgets/resizable/resizable_styles.dart';
+import '../widgets/scaffold/scaffold_styles.dart';
 import '../widgets/select/select_styles.dart';
 import '../widgets/sheet/sheet_styles.dart';
 import '../widgets/slider/slider_styles.dart';
@@ -33,9 +34,7 @@ import 'typography.dart';
 /// The root theme object every manyui widget reads from.
 ///
 /// Carries the color scheme, typography, focus-ring shape, default radius,
-/// and the host platform. Widget-family sub-styles (button, card, …) will
-/// be added in later phases without breaking this constructor — they default
-/// to derived values from the tokens above when not supplied.
+/// per-widget style tables, and the host platform.
 @immutable
 class MThemeData {
   /// Builds a theme data instance.
@@ -73,6 +72,7 @@ class MThemeData {
     MProgressStyles? progress,
     MAccordionStyles? accordion,
     MResizableStyles? resizable,
+    MScaffoldStyles? scaffold,
     this.radius = 6,
     TargetPlatform? platform,
   })  : typography = typography ?? const MTypography.standard(),
@@ -103,6 +103,7 @@ class MThemeData {
         progress = progress ?? const MProgressStyles(),
         accordion = accordion ?? const MAccordionStyles(),
         resizable = resizable ?? const MResizableStyles(),
+        scaffold = scaffold ?? const MScaffoldStyles(),
         platform = platform ?? defaultTargetPlatform;
 
   /// The default light theme.
@@ -130,167 +131,96 @@ class MThemeData {
   /// The focus-ring shape used by `MFocusRing`.
   final MFocusRingStyle focusRing;
 
-  /// The resolution table for [MButton] visual styles.
-  ///
-  /// Exposed as `theme.button.resolve(variant: ..., size: ..., modality: ...)`.
-  /// Replace the default `MButtonStyles()` to re-skin every button in the
-  /// tree with a different mapping from tokens to styles.
+  /// Style table for [MButton].
   final MButtonStyles button;
 
-  /// The resolution table for [MCard] visual styles.
-  ///
-  /// Exposed as `theme.card.resolve(colors: ..., radius: ...)`. Replace the
-  /// default `MCardStyles()` to re-skin every card in the tree.
+  /// Style table for [MCard].
   final MCardStyles card;
 
-  /// The resolution table for [MDivider] visual styles.
-  ///
-  /// Exposed as `theme.divider.resolve(colors: ...)`.
+  /// Style table for [MDivider].
   final MDividerStyles divider;
 
-  /// The resolution table for [MBadge] visual styles.
-  ///
-  /// Exposed as `theme.badge.resolve(variant: ..., colors: ..., typography: ...)`.
+  /// Style table for [MBadge].
   final MBadgeStyles badge;
 
-  /// The resolution table for [MAvatar] visual styles.
-  ///
-  /// Exposed as `theme.avatar.resolve(colors: ..., typography: ..., radius: ...)`.
+  /// Style table for [MAvatar].
   final MAvatarStyles avatar;
 
-  /// The resolution table for [MCheckbox] visual styles.
-  ///
-  /// Exposed as `theme.checkbox.resolve(modality: ..., colors: ..., radius: ...)`.
+  /// Style table for [MCheckbox].
   final MCheckboxStyles checkbox;
 
-  /// The resolution table for [MSwitch] visual styles.
+  /// Style table for [MSwitch].
   ///
-  /// Exposed as `theme.switch_.resolve(modality: ..., colors: ...)`. The field
-  /// is named `switch_` because `switch` is a Dart reserved keyword.
+  /// Named `switch_` because `switch` is a Dart reserved keyword.
   final MSwitchStyles switch_;
 
-  /// The resolution table for [MRadio] visual styles.
-  ///
-  /// Exposed as `theme.radio.resolve(modality: ..., colors: ...)`.
+  /// Style table for [MRadio].
   final MRadioStyles radio;
 
-  /// The resolution table for [MSlider] visual styles.
-  ///
-  /// Exposed as `theme.slider.resolve(modality: ..., colors: ...)`.
+  /// Style table for [MSlider].
   final MSliderStyles slider;
 
-  /// The resolution table for [MLabel] visual styles.
-  ///
-  /// Exposed as `theme.label.resolve(colors: ..., typography: ...)`.
+  /// Style table for [MLabel].
   final MLabelStyles label;
 
-  /// The resolution table for [MSelect] visual styles.
-  ///
-  /// Exposed as
-  /// `theme.select.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
+  /// Style table for [MSelect].
   final MSelectStyles select;
 
-  /// The resolution table for [MTextField] visual styles.
-  ///
-  /// Exposed as
-  /// `theme.textField.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
+  /// Style table for [MTextField].
   final MTextFieldStyles textField;
 
-  /// The resolution table for [MDateField] visual styles.
-  ///
-  /// Exposed as
-  /// `theme.dateField.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
+  /// Style table for [MDateField].
   final MDateFieldStyles dateField;
 
-  /// The resolution table for [MOTPField] visual styles.
-  ///
-  /// Exposed as
-  /// `theme.otpField.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
+  /// Style table for [MOTPField].
   final MOTPFieldStyles otpField;
 
-  /// The resolution table for [MPopover] visual styles.
-  ///
-  /// Exposed as
-  /// `theme.popover.resolve(colors: ..., typography: ..., radius: ...)`.
+  /// Style table for [MPopover].
   final MPopoverStyles popover;
 
-  /// The resolution table for [MTooltip] visual styles.
-  ///
-  /// Exposed as
-  /// `theme.tooltip.resolve(colors: ..., typography: ..., radius: ...)`.
+  /// Style table for [MTooltip].
   final MTooltipStyles tooltip;
 
-  /// The resolution table for [MDialog] visual styles.
-  ///
-  /// Exposed as
-  /// `theme.dialog.resolve(colors: ..., typography: ..., radius: ...)`.
+  /// Style table for [MDialog].
   final MDialogStyles dialog;
 
-  /// The resolution table for [MSheet] visual styles.
-  ///
-  /// Exposed as
-  /// `theme.sheet.resolve(colors: ..., typography: ..., radius: ...)`.
+  /// Style table for [MSheet].
   final MSheetStyles sheet;
 
-  /// The resolution table for [MToast] visual styles.
-  ///
-  /// Exposed as
-  /// `theme.toast.resolve(colors: ..., typography: ..., radius: ...)`.
+  /// Style table for [MToast].
   final MToastStyles toast;
 
-  /// The resolution table for [MTabs] visual styles.
-  ///
-  /// Exposed as
-  /// `theme.tabs.resolve(modality: ..., colors: ..., typography: ...)`.
+  /// Style table for [MTabs].
   final MTabsStyles tabs;
 
-  /// The resolution table for [MMenuBar] visual styles.
-  ///
-  /// Exposed as
-  /// `theme.menuBar.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
+  /// Style table for [MMenuBar].
   final MMenuBarStyles menuBar;
 
-  /// The resolution table for [MContextMenu] visual styles.
-  ///
-  /// Exposed as
-  /// `theme.contextMenu.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
+  /// Style table for [MContextMenu].
   final MContextMenuStyles contextMenu;
 
-  /// The resolution table for [MCommandPalette] visual styles.
-  ///
-  /// Exposed as
-  /// `theme.commandPalette.resolve(colors: ..., typography: ..., radius: ...)`.
+  /// Style table for [MCommandPalette].
   final MCommandPaletteStyles commandPalette;
 
-  /// The resolution table for [MProgress] and [MCircularProgress] visual
-  /// styles.
-  ///
-  /// Exposed as `theme.progress.resolve(colors: ...)`.
+  /// Style table for [MProgress] and [MCircularProgress].
   final MProgressStyles progress;
 
-  /// The resolution table for [MAccordion] visual styles.
-  ///
-  /// Exposed as
-  /// `theme.accordion.resolve(modality: ..., colors: ..., typography: ..., radius: ...)`.
+  /// Style table for [MAccordion].
   final MAccordionStyles accordion;
 
-  /// The resolution table for [MResizable] visual styles.
-  ///
-  /// Exposed as `theme.resizable.resolve(modality: ..., colors: ...)`.
+  /// Style table for [MResizable].
   final MResizableStyles resizable;
 
-  /// The default corner radius for cards, buttons, and inputs.
-  ///
-  /// Individual widget styles may override this; v0.1 ships a single scalar
-  /// rather than the multi-step scale shadcn now uses.
+  /// Style table for [MScaffold].
+  final MScaffoldStyles scaffold;
+
+  /// Default corner radius for cards, buttons, and inputs.
   final double radius;
 
   /// The host platform this theme renders for.
   ///
-  /// Widgets use this to pick between modality-dependent variants (e.g. a
-  /// touch-sized vs mouse-sized button). Defaults to
-  /// `defaultTargetPlatform`; override for tests or for apps that want to
-  /// render a non-host idiom.
+  /// Defaults to `defaultTargetPlatform`; override for tests or non-host
+  /// platform rendering.
   final TargetPlatform platform;
 
   /// Returns a copy with specific fields overridden.
@@ -324,6 +254,7 @@ class MThemeData {
     MProgressStyles? progress,
     MAccordionStyles? accordion,
     MResizableStyles? resizable,
+    MScaffoldStyles? scaffold,
     double? radius,
     TargetPlatform? platform,
   }) {
@@ -357,6 +288,7 @@ class MThemeData {
       progress: progress ?? this.progress,
       accordion: accordion ?? this.accordion,
       resizable: resizable ?? this.resizable,
+      scaffold: scaffold ?? this.scaffold,
       radius: radius ?? this.radius,
       platform: platform ?? this.platform,
     );
@@ -395,6 +327,7 @@ class MThemeData {
         other.progress == progress &&
         other.accordion == accordion &&
         other.resizable == resizable &&
+        other.scaffold == scaffold &&
         other.radius == radius &&
         other.platform == platform;
   }
@@ -430,6 +363,7 @@ class MThemeData {
         progress,
         accordion,
         resizable,
+        scaffold,
         radius,
         platform,
       ]);
