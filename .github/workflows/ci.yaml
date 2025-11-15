@@ -67,14 +67,14 @@ jobs:
         working-directory: ${{ matrix.package }}
 
   floor_check:
-    name: Verify against SDK floor (3.27)
+    name: Verify against SDK floor (3.38)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.27.x
+          flutter-version: 3.38.x
       - run: flutter --version
       - run: dart pub get
       - run: dart analyze

@@ -22,7 +22,7 @@ fvm flutter test
 
 If you would rather not use FVM, install the exact version from `.fvmrc` through any other channel. Goldens generated against a different Flutter version will diverge from CI and will not be accepted.
 
-The `floor_check` CI job runs against the supported SDK floor (currently 3.27.x). It does not run golden tests, so the version difference there is intentional.
+The `floor_check` CI job runs against the supported SDK floor (currently 3.38.x). It does not run golden tests, so the version difference there is intentional.
 
 ## Code style
 
