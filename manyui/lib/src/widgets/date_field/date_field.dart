@@ -714,14 +714,20 @@ class _CalendarIconButton extends StatelessWidget {
       height: 14,
       child: CustomPaint(painter: _CalendarPainter(color: color)),
     );
-    return MouseRegion(
-      cursor: onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(2),
-          child: icon,
+    return Semantics(
+      button: true,
+      enabled: onTap != null,
+      label: 'Open calendar',
+      child: MouseRegion(
+        cursor:
+            onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(2),
+            child: icon,
+          ),
         ),
       ),
     );

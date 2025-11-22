@@ -39,16 +39,25 @@ class MFocusRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!focused) return child;
-    final MThemeData theme = MTheme.of(context);
-    final MFocusRingStyle resolved = style ?? theme.focusRing;
-    return CustomPaint(
-      foregroundPainter: _RingPainter(
+    // The tree shape must be identical in both states. Returning `child`
+    // bare when unfocused changes the widget type at this slot the moment
+    // focus arrives, so Flutter discards and rebuilds the entire subtree:
+    // killing any state below, including EditableText's freshly opened IME
+    // connection (focused-but-can't-type). A constant CustomPaint with a
+    // null painter keeps the element (and subtree state) alive.
+    _RingPainter? painter;
+    if (focused) {
+      final MThemeData theme = MTheme.of(context);
+      final MFocusRingStyle resolved = style ?? theme.focusRing;
+      painter = _RingPainter(
         color: theme.colors.ring,
         width: resolved.width,
         offset: resolved.offset,
         radius: resolved.radius,
-      ),
+      );
+    }
+    return CustomPaint(
+      foregroundPainter: painter,
       child: child,
     );
   }

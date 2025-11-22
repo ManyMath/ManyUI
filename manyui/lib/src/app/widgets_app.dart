@@ -48,6 +48,7 @@ class MWidgetsApp extends StatelessWidget {
     this.actions,
     this.showSemanticsDebugger = false,
     this.debugShowCheckedModeBanner = true,
+    this.selectableText = true,
   });
 
   /// The widget shown at the default route.
@@ -91,6 +92,13 @@ class MWidgetsApp extends StatelessWidget {
 
   /// Wraps every page in additional widgets (e.g. a `MScaffold`).
   final TransitionBuilder? builder;
+
+  /// Whether static text throughout the app is mouse/touch selectable.
+  ///
+  /// Wraps the app content in a [SelectableRegion] so labels, errors, and
+  /// other read-only text can be selected and copied (Cmd/Ctrl-C). Text
+  /// fields keep their own selection handling. Defaults to true.
+  final bool selectableText;
 
   /// The locale to use, overriding system locale resolution.
   final Locale? locale;
@@ -150,7 +158,22 @@ class MWidgetsApp extends StatelessWidget {
             settings: settings,
             pageBuilder: (BuildContext context, _, __) => builder(context),
           ),
-          builder: builder,
+          builder: !selectableText
+              ? builder
+              : (BuildContext context, Widget? child) {
+                  // SelectableRegion needs an Overlay ancestor for its
+                  // selection handles; builder runs above the Navigator's
+                  // Overlay, so provide one.
+                  final Widget wrapped = Overlay.wrap(
+                    child: SelectableRegion(
+                      selectionControls: emptyTextSelectionControls,
+                      child: child ?? const SizedBox.shrink(),
+                    ),
+                  );
+                  return builder == null
+                      ? wrapped
+                      : builder!(context, wrapped);
+                },
           title: title,
           color: color,
           textStyle: resolved.typography

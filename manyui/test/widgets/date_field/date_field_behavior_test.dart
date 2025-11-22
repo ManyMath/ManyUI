@@ -163,9 +163,7 @@ void main() {
       // Header isn't in the tree until the popover opens.
       expect(find.text('May 2026'), findsNothing);
 
-      // The calendar toggle is the only GestureDetector outside the field's
-      // root tap layer. Tap by finding the widget through its painter.
-      await tester.tap(find.byType(CustomPaint).first);
+      await tester.tap(find.bySemanticsLabel('Open calendar'));
       await tester.pump();
       // pump once for the show, again for the postFrame focus request.
       await tester.pump();
@@ -186,7 +184,7 @@ void main() {
         modality: MInputModality.keyboard,
       );
 
-      await tester.tap(find.byType(CustomPaint).first);
+      await tester.tap(find.bySemanticsLabel('Open calendar'));
       await tester.pump();
       await tester.pump();
       expect(find.text(_currentMonthLabel()), findsOneWidget);
@@ -209,7 +207,7 @@ void main() {
         modality: MInputModality.keyboard,
       );
 
-      await tester.tap(find.byType(CustomPaint).first);
+      await tester.tap(find.bySemanticsLabel('Open calendar'));
       await tester.pump();
       await tester.pump();
       expect(find.text('May 2026'), findsOneWidget);
@@ -235,7 +233,7 @@ void main() {
         modality: MInputModality.keyboard,
       );
 
-      await tester.tap(find.byType(CustomPaint).first);
+      await tester.tap(find.bySemanticsLabel('Open calendar'));
       await tester.pump();
       await tester.pump();
 
@@ -262,7 +260,7 @@ void main() {
         modality: MInputModality.keyboard,
       );
 
-      await tester.tap(find.byType(CustomPaint).first);
+      await tester.tap(find.bySemanticsLabel('Open calendar'));
       await tester.pump();
       await tester.pump();
 
