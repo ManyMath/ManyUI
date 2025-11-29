@@ -6,6 +6,7 @@ environment:
   sdk: ^3.10.0
 
 workspace:
+  - example
   - manyui
   - manyui_assets
   - manyui_board

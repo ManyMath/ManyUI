@@ -1,0 +1,22 @@
+name: example
+description: Runnable showcase of every widget the manyui v0.1.1 library ships.
+publish_to: none
+version: 0.0.0
+
+environment:
+  flutter: ">=3.38.0"
+  sdk: ^3.10.0
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  manyui:
+    path: ../manyui
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: false
