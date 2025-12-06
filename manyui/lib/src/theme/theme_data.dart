@@ -12,6 +12,7 @@ import '../widgets/date_field/date_field_styles.dart';
 import '../widgets/dialog/dialog_styles.dart';
 import '../widgets/divider/divider_styles.dart';
 import '../widgets/label/label_styles.dart';
+import '../widgets/list_tile/list_tile_styles.dart';
 import '../widgets/menu_bar/menu_bar_styles.dart';
 import '../widgets/otp_field/otp_field_styles.dart';
 import '../widgets/popover/popover_styles.dart';
@@ -56,6 +57,7 @@ class MThemeData {
     MRadioStyles? radio,
     MSliderStyles? slider,
     MLabelStyles? label,
+    MListTileStyles? listTile,
     MSelectStyles? select,
     MTextFieldStyles? textField,
     MDateFieldStyles? dateField,
@@ -87,6 +89,7 @@ class MThemeData {
         radio = radio ?? const MRadioStyles(),
         slider = slider ?? const MSliderStyles(),
         label = label ?? const MLabelStyles(),
+        listTile = listTile ?? const MListTileStyles(),
         select = select ?? const MSelectStyles(),
         textField = textField ?? const MTextFieldStyles(),
         dateField = dateField ?? const MDateFieldStyles(),
@@ -163,6 +166,9 @@ class MThemeData {
   /// Style table for [MLabel].
   final MLabelStyles label;
 
+  /// Style table for [MListTile] and [MTreeListTile].
+  final MListTileStyles listTile;
+
   /// Style table for [MSelect].
   final MSelectStyles select;
 
@@ -238,6 +244,7 @@ class MThemeData {
     MRadioStyles? radio,
     MSliderStyles? slider,
     MLabelStyles? label,
+    MListTileStyles? listTile,
     MSelectStyles? select,
     MTextFieldStyles? textField,
     MDateFieldStyles? dateField,
@@ -272,6 +279,7 @@ class MThemeData {
       radio: radio ?? this.radio,
       slider: slider ?? this.slider,
       label: label ?? this.label,
+      listTile: listTile ?? this.listTile,
       select: select ?? this.select,
       textField: textField ?? this.textField,
       dateField: dateField ?? this.dateField,
@@ -311,6 +319,7 @@ class MThemeData {
         other.radio == radio &&
         other.slider == slider &&
         other.label == label &&
+        other.listTile == listTile &&
         other.select == select &&
         other.textField == textField &&
         other.dateField == dateField &&
@@ -347,6 +356,7 @@ class MThemeData {
         radio,
         slider,
         label,
+        listTile,
         select,
         textField,
         dateField,
