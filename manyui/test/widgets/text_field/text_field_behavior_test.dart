@@ -395,6 +395,100 @@ void main() {
     });
   });
 
+  group('MTextField multiline', () {
+    testWidgets('defaults to single-line (maxLines: 1)',
+        (WidgetTester tester) async {
+      await _pumpField(tester);
+      final EditableText editable =
+          tester.widget(find.byType(EditableText)) as EditableText;
+      expect(editable.maxLines, 1);
+    });
+
+    testWidgets('maxLines passes through to EditableText',
+        (WidgetTester tester) async {
+      await pumpManyApp(
+        tester,
+        _hosted(const MTextField(maxLines: 4)),
+        installOverlay: true,
+      );
+      final EditableText editable =
+          tester.widget(find.byType(EditableText)) as EditableText;
+      expect(editable.maxLines, 4);
+    });
+
+    testWidgets('null maxLines is unbounded', (WidgetTester tester) async {
+      await pumpManyApp(
+        tester,
+        _hosted(const MTextField(maxLines: null)),
+        installOverlay: true,
+      );
+      final EditableText editable =
+          tester.widget(find.byType(EditableText)) as EditableText;
+      expect(editable.maxLines, isNull);
+    });
+
+    testWidgets('entering a newline is accepted in multiline mode',
+        (WidgetTester tester) async {
+      final MController<String> controller = MController<String>('');
+      addTearDown(controller.dispose);
+      await pumpManyApp(
+        tester,
+        _hosted(MTextField(controller: controller, maxLines: null)),
+        installOverlay: true,
+      );
+
+      await tester.tap(find.byType(MTextField));
+      await tester.pump();
+      await tester.enterText(find.byType(EditableText), 'line one\nline two');
+      await tester.pump();
+
+      expect(controller.value, 'line one\nline two');
+    });
+  });
+
+  group('MTextField helper/error text', () {
+    testWidgets('helperText renders below the field',
+        (WidgetTester tester) async {
+      await pumpManyApp(
+        tester,
+        _hosted(const MTextField(helperText: 'must be unique')),
+        installOverlay: true,
+      );
+      expect(find.text('must be unique'), findsOneWidget);
+    });
+
+    testWidgets('errorText replaces helperText while error is true',
+        (WidgetTester tester) async {
+      await pumpManyApp(
+        tester,
+        _hosted(const MTextField(
+          error: true,
+          helperText: 'must be unique',
+          errorText: 'already taken',
+        )),
+        installOverlay: true,
+      );
+      expect(find.text('already taken'), findsOneWidget);
+      expect(find.text('must be unique'), findsNothing);
+    });
+
+    testWidgets('helperText still shows when error is true but errorText is null',
+        (WidgetTester tester) async {
+      await pumpManyApp(
+        tester,
+        _hosted(const MTextField(error: true, helperText: 'must be unique')),
+        installOverlay: true,
+      );
+      expect(find.text('must be unique'), findsOneWidget);
+    });
+
+    testWidgets('no footer text renders when both are null',
+        (WidgetTester tester) async {
+      await _pumpField(tester);
+      expect(find.byType(Text), findsNothing);
+    });
+  });
+
   group('MTextField style', () {
     testWidgets('applyDelta overrides minHeight',
         (WidgetTester tester) async {

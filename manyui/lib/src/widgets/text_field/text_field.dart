@@ -38,10 +38,14 @@ class MTextField extends StatefulWidget {
     this.readOnly = false,
     this.obscureText = false,
     this.maxLength,
+    this.maxLines = 1,
+    this.minLines,
     this.keyboardType,
     this.textInputAction,
     this.inputFormatters,
     this.error = false,
+    this.helperText,
+    this.errorText,
     this.leading,
     this.trailing,
     this.modality,
@@ -50,7 +54,14 @@ class MTextField extends StatefulWidget {
     this.autofocus = false,
     this.focusNode,
     super.key,
-  });
+  }) : assert(
+          maxLines == null || maxLines >= 1,
+          'maxLines must be null (unbounded) or >= 1',
+        ),
+        assert(
+          maxLines == 1 || !obscureText,
+          'obscureText only makes sense for a single-line field',
+        );
 
   /// The state source for this field.
   ///
@@ -95,6 +106,19 @@ class MTextField extends StatefulWidget {
   /// length is unbounded.
   final int? maxLength;
 
+  /// The maximum number of lines the field grows to before scrolling.
+  ///
+  /// Defaults to 1 (single-line). Pass null for an unbounded multiline field,
+  /// or an integer for a multiline field capped at that many visual lines.
+  /// Mutually exclusive with [obscureText] (asserted).
+  final int? maxLines;
+
+  /// The minimum number of lines the field occupies before it starts
+  /// growing. Only meaningful when [maxLines] is null or greater than 1;
+  /// defaults to 1 line's worth of height via [MTextFieldStyle.minHeight]
+  /// when null.
+  final int? minLines;
+
   /// The keyboard variant the OS should show on mobile. Maps to
   /// [TextInputType] — pass `TextInputType.emailAddress` for an email
   /// keyboard, etc.
@@ -115,6 +139,17 @@ class MTextField extends StatefulWidget {
   /// [MTextFieldStyle.errorBorderColor]); validation is the caller's
   /// responsibility.
   final bool error;
+
+  /// A helper line rendered below the field in its idle state.
+  ///
+  /// Replaced by [errorText] whenever [error] is true and [errorText] is
+  /// non-null, so callers can supply both and let the field switch between
+  /// them instead of swapping the child themselves.
+  final String? helperText;
+
+  /// An error line rendered below the field, shown in place of [helperText]
+  /// while [error] is true.
+  final String? errorText;
 
   /// Optional widget rendered at the leading (start) edge of the field —
   /// typically an icon. Its color follows [MTextFieldStyle.iconColor]
@@ -298,7 +333,8 @@ class _MTextFieldState extends State<MTextField> {
       obscureText: widget.obscureText,
       autocorrect: !widget.obscureText,
       enableSuggestions: !widget.obscureText,
-      maxLines: 1,
+      maxLines: widget.maxLines,
+      minLines: widget.minLines,
       keyboardType: widget.keyboardType ??
           (widget.obscureText
               ? TextInputType.visiblePassword
@@ -324,6 +360,11 @@ class _MTextFieldState extends State<MTextField> {
       autofocus: widget.autofocus,
     );
 
+    final bool multiline = widget.maxLines != 1;
+    final AlignmentDirectional textAlignment = multiline
+        ? AlignmentDirectional.topStart
+        : AlignmentDirectional.centerStart;
+
     final Widget content = Stack(
       children: <Widget>[
         // Placeholder underneath. EditableText doesn't render anything when
@@ -332,18 +373,18 @@ class _MTextFieldState extends State<MTextField> {
           Positioned.fill(
             child: IgnorePointer(
               child: Align(
-                alignment: AlignmentDirectional.centerStart,
+                alignment: textAlignment,
                 child: Text(
                   widget.placeholder!,
                   style: textStyle.copyWith(color: resolved.placeholderColor),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: multiline ? null : 1,
+                  overflow: multiline ? null : TextOverflow.ellipsis,
                 ),
               ),
             ),
           ),
         Align(
-          alignment: AlignmentDirectional.centerStart,
+          alignment: textAlignment,
           child: editable,
         ),
       ],
@@ -380,12 +421,19 @@ class _MTextFieldState extends State<MTextField> {
           // heightFactor: 1 collapses the surface to its row height so the
           // field doesn't stretch vertically when its parent is taller than
           // minHeight (e.g. inside an OverlayEntry's tall Stack slot).
+          // Multiline fields align their row to the top instead of center so
+          // leading/trailing decorations sit next to the first line rather
+          // than stretching to the field's full grown height.
           child: Align(
-            alignment: AlignmentDirectional.centerStart,
+            alignment: multiline
+                ? AlignmentDirectional.topStart
+                : AlignmentDirectional.centerStart,
             widthFactor: 1,
-            heightFactor: 1,
+            heightFactor: multiline ? null : 1,
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: multiline
+                  ? CrossAxisAlignment.start
+                  : CrossAxisAlignment.center,
               children: row,
             ),
           ),
@@ -418,7 +466,7 @@ class _MTextFieldState extends State<MTextField> {
 
     final Widget ringed = MFocusRing(focused: _focused, child: tappable);
 
-    return Semantics(
+    final Widget field = Semantics(
       textField: true,
       enabled: widget.enabled,
       readOnly: widget.readOnly,
@@ -432,6 +480,33 @@ class _MTextFieldState extends State<MTextField> {
             : SystemMouseCursors.basic,
         child: ringed,
       ),
+    );
+
+    // errorText takes over from helperText whenever the field is flagged in
+    // error and an errorText was actually supplied, so a caller can pass both
+    // and let the field switch rather than swapping the child itself.
+    final String? footer =
+        (widget.error && widget.errorText != null) ? widget.errorText : widget.helperText;
+    if (footer == null) {
+      return field;
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        field,
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            footer,
+            style: theme.typography.caption.copyWith(
+              color: widget.error
+                  ? resolved.errorBorderColor
+                  : theme.colors.mutedForeground,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
