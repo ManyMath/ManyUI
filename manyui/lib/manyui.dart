@@ -99,6 +99,7 @@ export 'src/widgets/switch/switch_styles.dart';
 export 'src/widgets/tabs/tabs.dart';
 export 'src/widgets/tabs/tabs_style.dart';
 export 'src/widgets/tabs/tabs_styles.dart';
+export 'src/widgets/text_field/secret_field.dart';
 export 'src/widgets/text_field/text_field.dart';
 export 'src/widgets/text_field/text_field_style.dart';
 export 'src/widgets/text_field/text_field_styles.dart';

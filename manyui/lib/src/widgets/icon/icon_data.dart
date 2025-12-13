@@ -60,6 +60,14 @@ class MIconData {
   static const MIconData close =
       MIconData._(_closePath, semanticLabel: 'Close');
 
+  /// Open eye glyph, for a "reveal secret" toggle in its shown state.
+  static const MIconData eye =
+      MIconData._(_eyePath, semanticLabel: 'Show');
+
+  /// Eye-with-slash glyph, for a "reveal secret" toggle in its hidden state.
+  static const MIconData eyeOff =
+      MIconData._(_eyeOffPath, semanticLabel: 'Hide');
+
   static Path _sunPath(double size) {
     final double s = size;
     final Path path = Path();
@@ -140,5 +148,38 @@ class MIconData {
       ..lineTo(s * 0.76, s * 0.76)
       ..moveTo(s * 0.76, s * 0.24)
       ..lineTo(s * 0.24, s * 0.76);
+  }
+
+  static Path _eyePath(double size) {
+    final double s = size;
+    final Rect pupil = Rect.fromCircle(
+      center: Offset(s * 0.5, s * 0.5),
+      radius: s * 0.1,
+    );
+    return Path()
+      // Almond-shaped outline via two quadratic arcs meeting at the corners.
+      ..moveTo(s * 0.1, s * 0.5)
+      ..quadraticBezierTo(s * 0.5, s * 0.22, s * 0.9, s * 0.5)
+      ..quadraticBezierTo(s * 0.5, s * 0.78, s * 0.1, s * 0.5)
+      ..close()
+      ..addOval(pupil);
+  }
+
+  static Path _eyeOffPath(double size) {
+    final double s = size;
+    final Rect pupil = Rect.fromCircle(
+      center: Offset(s * 0.5, s * 0.5),
+      radius: s * 0.1,
+    );
+    return Path()
+      ..moveTo(s * 0.1, s * 0.5)
+      ..quadraticBezierTo(s * 0.5, s * 0.22, s * 0.9, s * 0.5)
+      ..quadraticBezierTo(s * 0.5, s * 0.78, s * 0.1, s * 0.5)
+      ..close()
+      ..addOval(pupil)
+      // Slash through the whole glyph, drawn as a second subpath so the
+      // stroke pass renders it as its own open polyline.
+      ..moveTo(s * 0.18, s * 0.18)
+      ..lineTo(s * 0.82, s * 0.82);
   }
 }

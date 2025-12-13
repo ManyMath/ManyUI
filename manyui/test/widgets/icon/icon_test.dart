@@ -70,5 +70,14 @@ void main() {
       expect(find.bySemanticsLabel('Show more results'), findsOneWidget);
       expect(find.bySemanticsLabel('Expand'), findsNothing);
     });
+
+    testWidgets('eye and eyeOff default to Show/Hide labels',
+        (WidgetTester tester) async {
+      await pumpManyApp(tester, const MIcon(MIconData.eye));
+      expect(find.bySemanticsLabel('Show'), findsOneWidget);
+
+      await pumpManyApp(tester, const MIcon(MIconData.eyeOff));
+      expect(find.bySemanticsLabel('Hide'), findsOneWidget);
+    });
   });
 }
