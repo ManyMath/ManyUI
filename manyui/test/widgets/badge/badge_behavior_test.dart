@@ -97,6 +97,32 @@ void main() {
       expect(size.width, lessThan(200));
       expect(size.height, lessThan(80));
     });
+
+    testWidgets(
+        'does not stretch to fill a CrossAxisAlignment.stretch column',
+        (WidgetTester tester) async {
+      await pumpManyApp(
+        tester,
+        const Center(
+          child: SizedBox(
+            width: 300,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[MBadge(child: Text('Beta'))],
+            ),
+          ),
+        ),
+      );
+
+      final Size size = tester.getSize(find.descendant(
+        of: find.byType(MBadge),
+        matching: find.byType(DecoratedBox),
+      ));
+      // Anything well below the 300-wide column means the badge's visible
+      // surface stayed content-sized instead of stretching to fill it --
+      // the trap apps previously worked around by wrapping MBadge in a Row.
+      expect(size.width, lessThan(100));
+    });
   });
 
   group('MBadge style delta', () {

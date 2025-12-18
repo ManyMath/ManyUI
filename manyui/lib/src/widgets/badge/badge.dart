@@ -42,25 +42,35 @@ class MBadge extends StatelessWidget {
         )
         .applyDelta(style);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: resolved.backgroundColor,
-        borderRadius: resolved.radius,
-        border: resolved.borderColor != null
-            ? Border.all(
-                color: resolved.borderColor!,
-                width: resolved.borderWidth,
-              )
-            : null,
-      ),
-      child: Padding(
-        padding: resolved.padding,
-        child: DefaultTextStyle.merge(
-          style:
-              resolved.textStyle.copyWith(color: resolved.foregroundColor),
-          child: IconTheme.merge(
-            data: IconThemeData(color: resolved.foregroundColor, size: 14),
-            child: child,
+    // Align forces the loosest possible incoming constraints onto its child
+    // (sizing itself to whatever the child reports back), so a stretch-
+    // aligned Column/Row can't force this badge wider/taller than its
+    // content -- the same shape a Text or Icon relies on to stay
+    // content-sized in a stretch layout.
+    return Align(
+      alignment: Alignment.centerLeft,
+      widthFactor: 1,
+      heightFactor: 1,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: resolved.backgroundColor,
+          borderRadius: resolved.radius,
+          border: resolved.borderColor != null
+              ? Border.all(
+                  color: resolved.borderColor!,
+                  width: resolved.borderWidth,
+                )
+              : null,
+        ),
+        child: Padding(
+          padding: resolved.padding,
+          child: DefaultTextStyle.merge(
+            style:
+                resolved.textStyle.copyWith(color: resolved.foregroundColor),
+            child: IconTheme.merge(
+              data: IconThemeData(color: resolved.foregroundColor, size: 14),
+              child: child,
+            ),
           ),
         ),
       ),
