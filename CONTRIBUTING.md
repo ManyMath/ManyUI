@@ -43,6 +43,9 @@ Every PR that adds or changes a widget must include:
 - **Golden tests** for every styled widget in light and dark mode, on the three reference viewports: 360x800 (phone), 1024x768 (tablet), 1440x900 (desktop).
 
 Use `pumpManyApp` from `manyui_testing` to set up the test harness. It takes `theme`, `viewport`, and `modality` parameters so each test is one readable line.
+The `manyui_testing` README documents the local text-entry and animation
+pump patterns; follow those examples when a test touches `MTextField`,
+`MProgress`, or `MCircularProgress`.
 
 Run these locally before pushing:
 
