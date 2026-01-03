@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../foundation/input_modality.dart';
 import '../theme/theme.dart';
 import '../theme/theme_data.dart';
+import '../widgets/context_menu/context_menu_style.dart';
 
 /// Which theme an [MWidgetsApp] should use.
 ///
@@ -153,11 +154,13 @@ class MWidgetsApp extends StatelessWidget {
           onUnknownRoute: onUnknownRoute,
           navigatorKey: navigatorKey,
           navigatorObservers: navigatorObservers,
-          pageRouteBuilder: <T>(RouteSettings settings, WidgetBuilder builder) =>
-              PageRouteBuilder<T>(
-            settings: settings,
-            pageBuilder: (BuildContext context, _, __) => builder(context),
-          ),
+          pageRouteBuilder:
+              <T>(RouteSettings settings, WidgetBuilder builder) =>
+                  PageRouteBuilder<T>(
+                    settings: settings,
+                    pageBuilder: (BuildContext context, _, __) =>
+                        builder(context),
+                  ),
           builder: !selectableText
               ? builder
               : (BuildContext context, Widget? child) {
@@ -166,13 +169,28 @@ class MWidgetsApp extends StatelessWidget {
                   // Overlay, so provide one.
                   final Widget wrapped = Overlay.wrap(
                     child: SelectableRegion(
-                      selectionControls: emptyTextSelectionControls,
-                      child: child ?? const SizedBox.shrink(),
+                      contextMenuBuilder:
+                          (BuildContext context, SelectableRegionState state) {
+                            return _buildSelectableRegionContextMenu(
+                              context,
+                              state,
+                              theme: resolved,
+                              modality: MInputModality.defaultForPlatform(
+                                resolved.platform,
+                              ),
+                            );
+                          },
+                      selectionControls: _manyuiSelectionControls,
+                      child: DefaultSelectionStyle.merge(
+                        cursorColor: resolved.colors.foreground,
+                        selectionColor: resolved.colors.ring.withValues(
+                          alpha: 0.25,
+                        ),
+                        child: child ?? const SizedBox.shrink(),
+                      ),
                     ),
                   );
-                  return builder == null
-                      ? wrapped
-                      : builder!(context, wrapped);
+                  return builder == null ? wrapped : builder!(context, wrapped);
                 },
           title: title,
           color: color,
@@ -190,5 +208,280 @@ class MWidgetsApp extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+final TextSelectionControls _manyuiSelectionControls =
+    _MSelectableRegionControls();
+
+class _MSelectableRegionControls extends TextSelectionControls
+    with TextSelectionHandleControls {
+  @override
+  Widget buildHandle(
+    BuildContext context,
+    TextSelectionHandleType type,
+    double textLineHeight, [
+    VoidCallback? onTap,
+  ]) {
+    return const SizedBox.shrink();
+  }
+
+  @override
+  Offset getHandleAnchor(TextSelectionHandleType type, double textLineHeight) {
+    return Offset.zero;
+  }
+
+  @override
+  Size getHandleSize(double textLineHeight) => Size.zero;
+}
+
+Widget _buildSelectableRegionContextMenu(
+  BuildContext context,
+  SelectableRegionState selectableRegionState, {
+  required MThemeData theme,
+  required MInputModality modality,
+}) {
+  final List<_SelectionMenuItem> items = selectableRegionState
+      .contextMenuButtonItems
+      .map((ContextMenuButtonItem item) {
+        return _SelectionMenuItem(
+          label: _contextMenuButtonLabel(context, item),
+          onPressed: item.onPressed,
+        );
+      })
+      .where((_SelectionMenuItem item) => item.label.isNotEmpty)
+      .toList(growable: false);
+
+  if (items.isEmpty) return const SizedBox.shrink();
+
+  final MContextMenuStyle style = theme.contextMenu.resolve(
+    modality: modality,
+    colors: theme.colors,
+    typography: theme.typography,
+    radius: theme.radius,
+  );
+
+  return _MSelectionToolbar(
+    anchors: selectableRegionState.contextMenuAnchors,
+    items: items,
+    style: style,
+  );
+}
+
+String _contextMenuButtonLabel(
+  BuildContext context,
+  ContextMenuButtonItem item,
+) {
+  if (item.label != null) return item.label!;
+
+  final WidgetsLocalizations localizations = WidgetsLocalizations.of(context);
+  return switch (item.type) {
+    ContextMenuButtonType.cut => localizations.cutButtonLabel,
+    ContextMenuButtonType.copy => localizations.copyButtonLabel,
+    ContextMenuButtonType.paste => localizations.pasteButtonLabel,
+    ContextMenuButtonType.selectAll => localizations.selectAllButtonLabel,
+    ContextMenuButtonType.lookUp => localizations.lookUpButtonLabel,
+    ContextMenuButtonType.searchWeb => localizations.searchWebButtonLabel,
+    ContextMenuButtonType.share => localizations.shareButtonLabel,
+    ContextMenuButtonType.delete => 'Delete',
+    ContextMenuButtonType.liveTextInput => 'Scan text',
+    ContextMenuButtonType.custom => '',
+  };
+}
+
+class _SelectionMenuItem {
+  const _SelectionMenuItem({required this.label, required this.onPressed});
+
+  final String label;
+  final VoidCallback? onPressed;
+}
+
+class _MSelectionToolbar extends StatelessWidget {
+  const _MSelectionToolbar({
+    required this.anchors,
+    required this.items,
+    required this.style,
+  });
+
+  final TextSelectionToolbarAnchors anchors;
+  final List<_SelectionMenuItem> items;
+  final MContextMenuStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget surface = DecoratedBox(
+      decoration: BoxDecoration(
+        color: style.surfaceBackgroundColor,
+        borderRadius: style.surfaceRadius,
+        border: style.surfaceBorderColor == null
+            ? null
+            : Border.all(
+                color: style.surfaceBorderColor!,
+                width: style.surfaceBorderWidth,
+              ),
+        boxShadow: style.surfaceElevation > 0
+            ? <BoxShadow>[
+                BoxShadow(
+                  color: style.surfaceShadowColor,
+                  blurRadius: style.surfaceElevation,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : null,
+      ),
+      child: Padding(
+        padding: style.surfacePadding,
+        child: DefaultTextStyle.merge(
+          style: TextStyle(color: style.surfaceForegroundColor),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              for (int i = 0; i < items.length; i++) ...<Widget>[
+                if (i > 0) SizedBox(height: style.itemSpacing),
+                _MSelectionToolbarButton(item: items[i], style: style),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+
+    surface = IntrinsicWidth(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minWidth: style.surfaceMinWidth,
+          maxWidth: style.surfaceMaxWidth,
+        ),
+        child: surface,
+      ),
+    );
+
+    return CustomSingleChildLayout(
+      delegate: _SelectionToolbarLayout(
+        anchors: anchors,
+        viewportPadding: style.viewportPadding,
+      ),
+      child: surface,
+    );
+  }
+}
+
+class _MSelectionToolbarButton extends StatefulWidget {
+  const _MSelectionToolbarButton({required this.item, required this.style});
+
+  final _SelectionMenuItem item;
+  final MContextMenuStyle style;
+
+  @override
+  State<_MSelectionToolbarButton> createState() =>
+      _MSelectionToolbarButtonState();
+}
+
+class _MSelectionToolbarButtonState extends State<_MSelectionToolbarButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool enabled = widget.item.onPressed != null;
+    final MContextMenuStyle s = widget.style;
+    final TextStyle textStyle = s.itemTextStyle.copyWith(
+      color: s.itemForegroundColor,
+    );
+
+    Widget row = DecoratedBox(
+      decoration: BoxDecoration(
+        color: _hovered && enabled
+            ? s.itemHoveredBackgroundColor
+            : const Color(0x00000000),
+        borderRadius: s.itemRadius,
+      ),
+      child: SizedBox(
+        height: s.itemHeight,
+        child: Padding(
+          padding: s.itemPadding,
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              widget.item.label,
+              overflow: TextOverflow.ellipsis,
+              style: textStyle,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    if (!enabled) {
+      row = Opacity(opacity: s.disabledOpacity, child: row);
+    }
+
+    return Semantics(
+      button: true,
+      enabled: enabled,
+      child: MouseRegion(
+        cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        onEnter: (_) => setState(() => _hovered = true),
+        onExit: (_) => setState(() => _hovered = false),
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: enabled ? widget.item.onPressed : null,
+          child: row,
+        ),
+      ),
+    );
+  }
+}
+
+class _SelectionToolbarLayout extends SingleChildLayoutDelegate {
+  _SelectionToolbarLayout({
+    required this.anchors,
+    required this.viewportPadding,
+  });
+
+  final TextSelectionToolbarAnchors anchors;
+  final double viewportPadding;
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
+    final double maxWidth = (constraints.maxWidth - 2 * viewportPadding).clamp(
+      0.0,
+      double.infinity,
+    );
+    final double maxHeight = (constraints.maxHeight - 2 * viewportPadding)
+        .clamp(0.0, double.infinity);
+    return BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight);
+  }
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) {
+    final Offset? secondaryAnchor = anchors.secondaryAnchor;
+    if (secondaryAnchor == null) {
+      return _clamp(anchors.primaryAnchor, viewport: size, child: childSize);
+    }
+
+    final bool fitsAbove =
+        anchors.primaryAnchor.dy - viewportPadding >= childSize.height;
+    final Offset anchor = fitsAbove ? anchors.primaryAnchor : secondaryAnchor;
+    final Offset target = Offset(
+      anchor.dx - childSize.width / 2,
+      fitsAbove ? anchor.dy - childSize.height : anchor.dy,
+    );
+    return _clamp(target, viewport: size, child: childSize);
+  }
+
+  Offset _clamp(Offset offset, {required Size viewport, required Size child}) {
+    final double maxX = viewport.width - child.width - viewportPadding;
+    final double maxY = viewport.height - child.height - viewportPadding;
+    return Offset(
+      offset.dx.clamp(viewportPadding, maxX.clamp(0.0, double.infinity)),
+      offset.dy.clamp(viewportPadding, maxY.clamp(0.0, double.infinity)),
+    );
+  }
+
+  @override
+  bool shouldRelayout(_SelectionToolbarLayout oldDelegate) {
+    return anchors != oldDelegate.anchors ||
+        viewportPadding != oldDelegate.viewportPadding;
   }
 }

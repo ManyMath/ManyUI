@@ -4,19 +4,19 @@ import 'package:manyui/manyui.dart';
 
 void main() {
   group('MWidgetsApp', () {
-    testWidgets('mounts without a MaterialApp or CupertinoApp ancestor',
-        (WidgetTester tester) async {
+    testWidgets('mounts without a MaterialApp or CupertinoApp ancestor', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
-        const MWidgetsApp(
-          home: Center(child: Text('home')),
-        ),
+        const MWidgetsApp(home: Center(child: Text('home'))),
       );
       expect(find.text('home'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('installs MTheme so descendants see MThemeData',
-        (WidgetTester tester) async {
+    testWidgets('installs MTheme so descendants see MThemeData', (
+      WidgetTester tester,
+    ) async {
       late MThemeData seen;
       await tester.pumpWidget(
         MWidgetsApp(
@@ -32,23 +32,25 @@ void main() {
       expect(seen.colors.background, const MColorScheme.light().background);
     });
 
-    testWidgets('installs MInputModalityScope with a platform-derived default',
-        (WidgetTester tester) async {
-      late MInputModality seen;
-      await tester.pumpWidget(
-        MWidgetsApp(
-          theme: MThemeData.light(platform: TargetPlatform.iOS),
-          home: Builder(
-            builder: (BuildContext context) {
-              seen = MInputModalityScope.of(context);
-              return const SizedBox.shrink();
-            },
+    testWidgets(
+      'installs MInputModalityScope with a platform-derived default',
+      (WidgetTester tester) async {
+        late MInputModality seen;
+        await tester.pumpWidget(
+          MWidgetsApp(
+            theme: MThemeData.light(platform: TargetPlatform.iOS),
+            home: Builder(
+              builder: (BuildContext context) {
+                seen = MInputModalityScope.of(context);
+                return const SizedBox.shrink();
+              },
+            ),
           ),
-        ),
-      );
-      // iOS → touch.
-      expect(seen, MInputModality.touch);
-    });
+        );
+        // iOS → touch.
+        expect(seen, MInputModality.touch);
+      },
+    );
 
     testWidgets('themeMode.light forces the light theme', (tester) async {
       late MThemeData seen;
@@ -89,23 +91,24 @@ void main() {
     testWidgets('themeMode.system tracks platformBrightness', (tester) async {
       late MThemeData seen;
       Widget app() => MediaQuery(
-            data: const MediaQueryData(platformBrightness: Brightness.dark),
-            child: MWidgetsApp(
-              theme: MThemeData.light(),
-              darkTheme: MThemeData.dark(),
-              builder: (BuildContext context, Widget? child) {
-                seen = MTheme.of(context);
-                return child ?? const SizedBox.shrink();
-              },
-              home: const SizedBox.shrink(),
-            ),
-          );
+        data: const MediaQueryData(platformBrightness: Brightness.dark),
+        child: MWidgetsApp(
+          theme: MThemeData.light(),
+          darkTheme: MThemeData.dark(),
+          builder: (BuildContext context, Widget? child) {
+            seen = MTheme.of(context);
+            return child ?? const SizedBox.shrink();
+          },
+          home: const SizedBox.shrink(),
+        ),
+      );
       await tester.pumpWidget(app());
       expect(seen.colors.background, const MColorScheme.dark().background);
     });
 
-    testWidgets('DefaultTextStyle inherits the theme body typography',
-        (tester) async {
+    testWidgets('DefaultTextStyle inherits the theme body typography', (
+      tester,
+    ) async {
       TextStyle? captured;
       await tester.pumpWidget(
         MWidgetsApp(
@@ -123,25 +126,120 @@ void main() {
       expect(captured!.color, const MColorScheme.light().foreground);
     });
 
-    testWidgets(
-        'does not depend on Material — the Material widget is absent in-tree',
-        (tester) async {
+    testWidgets('selectableText installs modern selection menu controls', (
+      tester,
+    ) async {
       await tester.pumpWidget(
-        const MWidgetsApp(home: Center(child: Text('home'))),
+        const MWidgetsApp(home: Center(child: Text('copyable text'))),
       );
-      // package:flutter/material.dart's Material widget would be in the tree
-      // if MaterialApp were used. We can't import it here without dragging it
-      // in, but we can confirm the runtimeType chain doesn't include
-      // 'Material' or 'CupertinoApp' as ancestors.
-      bool foundMaterial = false;
-      bool foundCupertinoApp = false;
-      for (final Widget w in tester.allWidgets) {
-        final String name = w.runtimeType.toString();
-        if (name == 'Material' || name == 'MaterialApp') foundMaterial = true;
-        if (name == 'CupertinoApp') foundCupertinoApp = true;
-      }
-      expect(foundMaterial, isFalse);
-      expect(foundCupertinoApp, isFalse);
+
+      final SelectableRegion region = tester.widget<SelectableRegion>(
+        find.byType(SelectableRegion),
+      );
+      expect(region.contextMenuBuilder, isNotNull);
+      expect(region.selectionControls, isA<TextSelectionHandleControls>());
     });
+
+    testWidgets('selectableText context menu includes Copy for selected text', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const MWidgetsApp(home: Center(child: Text('copyable text'))),
+      );
+
+      final SelectableRegion region = tester.widget<SelectableRegion>(
+        find.byType(SelectableRegion),
+      );
+      final SelectableRegionState state = tester.state<SelectableRegionState>(
+        find.byType(SelectableRegion),
+      );
+
+      state.selectAll();
+      await tester.pump();
+
+      expect(
+        state.contextMenuButtonItems.map(
+          (ContextMenuButtonItem item) => item.type,
+        ),
+        contains(ContextMenuButtonType.copy),
+      );
+
+      final Widget menu = region.contextMenuBuilder!(
+        tester.element(find.byType(SelectableRegion)),
+        state,
+      );
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: SizedBox.expand(child: menu),
+        ),
+      );
+
+      expect(find.text('Copy'), findsOneWidget);
+    });
+
+    testWidgets('selectableText uses theme ring color for selection styling', (
+      tester,
+    ) async {
+      late DefaultSelectionStyle captured;
+
+      await tester.pumpWidget(
+        MWidgetsApp(
+          theme: MThemeData.light(),
+          themeMode: MThemeMode.light,
+          home: Builder(
+            builder: (BuildContext context) {
+              captured = DefaultSelectionStyle.of(context);
+              return const Text('light');
+            },
+          ),
+        ),
+      );
+      expect(
+        captured.selectionColor,
+        const MColorScheme.light().ring.withValues(alpha: 0.25),
+      );
+      expect(captured.cursorColor, const MColorScheme.light().foreground);
+
+      await tester.pumpWidget(
+        MWidgetsApp(
+          darkTheme: MThemeData.dark(),
+          themeMode: MThemeMode.dark,
+          home: Builder(
+            builder: (BuildContext context) {
+              captured = DefaultSelectionStyle.of(context);
+              return const Text('dark');
+            },
+          ),
+        ),
+      );
+      expect(
+        captured.selectionColor,
+        const MColorScheme.dark().ring.withValues(alpha: 0.25),
+      );
+      expect(captured.cursorColor, const MColorScheme.dark().foreground);
+    });
+
+    testWidgets(
+      'does not depend on Material — the Material widget is absent in-tree',
+      (tester) async {
+        await tester.pumpWidget(
+          const MWidgetsApp(home: Center(child: Text('home'))),
+        );
+        // package:flutter/material.dart's Material widget would be in the tree
+        // if MaterialApp were used. We can't import it here without dragging it
+        // in, but we can confirm the runtimeType chain doesn't include
+        // 'Material' or 'CupertinoApp' as ancestors.
+        bool foundMaterial = false;
+        bool foundCupertinoApp = false;
+        for (final Widget w in tester.allWidgets) {
+          final String name = w.runtimeType.toString();
+          if (name == 'Material' || name == 'MaterialApp') foundMaterial = true;
+          if (name == 'CupertinoApp') foundCupertinoApp = true;
+        }
+        expect(foundMaterial, isFalse);
+        expect(foundCupertinoApp, isFalse);
+      },
+    );
   });
 }
