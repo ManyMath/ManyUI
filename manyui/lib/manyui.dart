@@ -54,6 +54,7 @@ export 'src/widgets/dialog/dialog_styles.dart';
 export 'src/widgets/divider/divider.dart';
 export 'src/widgets/divider/divider_style.dart';
 export 'src/widgets/divider/divider_styles.dart';
+export 'src/widgets/empty_state/empty_state.dart';
 export 'src/widgets/icon/icon.dart';
 export 'src/widgets/icon/icon_data.dart';
 export 'src/widgets/label/label.dart';
