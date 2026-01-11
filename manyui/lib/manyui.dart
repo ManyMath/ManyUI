@@ -22,6 +22,7 @@ export 'src/theme/typography.dart';
 export 'src/widgets/accordion/accordion.dart';
 export 'src/widgets/accordion/accordion_style.dart';
 export 'src/widgets/accordion/accordion_styles.dart';
+export 'src/widgets/alert/alert.dart';
 export 'src/widgets/app_header/app_header.dart';
 export 'src/widgets/avatar/avatar.dart';
 export 'src/widgets/avatar/avatar_style.dart';
