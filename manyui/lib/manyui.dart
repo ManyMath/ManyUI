@@ -49,6 +49,7 @@ export 'src/widgets/context_menu/context_menu_styles.dart';
 export 'src/widgets/date_field/date_field.dart';
 export 'src/widgets/date_field/date_field_style.dart';
 export 'src/widgets/date_field/date_field_styles.dart';
+export 'src/widgets/dialog/confirm_dialog.dart';
 export 'src/widgets/dialog/dialog.dart';
 export 'src/widgets/dialog/dialog_style.dart';
 export 'src/widgets/dialog/dialog_styles.dart';
