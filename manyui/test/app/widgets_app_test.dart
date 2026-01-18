@@ -144,4 +144,125 @@ void main() {
       expect(foundCupertinoApp, isFalse);
     });
   });
+
+  group('MWidgetsApp.router', () {
+    testWidgets('routes a page that resolves MThemeData (light)',
+        (tester) async {
+      late MThemeData seen;
+      await tester.pumpWidget(
+        MWidgetsApp.router(
+          theme: MThemeData.light(),
+          darkTheme: MThemeData.dark(),
+          themeMode: MThemeMode.light,
+          routerConfig: _RouterConfigStub(
+            (BuildContext context) {
+              seen = MTheme.of(context);
+              return const Text('routed');
+            },
+          ),
+        ),
+      );
+      expect(find.text('routed'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      expect(seen.colors.background, const MColorScheme.light().background);
+    });
+
+    testWidgets('routes a page that resolves MThemeData (dark)',
+        (tester) async {
+      late MThemeData seen;
+      await tester.pumpWidget(
+        MWidgetsApp.router(
+          theme: MThemeData.light(),
+          darkTheme: MThemeData.dark(),
+          themeMode: MThemeMode.dark,
+          routerConfig: _RouterConfigStub(
+            (BuildContext context) {
+              seen = MTheme.of(context);
+              return const Text('routed');
+            },
+          ),
+        ),
+      );
+      expect(find.text('routed'), findsOneWidget);
+      expect(seen.colors.background, const MColorScheme.dark().background);
+    });
+
+    test('asserts when neither routerConfig nor routerDelegate is given', () {
+      expect(
+        () => MWidgetsApp.router(),
+        throwsA(isA<AssertionError>()),
+      );
+    });
+
+    test('asserts when routerConfig and routerDelegate are both given', () {
+      expect(
+        () => MWidgetsApp.router(
+          routerConfig: _RouterConfigStub((_) => const SizedBox.shrink()),
+          routerDelegate: _RouterConfigStub((_) => const SizedBox.shrink())
+              .routerDelegate,
+        ),
+        throwsA(isA<AssertionError>()),
+      );
+    });
+  });
+}
+
+/// A trivial [RouterConfig] showing a single page from [builder], enough to
+/// exercise [MWidgetsApp.router] without pulling in go_router.
+class _RouterConfigStub implements RouterConfig<Object> {
+  _RouterConfigStub(this._builder);
+
+  final WidgetBuilder _builder;
+
+  @override
+  RouteInformationProvider? get routeInformationProvider => null;
+
+  @override
+  RouteInformationParser<Object>? get routeInformationParser => null;
+
+  @override
+  BackButtonDispatcher? get backButtonDispatcher => null;
+
+  @override
+  RouterDelegate<Object> get routerDelegate => _StubRouterDelegate(_builder);
+}
+
+class _StubRouterDelegate extends RouterDelegate<Object>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin<Object> {
+  _StubRouterDelegate(this._builder);
+
+  final WidgetBuilder _builder;
+
+  @override
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      key: navigatorKey,
+      pages: <Page<dynamic>>[
+        _StubPage(_builder),
+      ],
+      onDidRemovePage: (Page<Object?> page) {},
+    );
+  }
+
+  @override
+  Future<void> setNewRoutePath(Object configuration) async {}
+}
+
+/// A widgets-only [Page] (no Material/Cupertino) so the router tests keep the
+/// "no Material in tree" invariant.
+class _StubPage extends Page<void> {
+  const _StubPage(this._builder);
+
+  final WidgetBuilder _builder;
+
+  @override
+  Route<void> createRoute(BuildContext context) {
+    return PageRouteBuilder<void>(
+      settings: this,
+      pageBuilder: (BuildContext context, _, __) => Builder(builder: _builder),
+    );
+  }
 }

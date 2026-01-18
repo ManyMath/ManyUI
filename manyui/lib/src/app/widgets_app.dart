@@ -25,7 +25,7 @@ enum MThemeMode {
 /// adds [MTheme], [MInputModalityScope], and a [DefaultTextStyle] from the
 /// theme's `body` slot.
 class MWidgetsApp extends StatelessWidget {
-  /// Builds a manyui root app.
+  /// Builds a manyui root app driving an imperative [Navigator] (Navigator 1.0).
   const MWidgetsApp({
     super.key,
     this.home,
@@ -48,7 +48,69 @@ class MWidgetsApp extends StatelessWidget {
     this.actions,
     this.showSemanticsDebugger = false,
     this.debugShowCheckedModeBanner = true,
-  });
+  })  : _usesRouter = false,
+        routeInformationProvider = null,
+        routeInformationParser = null,
+        routerDelegate = null,
+        backButtonDispatcher = null,
+        routerConfig = null;
+
+  /// Builds a manyui root app driving a [Router] (Navigator 2.0).
+  ///
+  /// Like `MaterialApp.router`: attach a router via a single [routerConfig]
+  /// (go_router's `GoRouter` is a `RouterConfig<Object>`) or via the
+  /// [routeInformationParser] + [routerDelegate] pair (plus optional
+  /// [routeInformationProvider] / [backButtonDispatcher]).
+  ///
+  /// The imperative [Navigator] fields ([home], [routes], etc.) don't apply
+  /// here. The theme wrapper sits above the [Router], so routed subtrees still
+  /// resolve [MTheme.of].
+  const MWidgetsApp.router({
+    super.key,
+    this.theme,
+    this.darkTheme,
+    this.themeMode = MThemeMode.system,
+    this.title = '',
+    this.color = const Color(0xFF000000),
+    this.routeInformationProvider,
+    this.routeInformationParser,
+    this.routerDelegate,
+    this.backButtonDispatcher,
+    this.routerConfig,
+    this.builder,
+    this.locale,
+    this.supportedLocales = const <Locale>[Locale('en', 'US')],
+    this.localizationsDelegates,
+    this.shortcuts,
+    this.actions,
+    this.showSemanticsDebugger = false,
+    this.debugShowCheckedModeBanner = true,
+  })  : assert(
+          routerDelegate != null || routerConfig != null,
+          'Either one of routerDelegate or routerConfig must be provided.',
+        ),
+        assert(
+          !(routerConfig != null &&
+              (routeInformationProvider != null ||
+                  routeInformationParser != null ||
+                  routerDelegate != null ||
+                  backButtonDispatcher != null)),
+          'If routerConfig is provided, none of the other router delegates may '
+          'be provided.',
+        ),
+        assert(
+          routeInformationProvider == null || routeInformationParser != null,
+          'If routeInformationProvider is provided, routeInformationParser must '
+          'also be provided.',
+        ),
+        _usesRouter = true,
+        home = null,
+        routes = const <String, WidgetBuilder>{},
+        initialRoute = null,
+        onGenerateRoute = null,
+        onUnknownRoute = null,
+        navigatorKey = null,
+        navigatorObservers = const <NavigatorObserver>[];
 
   /// The widget shown at the default route.
   final Widget? home;
@@ -88,6 +150,29 @@ class MWidgetsApp extends StatelessWidget {
 
   /// Observers to attach to the [Navigator].
   final List<NavigatorObserver> navigatorObservers;
+
+  /// Route information provider for the [Router] (`.router` only).
+  final RouteInformationProvider? routeInformationProvider;
+
+  /// Route information parser for the [Router] (`.router` only).
+  final RouteInformationParser<Object>? routeInformationParser;
+
+  /// Router delegate for the [Router] (`.router` only).
+  final RouterDelegate<Object>? routerDelegate;
+
+  /// Back button dispatcher for the [Router] (`.router` only).
+  ///
+  /// When null, [WidgetsApp.router] supplies a [RootBackButtonDispatcher], as
+  /// `MaterialApp.router` does.
+  final BackButtonDispatcher? backButtonDispatcher;
+
+  /// Single-object router config (`.router` only). go_router's `GoRouter`
+  /// attaches here.
+  final RouterConfig<Object>? routerConfig;
+
+  /// Whether this app drives a [Router] (Navigator 2.0) rather than an
+  /// imperative [Navigator]. Set by [MWidgetsApp.router].
+  final bool _usesRouter;
 
   /// Wraps every page in additional widgets (e.g. a `MScaffold`).
   final TransitionBuilder? builder;
@@ -132,39 +217,60 @@ class MWidgetsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MThemeData resolved = _resolveTheme(context);
+    final TextStyle textStyle = resolved.typography
+        .inheritFromContext(context)
+        .body
+        .copyWith(color: resolved.colors.foreground);
     return MTheme(
       data: resolved,
       child: MInputModalityScope(
         modality: MInputModality.defaultForPlatform(resolved.platform),
-        child: WidgetsApp(
-          key: null,
-          home: home,
-          routes: routes,
-          initialRoute: initialRoute,
-          onGenerateRoute: onGenerateRoute,
-          onUnknownRoute: onUnknownRoute,
-          navigatorKey: navigatorKey,
-          navigatorObservers: navigatorObservers,
-          pageRouteBuilder: <T>(RouteSettings settings, WidgetBuilder builder) =>
-              PageRouteBuilder<T>(
-            settings: settings,
-            pageBuilder: (BuildContext context, _, __) => builder(context),
-          ),
-          builder: builder,
-          title: title,
-          color: color,
-          textStyle: resolved.typography
-              .inheritFromContext(context)
-              .body
-              .copyWith(color: resolved.colors.foreground),
-          locale: locale,
-          supportedLocales: supportedLocales,
-          localizationsDelegates: localizationsDelegates,
-          shortcuts: shortcuts,
-          actions: actions,
-          showSemanticsDebugger: showSemanticsDebugger,
-          debugShowCheckedModeBanner: debugShowCheckedModeBanner,
-        ),
+        child: _usesRouter
+            ? WidgetsApp.router(
+                routeInformationProvider: routeInformationProvider,
+                routeInformationParser: routeInformationParser,
+                routerDelegate: routerDelegate,
+                backButtonDispatcher: backButtonDispatcher,
+                routerConfig: routerConfig,
+                builder: builder,
+                title: title,
+                color: color,
+                textStyle: textStyle,
+                locale: locale,
+                supportedLocales: supportedLocales,
+                localizationsDelegates: localizationsDelegates,
+                shortcuts: shortcuts,
+                actions: actions,
+                showSemanticsDebugger: showSemanticsDebugger,
+                debugShowCheckedModeBanner: debugShowCheckedModeBanner,
+              )
+            : WidgetsApp(
+                key: null,
+                home: home,
+                routes: routes,
+                initialRoute: initialRoute,
+                onGenerateRoute: onGenerateRoute,
+                onUnknownRoute: onUnknownRoute,
+                navigatorKey: navigatorKey,
+                navigatorObservers: navigatorObservers,
+                pageRouteBuilder:
+                    <T>(RouteSettings settings, WidgetBuilder builder) =>
+                        PageRouteBuilder<T>(
+                  settings: settings,
+                  pageBuilder: (BuildContext context, _, __) => builder(context),
+                ),
+                builder: builder,
+                title: title,
+                color: color,
+                textStyle: textStyle,
+                locale: locale,
+                supportedLocales: supportedLocales,
+                localizationsDelegates: localizationsDelegates,
+                shortcuts: shortcuts,
+                actions: actions,
+                showSemanticsDebugger: showSemanticsDebugger,
+                debugShowCheckedModeBanner: debugShowCheckedModeBanner,
+              ),
       ),
     );
   }
