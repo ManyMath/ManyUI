@@ -4,6 +4,7 @@ import '../../theme/theme.dart';
 import '../button/button.dart';
 import '../button/button_style.dart';
 import 'dialog.dart';
+import 'dialog_content.dart';
 import 'dialog_style.dart';
 
 /// A standard confirmation dialog body.
@@ -94,11 +95,7 @@ class MConfirmDialog extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 20),
-          Wrap(
-            alignment: WrapAlignment.end,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 8,
-            runSpacing: 8,
+          MDialogActions(
             children: <Widget>[
               MButton(
                 variant: MButtonVariant.ghost,
