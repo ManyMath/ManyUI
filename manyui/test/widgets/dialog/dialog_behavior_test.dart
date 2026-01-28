@@ -320,4 +320,65 @@ void main() {
       expect(dialogBox.size.width, lessThanOrEqualTo(425));
     });
   });
+
+  group('MDialog viewport constraints', () {
+    testWidgets('scrolls tall content inside a compact viewport',
+        (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(320, 240);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      late BuildContext rootContext;
+      await tester.pumpWidget(_app(
+        child: Builder(
+          builder: (BuildContext context) {
+            rootContext = context;
+            return const SizedBox.shrink();
+          },
+        ),
+      ));
+
+      unawaited(showMDialog<void>(
+        rootContext,
+        builder: (BuildContext ctx) => MDialogContent(
+          title: 'Long form',
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              for (int i = 1; i <= 12; i++) ...<Widget>[
+                Text('Field $i'),
+                const SizedBox(height: 32),
+              ],
+            ],
+          ),
+          actions: <Widget>[
+            MButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Done'),
+            ),
+          ],
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
+
+      final RenderBox scrollBox =
+          tester.renderObject(find.byType(SingleChildScrollView)) as RenderBox;
+      expect(scrollBox.size.height, lessThanOrEqualTo(208));
+
+      await tester.drag(
+        find.byType(SingleChildScrollView),
+        const Offset(0, -600),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Done'));
+      await tester.pumpAndSettle();
+      expect(find.text('Long form'), findsNothing);
+    });
+  });
 }

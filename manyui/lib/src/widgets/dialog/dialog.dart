@@ -164,7 +164,7 @@ class MDialogRoute<T> extends PopupRoute<T> {
         ? _EscapeDismiss(child: dialog)
         : dialog;
 
-    return Center(child: body);
+    return _DialogViewport(child: body);
   }
 
   @override
@@ -234,6 +234,31 @@ Future<T?> showMDialog<T>(
     semanticLabel: semanticLabel,
     dismissible: dismissible,
   ));
+}
+
+class _DialogViewport extends StatelessWidget {
+  const _DialogViewport({required this.child});
+
+  static const EdgeInsets _viewportInset = EdgeInsets.all(16);
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      minimum: _viewportInset,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: constraints.maxHeight),
+              child: SingleChildScrollView(child: child),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
 
 /// Internal helper that closes the route on Escape.
