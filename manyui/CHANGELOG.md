@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.2 (2026-06-17)
+
+Patch release.
+
+### Fixed
+- `MTextField` took no keyboard input. Tapping a field focused it but never opened the platform text-input connection, so it showed a focus ring with no caret and ignored typing and paste. The tap handler now calls `EditableText.requestKeyboard()`, the same path Flutter's `TextField` uses, which both focuses the field and opens the connection.
+
 ## 0.1.1 (2026-05-14)
 
 Patch release. Adds the `MScaffold` widget that v0.1.0's docs referenced but never built.
