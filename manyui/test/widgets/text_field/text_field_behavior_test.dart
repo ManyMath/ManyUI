@@ -79,6 +79,27 @@ void main() {
       expect(reports.last, 'hello');
     });
 
+    testWidgets('tapping opens the input connection and accepts text',
+        (WidgetTester tester) async {
+      // Uses the real tap path, not enterText(), which calls requestKeyboard()
+      // directly and so hides a broken onTap. Regression test for tapping
+      // focusing the field but never opening the input connection.
+      final MController<String> controller = MController<String>('');
+      addTearDown(controller.dispose);
+
+      await _pumpField(tester, controller: controller);
+      expect(tester.testTextInput.hasAnyClients, isFalse);
+
+      await tester.tap(find.byType(MTextField));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(tester.testTextInput.hasAnyClients, isTrue);
+
+      tester.testTextInput.enterText('hello');
+      await tester.pump();
+      expect(controller.value, 'hello');
+    });
+
     testWidgets('external controller mutation updates the displayed text',
         (WidgetTester tester) async {
       final MController<String> controller = MController<String>('start');

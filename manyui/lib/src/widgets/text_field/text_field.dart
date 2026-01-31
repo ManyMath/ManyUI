@@ -160,6 +160,13 @@ class _MTextFieldState extends State<MTextField> {
   // maintain our own TextEditingController and keep them in sync.
   late TextEditingController _editing;
 
+  // Lets the tap handler call EditableText.requestKeyboard(). Focusing the
+  // node alone doesn't open the input connection (EditableText only opens it
+  // on focus-gain when a keyboard token is consumed), leaving the field
+  // focused but inert: no caret, typing, or paste.
+  final GlobalKey<EditableTextState> _editableKey =
+      GlobalKey<EditableTextState>();
+
   late UndoHistoryController _undo;
 
   FocusNode? _ownedFocusNode;
@@ -292,6 +299,7 @@ class _MTextFieldState extends State<MTextField> {
         empty && (widget.placeholder?.isNotEmpty ?? false);
 
     final Widget editable = EditableText(
+      key: _editableKey,
       controller: _editing,
       focusNode: _focusNode,
       readOnly: widget.readOnly || !widget.enabled,
@@ -404,7 +412,9 @@ class _MTextFieldState extends State<MTextField> {
       behavior: HitTestBehavior.opaque,
       onTap: widget.enabled
           ? () {
-              if (!_focusNode.hasFocus) _focusNode.requestFocus();
+              // Focuses and opens the input connection; a bare
+              // requestFocus() focuses without opening it.
+              _editableKey.currentState?.requestKeyboard();
             }
           : null,
       child: surface,
