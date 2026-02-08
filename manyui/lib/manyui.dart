@@ -83,6 +83,7 @@ export 'src/widgets/popover/popover_styles.dart';
 export 'src/widgets/progress/progress.dart';
 export 'src/widgets/progress/progress_style.dart';
 export 'src/widgets/progress/progress_styles.dart';
+export 'src/widgets/property_row/property_row.dart';
 export 'src/widgets/radio/radio.dart';
 export 'src/widgets/radio/radio_style.dart';
 export 'src/widgets/radio/radio_styles.dart';
