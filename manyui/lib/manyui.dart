@@ -96,6 +96,7 @@ export 'src/widgets/scaffold/scaffold_styles.dart';
 export 'src/widgets/select/select.dart';
 export 'src/widgets/select/select_style.dart';
 export 'src/widgets/select/select_styles.dart';
+export 'src/widgets/section_header/section_header.dart';
 export 'src/widgets/sheet/sheet.dart';
 export 'src/widgets/sheet/sheet_style.dart';
 export 'src/widgets/sheet/sheet_styles.dart';
