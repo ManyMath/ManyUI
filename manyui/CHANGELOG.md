@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.3 (2026-06-17)
+
+Minor release.
+
+### Added
+- `MTextField` now takes `minLines` and `maxLines` (default `maxLines: 1`, so single-line behavior is unchanged). Any other `maxLines` makes the field multiline: `keyboardType` defaults to `TextInputType.multiline`, the field sizes to its content, and Flutter stops stripping `\n` before `inputFormatters` run so a formatter can act on a multi-line paste. Set `minLines` (e.g. `minLines: 1, maxLines: 5`) to grow with content rather than fill the available height.
+
 ## 0.1.2 (2026-06-17)
 
 Patch release.
