@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/widgets.dart';
 
 import '../../theme/theme.dart';
+import '../action_row/action_row.dart';
 
 /// A responsive app-shell header for [MScaffold.header].
 ///
@@ -87,10 +88,10 @@ class MAppHeader extends StatelessWidget {
             flex: 2,
             child: Align(
               alignment: Alignment.centerRight,
-              child: _Actions(
+              child: MActionRow(
                 spacing: actionSpacing,
                 runSpacing: runSpacing,
-                actions: actions,
+                children: actions,
               ),
             ),
           ),
@@ -115,10 +116,10 @@ class MAppHeader extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: width),
-              child: _Actions(
+              child: MActionRow(
                 spacing: actionSpacing,
                 runSpacing: runSpacing,
-                actions: actions,
+                children: actions,
               ),
             ),
           ),
@@ -168,29 +169,6 @@ class _Identity extends StatelessWidget {
           ),
         ],
       ],
-    );
-  }
-}
-
-class _Actions extends StatelessWidget {
-  const _Actions({
-    required this.spacing,
-    required this.runSpacing,
-    required this.actions,
-  });
-
-  final double spacing;
-  final double runSpacing;
-  final List<Widget> actions;
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      alignment: WrapAlignment.end,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: spacing,
-      runSpacing: runSpacing,
-      children: actions,
     );
   }
 }

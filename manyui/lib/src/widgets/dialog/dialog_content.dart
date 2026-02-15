@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../theme/theme.dart';
+import '../action_row/action_row.dart';
 
 /// Standard action row for dialog bodies.
 ///
@@ -31,11 +32,8 @@ class MDialogActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (children.isEmpty) return const SizedBox.shrink();
-
-    return Wrap(
+    return MActionRow(
       alignment: alignment,
-      crossAxisAlignment: WrapCrossAlignment.center,
       spacing: spacing,
       runSpacing: runSpacing,
       children: children,
