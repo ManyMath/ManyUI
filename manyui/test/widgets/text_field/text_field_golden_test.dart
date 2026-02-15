@@ -67,7 +67,58 @@ Widget _scene(MThemeData theme, _Case c) {
   );
 }
 
+Widget _multilineScene(MThemeData theme) {
+  // A growing textarea (minLines/maxLines) seeded with several lines, so the
+  // golden captures the multiline layout: top-aligned content sized to the
+  // line count rather than collapsed to one row.
+  return ColoredBox(
+    color: theme.colors.background,
+    child: Center(
+      child: SizedBox(
+        width: 220,
+        child: Overlay(
+          initialEntries: <OverlayEntry>[
+            OverlayEntry(
+              builder: (BuildContext _) => const Center(
+                child: MTextField(
+                  initialValue: 'first line\nsecond line\nthird line',
+                  placeholder: 'notes',
+                  minLines: 1,
+                  maxLines: 5,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
 void main() {
+  group('MTextField multiline goldens', () {
+    for (final _ThemeMode mode in _themes) {
+      testWidgets(
+        'multiline ${mode.name}',
+        (WidgetTester tester) async {
+          await pumpManyApp(
+            tester,
+            _multilineScene(mode.data),
+            theme: mode.data,
+            viewport: const Size(320, 220),
+            modality: MInputModality.mouse,
+          );
+          await tester.pump();
+
+          await expectLater(
+            find.byType(Overlay).first,
+            matchesGoldenFile('goldens/multiline_${mode.name}.png'),
+          );
+        },
+      );
+    }
+  });
+
   group('MTextField goldens — state x theme', () {
     for (final _ThemeMode mode in _themes) {
       for (final _Case c in _cases) {

@@ -28,6 +28,9 @@ Future<void> _pumpField(
   Widget? trailing,
   FocusNode? focusNode,
   bool autofocus = false,
+  List<TextInputFormatter>? inputFormatters,
+  int? minLines,
+  int? maxLines = 1,
   MInputModality modality = MInputModality.mouse,
 }) async {
   await pumpManyApp(
@@ -47,6 +50,9 @@ Future<void> _pumpField(
       trailing: trailing,
       focusNode: focusNode,
       autofocus: autofocus,
+      inputFormatters: inputFormatters,
+      minLines: minLines,
+      maxLines: maxLines,
     )),
     modality: modality,
     installOverlay: true,
@@ -153,6 +159,139 @@ void main() {
       await tester.pump();
 
       expect(controller.value, 'abcd');
+    });
+  });
+
+  group('MTextField multiline', () {
+    testWidgets('maxLines: null lets a newline reach inputFormatters',
+        (WidgetTester tester) async {
+      // The motivating case: a formatter must see the raw '\n' so it can act
+      // on a multi-line paste before anything strips it.
+      final List<String> seen = <String>[];
+      final MController<String> controller = MController<String>('');
+      addTearDown(controller.dispose);
+
+      await _pumpField(
+        tester,
+        controller: controller,
+        maxLines: null,
+        inputFormatters: <TextInputFormatter>[
+          TextInputFormatter.withFunction((TextEditingValue _, TextEditingValue next) {
+            seen.add(next.text);
+            return next;
+          }),
+        ],
+      );
+
+      await tester.tap(find.byType(MTextField));
+      await tester.pump();
+      await tester.enterText(find.byType(EditableText), 'a\nb');
+      await tester.pump();
+
+      expect(seen, contains('a\nb'),
+          reason: 'multiline must forward the raw newline to formatters');
+      expect(controller.value, 'a\nb');
+    });
+
+    testWidgets('maxLines: 1 strips the newline before inputFormatters',
+        (WidgetTester tester) async {
+      final List<String> seen = <String>[];
+      final MController<String> controller = MController<String>('');
+      addTearDown(controller.dispose);
+
+      await _pumpField(
+        tester,
+        controller: controller,
+        maxLines: 1,
+        inputFormatters: <TextInputFormatter>[
+          TextInputFormatter.withFunction((TextEditingValue _, TextEditingValue next) {
+            seen.add(next.text);
+            return next;
+          }),
+        ],
+      );
+
+      await tester.tap(find.byType(MTextField));
+      await tester.pump();
+      await tester.enterText(find.byType(EditableText), 'a\nb');
+      await tester.pump();
+
+      // Single-line EditableText strips '\n' before formatters run, so neither
+      // the formatter nor the controller ever sees it.
+      expect(seen.every((String s) => !s.contains('\n')), isTrue,
+          reason: 'single-line must strip the newline before formatters');
+      expect(controller.value, isNot(contains('\n')));
+      expect(controller.value, 'ab');
+    });
+
+    testWidgets('grows taller as lines are added when minLines/maxLines allow',
+        (WidgetTester tester) async {
+      // minLines anchors the floor so the field sizes to content (between
+      // minLines and maxLines) rather than greedily filling its parent. This
+      // is the textarea-that-grows config.
+      final MController<String> controller = MController<String>('one');
+      addTearDown(controller.dispose);
+
+      await _pumpField(tester, controller: controller, minLines: 1, maxLines: 5);
+      final double oneLine =
+          tester.getSize(find.byType(MTextField)).height;
+
+      controller.value = 'one\ntwo\nthree';
+      await tester.pump();
+      final double threeLines =
+          tester.getSize(find.byType(MTextField)).height;
+
+      expect(threeLines, greaterThan(oneLine),
+          reason: 'a growing multiline field should size to its content');
+    });
+
+    testWidgets('single-line field does not grow with newlines',
+        (WidgetTester tester) async {
+      final MController<String> controller = MController<String>('one');
+      addTearDown(controller.dispose);
+
+      // Default maxLines: 1.
+      await _pumpField(tester, controller: controller);
+      final double before =
+          tester.getSize(find.byType(MTextField)).height;
+
+      controller.value = 'one\ntwo\nthree';
+      await tester.pump();
+      final double after = tester.getSize(find.byType(MTextField)).height;
+
+      expect(after, before,
+          reason: 'single-line height must not change with newlines');
+    });
+
+    testWidgets('single-line defaults keyboardType to text',
+        (WidgetTester tester) async {
+      await _pumpField(tester, maxLines: 1);
+      final EditableText editable =
+          tester.widget(find.byType(EditableText)) as EditableText;
+      expect(editable.keyboardType, TextInputType.text);
+    });
+
+    testWidgets('multiline defaults keyboardType to multiline',
+        (WidgetTester tester) async {
+      await _pumpField(tester, maxLines: null);
+      final EditableText editable =
+          tester.widget(find.byType(EditableText)) as EditableText;
+      expect(editable.keyboardType, TextInputType.multiline);
+    });
+
+    testWidgets('an explicit keyboardType is not overridden by multiline',
+        (WidgetTester tester) async {
+      await pumpManyApp(
+        tester,
+        _hosted(const MTextField(
+          maxLines: null,
+          keyboardType: TextInputType.number,
+        )),
+      );
+      await tester.pump();
+      final EditableText editable =
+          tester.widget(find.byType(EditableText)) as EditableText;
+      expect(editable.keyboardType, TextInputType.number);
     });
   });
 

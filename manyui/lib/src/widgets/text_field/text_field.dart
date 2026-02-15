@@ -49,6 +49,8 @@ class MTextField extends StatefulWidget {
     this.semanticLabel,
     this.autofocus = false,
     this.focusNode,
+    this.minLines,
+    this.maxLines = 1,
     super.key,
   });
 
@@ -146,6 +148,19 @@ class MTextField extends StatefulWidget {
   ///
   /// When null, the field creates and disposes its own node.
   final FocusNode? focusNode;
+
+  /// The minimum number of lines to occupy. When null, the field starts at one
+  /// line and grows toward [maxLines]. Forwarded to [EditableText.minLines].
+  final int? minLines;
+
+  /// The maximum number of lines the field can grow to.
+  ///
+  /// Defaults to `1` (single-line). Pass `null` for unbounded growth, or an
+  /// integer to cap it. Any value other than `1` makes the field multiline:
+  /// Flutter then stops stripping `\n` from input before [inputFormatters]
+  /// run, and the field sizes to its content instead of collapsing to one row.
+  /// Forwarded to [EditableText.maxLines].
+  final int? maxLines;
 
   @override
   State<MTextField> createState() => _MTextFieldState();
@@ -298,6 +313,11 @@ class _MTextFieldState extends State<MTextField> {
     final bool showPlaceholder =
         empty && (widget.placeholder?.isNotEmpty ?? false);
 
+    // maxLines == 1 is Flutter's single-line mode: it strips '\n' before
+    // formatters run and the surface collapses to one row. Any other value
+    // (including null = unbounded) makes the field multiline.
+    final bool multiline = widget.maxLines != 1;
+
     final Widget editable = EditableText(
       key: _editableKey,
       controller: _editing,
@@ -306,11 +326,12 @@ class _MTextFieldState extends State<MTextField> {
       obscureText: widget.obscureText,
       autocorrect: !widget.obscureText,
       enableSuggestions: !widget.obscureText,
-      maxLines: 1,
+      minLines: widget.minLines,
+      maxLines: widget.maxLines,
       keyboardType: widget.keyboardType ??
           (widget.obscureText
               ? TextInputType.visiblePassword
-              : TextInputType.text),
+              : (multiline ? TextInputType.multiline : TextInputType.text)),
       textInputAction: widget.textInputAction,
       inputFormatters: <TextInputFormatter>[
         if (widget.maxLength != null)
@@ -340,7 +361,11 @@ class _MTextFieldState extends State<MTextField> {
           Positioned.fill(
             child: IgnorePointer(
               child: Align(
-                alignment: AlignmentDirectional.centerStart,
+                // Single-line centers vertically; multiline pins to the top so
+                // the placeholder sits on the first line, matching the caret.
+                alignment: multiline
+                    ? AlignmentDirectional.topStart
+                    : AlignmentDirectional.centerStart,
                 child: Text(
                   widget.placeholder!,
                   style: textStyle.copyWith(color: resolved.placeholderColor),
@@ -352,6 +377,12 @@ class _MTextFieldState extends State<MTextField> {
           ),
         Align(
           alignment: AlignmentDirectional.centerStart,
+          // Multiline: heightFactor 1 sizes this Align (and so the surrounding
+          // Stack) to the editable's content height instead of filling the
+          // incoming constraint, so the field grows with its line count.
+          // Single-line keeps the original null (fill) so its layout is
+          // byte-identical to before multiline support.
+          heightFactor: multiline ? 1 : null,
           child: editable,
         ),
       ],
@@ -385,15 +416,17 @@ class _MTextFieldState extends State<MTextField> {
         ),
         child: Padding(
           padding: resolved.padding,
-          // heightFactor: 1 collapses the surface to its row height so the
-          // field doesn't stretch vertically when its parent is taller than
-          // minHeight (e.g. inside an OverlayEntry's tall Stack slot).
+          // heightFactor 1 sizes the surface to its child's height: one row for
+          // single-line, the current line count for multiline. Either way the
+          // field doesn't stretch to fill a taller parent (e.g. inside an
+          // OverlayEntry's tall Stack slot).
           child: Align(
             alignment: AlignmentDirectional.centerStart,
             widthFactor: 1,
             heightFactor: 1,
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment:
+                  multiline ? CrossAxisAlignment.start : CrossAxisAlignment.center,
               children: row,
             ),
           ),
