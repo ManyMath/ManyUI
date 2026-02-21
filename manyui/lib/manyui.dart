@@ -94,6 +94,7 @@ export 'src/widgets/resizable/resizable_styles.dart';
 export 'src/widgets/scaffold/scaffold.dart';
 export 'src/widgets/scaffold/scaffold_style.dart';
 export 'src/widgets/scaffold/scaffold_styles.dart';
+export 'src/widgets/segmented_control/segmented_control.dart';
 export 'src/widgets/select/select.dart';
 export 'src/widgets/select/select_style.dart';
 export 'src/widgets/select/select_styles.dart';
