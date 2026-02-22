@@ -1,8 +1,7 @@
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../foundation/focus_ring.dart';
 import '../../foundation/input_modality.dart';
+import '../../foundation/pressable.dart';
 import '../../theme/theme.dart';
 import '../../theme/theme_data.dart';
 import 'button_style.dart';
@@ -21,7 +20,7 @@ import 'button_style.dart';
 ///   child: const Text('Submit'),
 /// )
 /// ```
-class MButton extends StatefulWidget {
+class MButton extends StatelessWidget {
   /// Builds a button.
   const MButton({
     this.onPressed,
@@ -73,127 +72,76 @@ class MButton extends StatefulWidget {
   bool get _enabled => onPressed != null || onLongPress != null;
 
   @override
-  State<MButton> createState() => _MButtonState();
-}
-
-class _MButtonState extends State<MButton> {
-  bool _focused = false;
-  bool _hovered = false;
-
-  late final Map<Type, Action<Intent>> _actions = <Type, Action<Intent>>{
-    ActivateIntent: CallbackAction<ActivateIntent>(
-      onInvoke: (_) {
-        if (widget.onPressed != null) widget.onPressed!();
-        return null;
-      },
-    ),
-  };
-
-  void _onShowFocus(bool value) {
-    if (_focused != value) setState(() => _focused = value);
-  }
-
-  void _onShowHover(bool value) {
-    if (_hovered != value) setState(() => _hovered = value);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final MThemeData theme = MTheme.of(context);
-    final MInputModality resolvedModality =
-        MInputModalityScope.resolve(context, widget.modality);
-    final bool hoverCapable = resolvedModality == MInputModality.mouse ||
-        resolvedModality == MInputModality.stylus;
+    return MPressable(
+      onPressed: onPressed,
+      onLongPress: onLongPress,
+      modality: modality,
+      autofocus: autofocus,
+      focusNode: focusNode,
+      builder: (BuildContext context, MPressableStates states) {
+        final MThemeData theme = MTheme.of(context);
+        final MButtonStyle baseStyle = theme.button.resolve(
+          variant: variant,
+          size: size,
+          modality: states.modality,
+          colors: theme.colors,
+          typography: theme.typography.inheritFromContext(context),
+          radius: theme.radius,
+        );
+        final MButtonStyle resolved = baseStyle.applyDelta(style);
 
-    final MButtonStyle baseStyle = theme.button.resolve(
-      variant: widget.variant,
-      size: widget.size,
-      modality: resolvedModality,
-      colors: theme.colors,
-      typography: theme.typography.inheritFromContext(context),
-      radius: theme.radius,
-    );
-    final MButtonStyle resolved = baseStyle.applyDelta(widget.style);
+        final Color background = states.hovered
+            ? resolved.hoverBackgroundColor
+            : resolved.backgroundColor;
 
-    final bool showHover = hoverCapable && _hovered && widget._enabled;
-    final Color background =
-        showHover ? resolved.hoverBackgroundColor : resolved.backgroundColor;
-
-    Widget labelContent = DefaultTextStyle.merge(
-      style: resolved.textStyle.copyWith(color: resolved.foregroundColor),
-      child: IconTheme.merge(
-        data: IconThemeData(color: resolved.foregroundColor),
-        child: widget.child,
-      ),
-    );
-    if (widget.semanticLabel != null) {
-      labelContent = Semantics(
-        label: widget.semanticLabel,
-        excludeSemantics: true,
-        child: labelContent,
-      );
-    }
-    final Widget label = labelContent;
-
-    Widget surface = ConstrainedBox(
-      constraints: BoxConstraints(minHeight: resolved.minHeight),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: background,
-          borderRadius: resolved.radius,
-          border: resolved.borderColor != null
-              ? Border.all(
-                  color: resolved.borderColor!,
-                  width: resolved.borderWidth,
-                )
-              : null,
-        ),
-        child: Padding(
-          padding: resolved.padding,
-          child: Align(
-            alignment: Alignment.center,
-            widthFactor: 1,
-            heightFactor: 1,
-            child: label,
+        Widget labelContent = DefaultTextStyle.merge(
+          style: resolved.textStyle.copyWith(color: resolved.foregroundColor),
+          child: IconTheme.merge(
+            data: IconThemeData(color: resolved.foregroundColor),
+            child: child,
           ),
-        ),
-      ),
-    );
+        );
+        if (semanticLabel != null) {
+          labelContent = Semantics(
+            label: semanticLabel,
+            excludeSemantics: true,
+            child: labelContent,
+          );
+        }
+        final Widget label = labelContent;
 
-    if (!widget._enabled) {
-      surface = Opacity(opacity: 0.5, child: surface);
-    }
+        Widget surface = ConstrainedBox(
+          constraints: BoxConstraints(minHeight: resolved.minHeight),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: background,
+              borderRadius: resolved.radius,
+              border: resolved.borderColor != null
+                  ? Border.all(
+                      color: resolved.borderColor!,
+                      width: resolved.borderWidth,
+                    )
+                  : null,
+            ),
+            child: Padding(
+              padding: resolved.padding,
+              child: Align(
+                alignment: Alignment.center,
+                widthFactor: 1,
+                heightFactor: 1,
+                child: label,
+              ),
+            ),
+          ),
+        );
 
-    surface = MFocusRing(focused: _focused, child: surface);
+        if (!_enabled) {
+          surface = Opacity(opacity: 0.5, child: surface);
+        }
 
-    final Widget detector = FocusableActionDetector(
-      enabled: widget._enabled,
-      autofocus: widget.autofocus,
-      focusNode: widget.focusNode,
-      onShowFocusHighlight: _onShowFocus,
-      onShowHoverHighlight: _onShowHover,
-      mouseCursor: widget._enabled
-          ? SystemMouseCursors.click
-          : SystemMouseCursors.basic,
-      shortcuts: const <ShortcutActivator, Intent>{
-        SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
-        SingleActivator(LogicalKeyboardKey.numpadEnter): ActivateIntent(),
-        SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+        return surface;
       },
-      actions: _actions,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: widget._enabled ? widget.onPressed : null,
-        onLongPress: widget._enabled ? widget.onLongPress : null,
-        child: surface,
-      ),
-    );
-
-    return Semantics(
-      button: true,
-      enabled: widget._enabled,
-      container: true,
-      child: detector,
     );
   }
 }

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.4 (2026-06-18)
+
+Minor release.
+
+### Added
+- `MPressable`, a foundation interaction primitive (hover, focus, press, keyboard activation, modality-aware cursor, focus ring) that any surface can build on to become a button-like control. Pair it with `MCard` for a whole-card link.
+
+### Changed
+- `MButton` is now implemented on top of `MPressable`. No public API or visual change.
+
 ## 0.1.3 (2026-06-17)
 
 Minor release.
