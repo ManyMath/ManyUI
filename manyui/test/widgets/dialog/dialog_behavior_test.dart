@@ -322,6 +322,34 @@ void main() {
   });
 
   group('MDialog viewport constraints', () {
+    testWidgets('lays out text fields without intrinsic measurement failures',
+        (WidgetTester tester) async {
+      late BuildContext rootContext;
+      await tester.pumpWidget(_app(
+        child: Builder(
+          builder: (BuildContext context) {
+            rootContext = context;
+            return const SizedBox.shrink();
+          },
+        ),
+      ));
+
+      unawaited(showMDialog<void>(
+        rootContext,
+        builder: (BuildContext _) => const MDialogContent(
+          title: 'Form',
+          content: MField(
+            label: 'Name',
+            child: MTextField(semanticLabel: 'Name'),
+          ),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.byType(MTextField), findsOneWidget);
+    });
+
     testWidgets('scrolls tall content inside a compact viewport',
         (WidgetTester tester) async {
       tester.view.physicalSize = const Size(320, 240);

@@ -47,33 +47,31 @@ class MDialog extends StatelessWidget {
 
     final Widget surface = ConstrainedBox(
       constraints: BoxConstraints(maxWidth: resolved.maxWidth),
-      child: IntrinsicWidth(
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: resolved.backgroundColor,
-            borderRadius: resolved.radius,
-            border: resolved.borderColor != null
-                ? Border.all(
-                    color: resolved.borderColor!,
-                    width: resolved.borderWidth,
-                  )
-                : null,
-            boxShadow: resolved.elevation > 0
-                ? <BoxShadow>[
-                    BoxShadow(
-                      color: resolved.shadowColor,
-                      blurRadius: resolved.elevation,
-                      offset: const Offset(0, 8),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Padding(
-            padding: resolved.padding,
-            child: DefaultTextStyle.merge(
-              style: TextStyle(color: resolved.foregroundColor),
-              child: child,
-            ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: resolved.backgroundColor,
+          borderRadius: resolved.radius,
+          border: resolved.borderColor != null
+              ? Border.all(
+                  color: resolved.borderColor!,
+                  width: resolved.borderWidth,
+                )
+              : null,
+          boxShadow: resolved.elevation > 0
+              ? <BoxShadow>[
+                  BoxShadow(
+                    color: resolved.shadowColor,
+                    blurRadius: resolved.elevation,
+                    offset: const Offset(0, 8),
+                  ),
+                ]
+              : null,
+        ),
+        child: Padding(
+          padding: resolved.padding,
+          child: DefaultTextStyle.merge(
+            style: TextStyle(color: resolved.foregroundColor),
+            child: child,
           ),
         ),
       ),
