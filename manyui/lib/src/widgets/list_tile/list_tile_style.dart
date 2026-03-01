@@ -90,17 +90,17 @@ class MListTileStyle {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        selectedBackgroundColor,
-        foregroundColor,
-        selectedForegroundColor,
-        subtitleColor,
-        titleStyle,
-        subtitleStyle,
-        padding,
-        horizontalGap,
-        radius,
-      );
+    backgroundColor,
+    selectedBackgroundColor,
+    foregroundColor,
+    selectedForegroundColor,
+    subtitleColor,
+    titleStyle,
+    subtitleStyle,
+    padding,
+    horizontalGap,
+    radius,
+  );
 }
 
 /// A nullable overlay of [MListTileStyle] fields.
@@ -173,15 +173,15 @@ class MListTileStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        selectedBackgroundColor,
-        foregroundColor,
-        selectedForegroundColor,
-        subtitleColor,
-        titleStyle,
-        subtitleStyle,
-        padding,
-        horizontalGap,
-        radius,
-      );
+    backgroundColor,
+    selectedBackgroundColor,
+    foregroundColor,
+    selectedForegroundColor,
+    subtitleColor,
+    titleStyle,
+    subtitleStyle,
+    padding,
+    horizontalGap,
+    radius,
+  );
 }

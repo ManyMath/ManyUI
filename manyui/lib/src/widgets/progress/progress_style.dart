@@ -66,7 +66,8 @@ class MProgressStyle {
       trackRadius: delta.trackRadius ?? trackRadius,
       valueRadius: delta.valueRadius ?? valueRadius,
       disabledOpacity: delta.disabledOpacity ?? disabledOpacity,
-      indeterminateDuration: delta.indeterminateDuration ?? indeterminateDuration,
+      indeterminateDuration:
+          delta.indeterminateDuration ?? indeterminateDuration,
     );
   }
 
@@ -87,16 +88,16 @@ class MProgressStyle {
 
   @override
   int get hashCode => Object.hash(
-        thickness,
-        minWidth,
-        diameter,
-        trackColor,
-        valueColor,
-        trackRadius,
-        valueRadius,
-        disabledOpacity,
-        indeterminateDuration,
-      );
+    thickness,
+    minWidth,
+    diameter,
+    trackColor,
+    valueColor,
+    trackRadius,
+    valueRadius,
+    disabledOpacity,
+    indeterminateDuration,
+  );
 }
 
 /// A nullable overlay of [MProgressStyle] fields.
@@ -164,14 +165,14 @@ class MProgressStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        thickness,
-        minWidth,
-        diameter,
-        trackColor,
-        valueColor,
-        trackRadius,
-        valueRadius,
-        disabledOpacity,
-        indeterminateDuration,
-      );
+    thickness,
+    minWidth,
+    diameter,
+    trackColor,
+    valueColor,
+    trackRadius,
+    valueRadius,
+    disabledOpacity,
+    indeterminateDuration,
+  );
 }

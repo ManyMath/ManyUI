@@ -5,8 +5,9 @@ import 'package:manyui_testing/manyui_testing.dart';
 
 void main() {
   group('MListTile rendering', () {
-    testWidgets('renders title, subtitle, leading, and trailing',
-        (WidgetTester tester) async {
+    testWidgets('renders title, subtitle, leading, and trailing', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         const MListTile(
@@ -23,12 +24,10 @@ void main() {
       expect(find.text('T'), findsOneWidget);
     });
 
-    testWidgets('omits subtitle/leading/trailing when null',
-        (WidgetTester tester) async {
-      await pumpManyApp(
-        tester,
-        const MListTile(title: Text('Title only')),
-      );
+    testWidgets('omits subtitle/leading/trailing when null', (
+      WidgetTester tester,
+    ) async {
+      await pumpManyApp(tester, const MListTile(title: Text('Title only')));
 
       expect(find.text('Title only'), findsOneWidget);
     });
@@ -48,12 +47,10 @@ void main() {
       expect(taps, 1);
     });
 
-    testWidgets('has no gesture detector when onTap is null',
-        (WidgetTester tester) async {
-      await pumpManyApp(
-        tester,
-        const MListTile(title: Text('Row')),
-      );
+    testWidgets('has no gesture detector when onTap is null', (
+      WidgetTester tester,
+    ) async {
+      await pumpManyApp(tester, const MListTile(title: Text('Row')));
 
       expect(
         find.descendant(
@@ -64,8 +61,9 @@ void main() {
       );
     });
 
-    testWidgets('exposes button+selected semantics when interactive',
-        (WidgetTester tester) async {
+    testWidgets('exposes button+selected semantics when interactive', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         MListTile(title: const Text('Row'), selected: true, onTap: () {}),
@@ -84,31 +82,34 @@ void main() {
   });
 
   group('MListTile selected styling', () {
-    testWidgets('paints accent background and accentForeground text when selected',
-        (WidgetTester tester) async {
-      final MThemeData theme = MThemeData.light();
-      await pumpManyApp(
-        tester,
-        const MListTile(title: Text('Row'), selected: true),
-        theme: theme,
-      );
+    testWidgets(
+      'paints accent background and accentForeground text when selected',
+      (WidgetTester tester) async {
+        final MThemeData theme = MThemeData.light();
+        await pumpManyApp(
+          tester,
+          const MListTile(title: Text('Row'), selected: true),
+          theme: theme,
+        );
 
-      final Container container = tester.widget<Container>(
-        find.descendant(
-          of: find.byType(MListTile),
-          matching: find.byType(Container),
-        ),
-      );
-      final BoxDecoration deco = container.decoration! as BoxDecoration;
-      expect(deco.color, theme.colors.accent);
+        final Container container = tester.widget<Container>(
+          find.descendant(
+            of: find.byType(MListTile),
+            matching: find.byType(Container),
+          ),
+        );
+        final BoxDecoration deco = container.decoration! as BoxDecoration;
+        expect(deco.color, theme.colors.accent);
 
-      final Element textElement = tester.element(find.text('Row'));
-      final DefaultTextStyle dts = DefaultTextStyle.of(textElement);
-      expect(dts.style.color, theme.colors.accentForeground);
-    });
+        final Element textElement = tester.element(find.text('Row'));
+        final DefaultTextStyle dts = DefaultTextStyle.of(textElement);
+        expect(dts.style.color, theme.colors.accentForeground);
+      },
+    );
 
-    testWidgets('unselected row has no accent background',
-        (WidgetTester tester) async {
+    testWidgets('unselected row has no accent background', (
+      WidgetTester tester,
+    ) async {
       final MThemeData theme = MThemeData.light();
       await pumpManyApp(
         tester,
@@ -128,8 +129,9 @@ void main() {
   });
 
   group('MListTile style delta', () {
-    testWidgets('overrides only the supplied fields',
-        (WidgetTester tester) async {
+    testWidgets('overrides only the supplied fields', (
+      WidgetTester tester,
+    ) async {
       const Color override = Color(0xFF00FF00);
       await pumpManyApp(
         tester,

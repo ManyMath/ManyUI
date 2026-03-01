@@ -128,22 +128,22 @@ class MTextFieldStyle {
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
-        minHeight,
-        padding,
-        backgroundColor,
-        borderColor,
-        focusedBorderColor,
-        errorBorderColor,
-        borderWidth,
-        radius,
-        textStyle,
-        placeholderColor,
-        cursorColor,
-        selectionColor,
-        iconColor,
-        decorationGap,
-        disabledOpacity,
-      ]);
+    minHeight,
+    padding,
+    backgroundColor,
+    borderColor,
+    focusedBorderColor,
+    errorBorderColor,
+    borderWidth,
+    radius,
+    textStyle,
+    placeholderColor,
+    cursorColor,
+    selectionColor,
+    iconColor,
+    decorationGap,
+    disabledOpacity,
+  ]);
 }
 
 /// A nullable overlay of [MTextFieldStyle] fields.
@@ -240,20 +240,20 @@ class MTextFieldStyleDelta {
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
-        minHeight,
-        padding,
-        backgroundColor,
-        borderColor,
-        focusedBorderColor,
-        errorBorderColor,
-        borderWidth,
-        radius,
-        textStyle,
-        placeholderColor,
-        cursorColor,
-        selectionColor,
-        iconColor,
-        decorationGap,
-        disabledOpacity,
-      ]);
+    minHeight,
+    padding,
+    backgroundColor,
+    borderColor,
+    focusedBorderColor,
+    errorBorderColor,
+    borderWidth,
+    radius,
+    textStyle,
+    placeholderColor,
+    cursorColor,
+    selectionColor,
+    iconColor,
+    decorationGap,
+    disabledOpacity,
+  ]);
 }

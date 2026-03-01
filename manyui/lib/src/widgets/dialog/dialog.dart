@@ -77,11 +77,7 @@ class MDialog extends StatelessWidget {
       ),
     );
 
-    return Semantics(
-      container: true,
-      label: semanticLabel,
-      child: surface,
-    );
+    return Semantics(container: true, label: semanticLabel, child: surface);
   }
 }
 
@@ -158,9 +154,7 @@ class MDialogRoute<T> extends PopupRoute<T> {
       ),
     );
 
-    final Widget body = dismissible
-        ? _EscapeDismiss(child: dialog)
-        : dialog;
+    final Widget body = dismissible ? _EscapeDismiss(child: dialog) : dialog;
 
     return _DialogViewport(child: body);
   }
@@ -224,14 +218,16 @@ Future<T?> showMDialog<T>(
       )
       .applyDelta(style);
 
-  return Navigator.of(context).push<T>(MDialogRoute<T>(
-    builder: builder,
-    scrimColor: resolved.scrimColor,
-    themeData: theme,
-    style: style,
-    semanticLabel: semanticLabel,
-    dismissible: dismissible,
-  ));
+  return Navigator.of(context).push<T>(
+    MDialogRoute<T>(
+      builder: builder,
+      scrimColor: resolved.scrimColor,
+      themeData: theme,
+      style: style,
+      semanticLabel: semanticLabel,
+      dismissible: dismissible,
+    ),
+  );
 }
 
 class _DialogViewport extends StatelessWidget {

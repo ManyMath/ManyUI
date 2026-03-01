@@ -100,8 +100,7 @@ class MAccordionStyle {
       headerHeight: delta.headerHeight ?? headerHeight,
       headerForegroundColor:
           delta.headerForegroundColor ?? headerForegroundColor,
-      headerTitleTextStyle:
-          delta.headerTitleTextStyle ?? headerTitleTextStyle,
+      headerTitleTextStyle: delta.headerTitleTextStyle ?? headerTitleTextStyle,
       headerHoveredBackgroundColor:
           delta.headerHoveredBackgroundColor ?? headerHoveredBackgroundColor,
       chevronColor: delta.chevronColor ?? chevronColor,
@@ -140,25 +139,25 @@ class MAccordionStyle {
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
-        surfaceBackgroundColor,
-        surfaceBorderColor,
-        surfaceBorderWidth,
-        surfaceRadius,
-        itemDividerColor,
-        itemDividerThickness,
-        headerPadding,
-        headerHeight,
-        headerForegroundColor,
-        headerTitleTextStyle,
-        headerHoveredBackgroundColor,
-        chevronColor,
-        chevronSize,
-        bodyPadding,
-        bodyForegroundColor,
-        bodyTextStyle,
-        expandDuration,
-        disabledOpacity,
-      ]);
+    surfaceBackgroundColor,
+    surfaceBorderColor,
+    surfaceBorderWidth,
+    surfaceRadius,
+    itemDividerColor,
+    itemDividerThickness,
+    headerPadding,
+    headerHeight,
+    headerForegroundColor,
+    headerTitleTextStyle,
+    headerHoveredBackgroundColor,
+    chevronColor,
+    chevronSize,
+    bodyPadding,
+    bodyForegroundColor,
+    bodyTextStyle,
+    expandDuration,
+    disabledOpacity,
+  ]);
 }
 
 /// A nullable overlay of [MAccordionStyle] fields.
@@ -271,23 +270,23 @@ class MAccordionStyleDelta {
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
-        surfaceBackgroundColor,
-        surfaceBorderColor,
-        surfaceBorderWidth,
-        surfaceRadius,
-        itemDividerColor,
-        itemDividerThickness,
-        headerPadding,
-        headerHeight,
-        headerForegroundColor,
-        headerTitleTextStyle,
-        headerHoveredBackgroundColor,
-        chevronColor,
-        chevronSize,
-        bodyPadding,
-        bodyForegroundColor,
-        bodyTextStyle,
-        expandDuration,
-        disabledOpacity,
-      ]);
+    surfaceBackgroundColor,
+    surfaceBorderColor,
+    surfaceBorderWidth,
+    surfaceRadius,
+    itemDividerColor,
+    itemDividerThickness,
+    headerPadding,
+    headerHeight,
+    headerForegroundColor,
+    headerTitleTextStyle,
+    headerHoveredBackgroundColor,
+    chevronColor,
+    chevronSize,
+    bodyPadding,
+    bodyForegroundColor,
+    bodyTextStyle,
+    expandDuration,
+    disabledOpacity,
+  ]);
 }

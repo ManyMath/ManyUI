@@ -116,20 +116,20 @@ class MTooltipStyle {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        padding,
-        textStyle,
-        radius,
-        elevation,
-        shadowColor,
-        gap,
-        maxWidth,
-        showDelay,
-        hideDelay,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    padding,
+    textStyle,
+    radius,
+    elevation,
+    shadowColor,
+    gap,
+    maxWidth,
+    showDelay,
+    hideDelay,
+  );
 }
 
 /// A nullable overlay of [MTooltipStyle] fields.
@@ -212,18 +212,18 @@ class MTooltipStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        padding,
-        textStyle,
-        radius,
-        elevation,
-        shadowColor,
-        gap,
-        maxWidth,
-        showDelay,
-        hideDelay,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    padding,
+    textStyle,
+    radius,
+    elevation,
+    shadowColor,
+    gap,
+    maxWidth,
+    showDelay,
+    hideDelay,
+  );
 }

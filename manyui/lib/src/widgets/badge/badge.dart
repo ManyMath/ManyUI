@@ -65,8 +65,7 @@ class MBadge extends StatelessWidget {
         child: Padding(
           padding: resolved.padding,
           child: DefaultTextStyle.merge(
-            style:
-                resolved.textStyle.copyWith(color: resolved.foregroundColor),
+            style: resolved.textStyle.copyWith(color: resolved.foregroundColor),
             child: IconTheme.merge(
               data: IconThemeData(color: resolved.foregroundColor, size: 14),
               child: child,

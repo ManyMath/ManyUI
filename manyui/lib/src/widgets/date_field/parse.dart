@@ -156,9 +156,7 @@ DateTime? _build(int y, int m, int d) {
   if (y < 1 || y > 9999) return null;
   final DateTime candidate = DateTime.utc(y, m, d);
   // Reject calendar overflow (e.g. Feb 30 rolling forward into March).
-  if (candidate.year != y ||
-      candidate.month != m ||
-      candidate.day != d) {
+  if (candidate.year != y || candidate.month != m || candidate.day != d) {
     return null;
   }
   return candidate;

@@ -44,8 +44,9 @@ class MScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MScaffoldStyle resolved =
-        theme.scaffold.resolve(colors: theme.colors).applyDelta(style);
+    final MScaffoldStyle resolved = theme.scaffold
+        .resolve(colors: theme.colors)
+        .applyDelta(style);
 
     final Widget paddedBody = Padding(
       padding: resolved.bodyPadding,

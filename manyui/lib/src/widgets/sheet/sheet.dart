@@ -77,17 +77,17 @@ class MSheet extends StatelessWidget {
         : theme.radius;
     final BorderRadiusGeometry anchoredRadius = switch (anchor) {
       MSheetAnchor.bottom => BorderRadius.only(
-          topLeft: Radius.circular(cornerRadius),
-          topRight: Radius.circular(cornerRadius),
-        ),
+        topLeft: Radius.circular(cornerRadius),
+        topRight: Radius.circular(cornerRadius),
+      ),
       MSheetAnchor.start => BorderRadiusDirectional.only(
-          topEnd: Radius.circular(cornerRadius),
-          bottomEnd: Radius.circular(cornerRadius),
-        ),
+        topEnd: Radius.circular(cornerRadius),
+        bottomEnd: Radius.circular(cornerRadius),
+      ),
       MSheetAnchor.end => BorderRadiusDirectional.only(
-          topStart: Radius.circular(cornerRadius),
-          bottomStart: Radius.circular(cornerRadius),
-        ),
+        topStart: Radius.circular(cornerRadius),
+        bottomStart: Radius.circular(cornerRadius),
+      ),
     };
 
     final Widget body = Padding(
@@ -141,11 +141,7 @@ class MSheet extends StatelessWidget {
       child: content,
     );
 
-    return Semantics(
-      container: true,
-      label: semanticLabel,
-      child: surface,
-    );
+    return Semantics(container: true, label: semanticLabel, child: surface);
   }
 }
 
@@ -222,18 +218,19 @@ class MSheetRoute<T> extends PopupRoute<T> {
       data: themeData,
       child: Builder(
         builder: (BuildContext themedContext) {
-          final MInputModality modality =
-              MInputModalityScope.of(themedContext);
+          final MInputModality modality = MInputModalityScope.of(themedContext);
           final MSheetStyle resolved = themeData.sheet
               .resolve(
                 colors: themeData.colors,
-                typography: themeData.typography
-                    .inheritFromContext(themedContext),
+                typography: themeData.typography.inheritFromContext(
+                  themedContext,
+                ),
                 radius: themeData.radius,
               )
               .applyDelta(style);
 
-          final bool dragToDismiss = dismissible &&
+          final bool dragToDismiss =
+              dismissible &&
               anchor == MSheetAnchor.bottom &&
               modality == MInputModality.touch;
 
@@ -243,7 +240,7 @@ class MSheetRoute<T> extends PopupRoute<T> {
             semanticLabel: semanticLabel,
             showDragHandle:
                 anchor == MSheetAnchor.bottom &&
-                    modality == MInputModality.touch,
+                modality == MInputModality.touch,
             child: Builder(builder: builder),
           );
 
@@ -272,9 +269,7 @@ class MSheetRoute<T> extends PopupRoute<T> {
             child: draggable,
           );
 
-          return dismissible
-              ? _EscapeDismiss(child: aligned)
-              : aligned;
+          return dismissible ? _EscapeDismiss(child: aligned) : aligned;
         },
       ),
     );
@@ -293,9 +288,10 @@ class MSheetRoute<T> extends PopupRoute<T> {
       MSheetAnchor.end => const Offset(1, 0),
     };
     return SlideTransition(
-      position: Tween<Offset>(begin: begin, end: Offset.zero).animate(
-        CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-      ),
+      position: Tween<Offset>(
+        begin: begin,
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
       child: child,
     );
   }
@@ -357,15 +353,17 @@ Future<T?> showMSheet<T>(
       )
       .applyDelta(style);
 
-  return Navigator.of(context).push<T>(MSheetRoute<T>(
-    builder: builder,
-    scrimColor: resolved.scrimColor,
-    themeData: theme,
-    anchor: anchor,
-    style: style,
-    semanticLabel: semanticLabel,
-    dismissible: dismissible,
-  ));
+  return Navigator.of(context).push<T>(
+    MSheetRoute<T>(
+      builder: builder,
+      scrimColor: resolved.scrimColor,
+      themeData: theme,
+      anchor: anchor,
+      style: style,
+      semanticLabel: semanticLabel,
+      dismissible: dismissible,
+    ),
+  );
 }
 
 /// Wraps a sheet in viewport-relative constraints.
@@ -395,10 +393,7 @@ class _AnchoredSize extends StatelessWidget {
           constraints: BoxConstraints(
             maxHeight: viewport.height * maxHeightFraction,
           ),
-          child: SizedBox(
-            width: viewport.width,
-            child: child,
-          ),
+          child: SizedBox(width: viewport.width, child: child),
         );
       case MSheetAnchor.start:
       case MSheetAnchor.end:

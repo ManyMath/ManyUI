@@ -43,8 +43,7 @@ class MCommandPaletteStyles {
       maxWidth: 520,
       maxHeightFraction: 0.6,
       topOffset: 96,
-      searchPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      searchPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       searchTextStyle: typography.body.copyWith(color: colors.foreground),
       searchPlaceholderColor: colors.mutedForeground,
       searchDividerColor: colors.border,
@@ -62,8 +61,7 @@ class MCommandPaletteStyles {
       itemLeadingTrailingGap: 8,
       disabledOpacity: 0.5,
       emptyText: 'No results.',
-      emptyTextStyle:
-          typography.label.copyWith(color: colors.mutedForeground),
+      emptyTextStyle: typography.label.copyWith(color: colors.mutedForeground),
     );
   }
 

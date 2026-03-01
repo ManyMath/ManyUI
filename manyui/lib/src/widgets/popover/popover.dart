@@ -20,10 +20,8 @@ import 'popover_style.dart';
 ///   );
 /// }
 /// ```
-typedef MPopoverContentBuilder = Widget Function(
-  BuildContext context,
-  VoidCallback close,
-);
+typedef MPopoverContentBuilder =
+    Widget Function(BuildContext context, VoidCallback close);
 
 /// Drives an [MPopover]'s open/close state.
 ///
@@ -142,8 +140,9 @@ class _MPopoverState extends State<MPopover> {
   late MPopoverController _controller;
   bool _ownsController = false;
 
-  final MOverlayAnchorController _anchor =
-      MOverlayAnchorController(debugLabel: 'MPopover');
+  final MOverlayAnchorController _anchor = MOverlayAnchorController(
+    debugLabel: 'MPopover',
+  );
 
   final FocusNode _anchorFocusNode = FocusNode(debugLabel: 'MPopover anchor');
 
@@ -290,7 +289,10 @@ class _MPopoverState extends State<MPopover> {
   }
 
   Widget _buildOverlay(BuildContext overlayContext, MPopoverStyle s) {
-    final Widget body = widget.popoverBuilder(overlayContext, _controller.close);
+    final Widget body = widget.popoverBuilder(
+      overlayContext,
+      _controller.close,
+    );
 
     Widget surface = DecoratedBox(
       decoration: BoxDecoration(

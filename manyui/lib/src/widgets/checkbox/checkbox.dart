@@ -158,8 +158,10 @@ class _MCheckboxState extends State<MCheckbox> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality resolvedModality =
-        MInputModalityScope.resolve(context, widget.modality);
+    final MInputModality resolvedModality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
 
     final MCheckboxStyle resolved = theme.checkbox
         .resolve(

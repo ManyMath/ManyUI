@@ -5,8 +5,9 @@ import 'package:manyui_testing/manyui_testing.dart';
 
 void main() {
   group('MIcon sizing and color', () {
-    testWidgets('defaults to 24 and theme foreground when unset',
-        (WidgetTester tester) async {
+    testWidgets('defaults to 24 and theme foreground when unset', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(tester, const MIcon(MIconData.chevronDown));
 
       final SizedBox box = tester.widget(
@@ -19,8 +20,9 @@ void main() {
       expect(box.height, 24);
     });
 
-    testWidgets('explicit size overrides the default',
-        (WidgetTester tester) async {
+    testWidgets('explicit size overrides the default', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(tester, const MIcon(MIconData.chevronDown, size: 40));
 
       final SizedBox box = tester.widget(
@@ -33,8 +35,9 @@ void main() {
       expect(box.height, 40);
     });
 
-    testWidgets('inherits size/color from an ancestor IconTheme',
-        (WidgetTester tester) async {
+    testWidgets('inherits size/color from an ancestor IconTheme', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         const IconTheme(
@@ -60,8 +63,9 @@ void main() {
       expect(find.bySemanticsLabel('Expand'), findsOneWidget);
     });
 
-    testWidgets('call-site semanticLabel overrides the default',
-        (WidgetTester tester) async {
+    testWidgets('call-site semanticLabel overrides the default', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         const MIcon(MIconData.chevronDown, semanticLabel: 'Show more results'),
@@ -71,8 +75,9 @@ void main() {
       expect(find.bySemanticsLabel('Expand'), findsNothing);
     });
 
-    testWidgets('eye and eyeOff default to Show/Hide labels',
-        (WidgetTester tester) async {
+    testWidgets('eye and eyeOff default to Show/Hide labels', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(tester, const MIcon(MIconData.eye));
       expect(find.bySemanticsLabel('Show'), findsOneWidget);
 

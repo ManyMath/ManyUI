@@ -80,16 +80,16 @@ class MPopoverStyle {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        radius,
-        padding,
-        elevation,
-        shadowColor,
-        gap,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    radius,
+    padding,
+    elevation,
+    shadowColor,
+    gap,
+  );
 }
 
 /// A nullable overlay of [MPopoverStyle] fields.
@@ -152,14 +152,14 @@ class MPopoverStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        radius,
-        padding,
-        elevation,
-        shadowColor,
-        gap,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    radius,
+    padding,
+    elevation,
+    shadowColor,
+    gap,
+  );
 }

@@ -21,10 +21,7 @@ class MCardStyles {
   const MCardStyles();
 
   /// Returns the resolved [MCardStyle] using the supplied theme tokens.
-  MCardStyle resolve({
-    required MColorScheme colors,
-    required double radius,
-  }) {
+  MCardStyle resolve({required MColorScheme colors, required double radius}) {
     return MCardStyle(
       backgroundColor: colors.card,
       foregroundColor: colors.cardForeground,

@@ -128,8 +128,9 @@ class _MDateFieldState extends State<MDateField> {
   bool _focused = false;
   bool _syncing = false;
 
-  final MOverlayAnchorController _anchor =
-      MOverlayAnchorController(debugLabel: 'MDateField popover');
+  final MOverlayAnchorController _anchor = MOverlayAnchorController(
+    debugLabel: 'MDateField popover',
+  );
 
   bool _open = false;
   // Year/month currently shown in the calendar header.
@@ -148,11 +149,14 @@ class _MDateFieldState extends State<MDateField> {
     super.initState();
     _bindController(widget.controller);
     final DateTime? seed = _controller.value;
-    _editing = TextEditingController(text: seed == null ? '' : formatMDate(seed));
+    _editing = TextEditingController(
+      text: seed == null ? '' : formatMDate(seed),
+    );
     _editing.addListener(_onEditingChanged);
     _undo = UndoHistoryController();
     _focusNode.addListener(_onFocusNodeChanged);
-    final DateTime initialView = seed ?? DateTime.utc(_today().year, _today().month, 1);
+    final DateTime initialView =
+        seed ?? DateTime.utc(_today().year, _today().month, 1);
     _viewYear = initialView.year;
     _viewMonth = initialView.month;
   }
@@ -299,7 +303,8 @@ class _MDateFieldState extends State<MDateField> {
 
   void _closePopover({DateTime? committedValue}) {
     if (!_open) return;
-    if (committedValue != null && !_sameDay(_controller.value, committedValue)) {
+    if (committedValue != null &&
+        !_sameDay(_controller.value, committedValue)) {
       _syncing = true;
       _controller.value = committedValue;
       _editing.text = formatMDate(committedValue);
@@ -338,7 +343,11 @@ class _MDateFieldState extends State<MDateField> {
 
   void _moveFocusedDay(int dayDelta) {
     final DateTime base = _focusedDay ?? _today();
-    final DateTime next = DateTime.utc(base.year, base.month, base.day + dayDelta);
+    final DateTime next = DateTime.utc(
+      base.year,
+      base.month,
+      base.day + dayDelta,
+    );
     setState(() {
       _focusedDay = next;
       if (next.year != _viewYear || next.month != _viewMonth) {
@@ -349,9 +358,11 @@ class _MDateFieldState extends State<MDateField> {
   }
 
   int _daysInMonth(int year, int month) {
-    return DateTime.utc(month == 12 ? year + 1 : year, month == 12 ? 1 : month + 1, 1)
-        .subtract(const Duration(days: 1))
-        .day;
+    return DateTime.utc(
+      month == 12 ? year + 1 : year,
+      month == 12 ? 1 : month + 1,
+      1,
+    ).subtract(const Duration(days: 1)).day;
   }
 
   KeyEventResult _onPopoverKey(FocusNode node, KeyEvent event) {
@@ -394,8 +405,13 @@ class _MDateFieldState extends State<MDateField> {
     }
     if (key == LogicalKeyboardKey.end) {
       final DateTime base = _focusedDay ?? _today();
-      setState(() => _focusedDay =
-          DateTime.utc(base.year, base.month, _daysInMonth(base.year, base.month)));
+      setState(
+        () => _focusedDay = DateTime.utc(
+          base.year,
+          base.month,
+          _daysInMonth(base.year, base.month),
+        ),
+      );
       return KeyEventResult.handled;
     }
     if (key == LogicalKeyboardKey.enter ||
@@ -413,8 +429,10 @@ class _MDateFieldState extends State<MDateField> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality resolvedModality =
-        MInputModalityScope.resolve(context, widget.modality);
+    final MInputModality resolvedModality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
     final MDateFieldStyle resolved = theme.dateField
         .resolve(
           modality: resolvedModality,
@@ -428,8 +446,9 @@ class _MDateFieldState extends State<MDateField> {
         ? resolved.errorBorderColor
         : (_focused ? resolved.focusedBorderColor : resolved.borderColor);
 
-    final TextStyle textStyle =
-        resolved.textStyle.copyWith(color: theme.colors.foreground);
+    final TextStyle textStyle = resolved.textStyle.copyWith(
+      color: theme.colors.foreground,
+    );
 
     final bool empty = _editing.text.isEmpty;
     final bool showPlaceholder =
@@ -469,10 +488,7 @@ class _MDateFieldState extends State<MDateField> {
               ),
             ),
           ),
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: editable,
-        ),
+        Align(alignment: AlignmentDirectional.centerStart, child: editable),
       ],
     );
 
@@ -619,8 +635,9 @@ class _MDateFieldState extends State<MDateField> {
           child: Center(
             child: Text(
               title,
-              style: s.popoverHeaderTextStyle
-                  .copyWith(color: s.popoverHeaderForegroundColor),
+              style: s.popoverHeaderTextStyle.copyWith(
+                color: s.popoverHeaderForegroundColor,
+              ),
             ),
           ),
         ),
@@ -643,8 +660,9 @@ class _MDateFieldState extends State<MDateField> {
             child: Center(
               child: Text(
                 shortWeekdayName(wd),
-                style: s.popoverWeekdayTextStyle
-                    .copyWith(color: s.popoverWeekdayColor),
+                style: s.popoverWeekdayTextStyle.copyWith(
+                  color: s.popoverWeekdayColor,
+                ),
               ),
             ),
           ),
@@ -668,37 +686,34 @@ class _MDateFieldState extends State<MDateField> {
         final int dayOffset = idx - leading;
         final DateTime day = first.add(Duration(days: dayOffset));
         final bool inMonth = dayOffset >= 0 && dayOffset < daysInThis;
-        final bool isFocused = _focusedDay != null && _sameDay(_focusedDay, day);
+        final bool isFocused =
+            _focusedDay != null && _sameDay(_focusedDay, day);
         final bool isSelected = _sameDay(selected, day);
         final bool allowed = _withinBounds(day);
-        cells.add(_DayCell(
-          day: day,
-          inMonth: inMonth,
-          focused: isFocused,
-          selected: isSelected,
-          enabled: allowed,
-          style: s,
-          onTap: () {
-            if (!allowed) return;
-            _closePopover(committedValue: day);
-          },
-          onHover: () {
-            if (!allowed) return;
-            if (!_sameDay(_focusedDay, day)) {
-              setState(() => _focusedDay = day);
-            }
-          },
-        ));
+        cells.add(
+          _DayCell(
+            day: day,
+            inMonth: inMonth,
+            focused: isFocused,
+            selected: isSelected,
+            enabled: allowed,
+            style: s,
+            onTap: () {
+              if (!allowed) return;
+              _closePopover(committedValue: day);
+            },
+            onHover: () {
+              if (!allowed) return;
+              if (!_sameDay(_focusedDay, day)) {
+                setState(() => _focusedDay = day);
+              }
+            },
+          ),
+        );
       }
-      rows.add(Row(
-        mainAxisSize: MainAxisSize.min,
-        children: cells,
-      ));
+      rows.add(Row(mainAxisSize: MainAxisSize.min, children: cells));
     }
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: rows,
-    );
+    return Column(mainAxisSize: MainAxisSize.min, children: rows);
   }
 }
 
@@ -719,15 +734,13 @@ class _CalendarIconButton extends StatelessWidget {
       enabled: onTap != null,
       label: 'Open calendar',
       child: MouseRegion(
-        cursor:
-            onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        cursor: onTap != null
+            ? SystemMouseCursors.click
+            : SystemMouseCursors.basic,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(2),
-            child: icon,
-          ),
+          child: Padding(padding: const EdgeInsets.all(2), child: icon),
         ),
       ),
     );
@@ -757,11 +770,7 @@ class _CalendarPainter extends CustomPainter {
     );
     canvas.drawRRect(body, stroke);
     // Top binder line.
-    canvas.drawLine(
-      Offset(w * 0.1, h * 0.4),
-      Offset(w * 0.9, h * 0.4),
-      stroke,
-    );
+    canvas.drawLine(Offset(w * 0.1, h * 0.4), Offset(w * 0.9, h * 0.4), stroke);
     // Two binder rings.
     canvas.drawLine(Offset(w * 0.3, h * 0.1), Offset(w * 0.3, h * 0.3), stroke);
     canvas.drawLine(Offset(w * 0.7, h * 0.1), Offset(w * 0.7, h * 0.3), stroke);
@@ -863,8 +872,8 @@ class _DayCell extends StatelessWidget {
     final Color foreground = selected
         ? style.cellSelectedForegroundColor
         : (inMonth
-            ? style.cellForegroundColor
-            : style.cellMutedForegroundColor);
+              ? style.cellForegroundColor
+              : style.cellMutedForegroundColor);
     final Color? background = selected
         ? style.cellSelectedBackgroundColor
         : (focused ? style.cellFocusedBackgroundColor : null);

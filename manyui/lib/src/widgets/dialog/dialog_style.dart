@@ -89,17 +89,17 @@ class MDialogStyle {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        radius,
-        padding,
-        elevation,
-        shadowColor,
-        scrimColor,
-        maxWidth,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    radius,
+    padding,
+    elevation,
+    shadowColor,
+    scrimColor,
+    maxWidth,
+  );
 }
 
 /// A nullable overlay of [MDialogStyle] fields.
@@ -167,15 +167,15 @@ class MDialogStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        radius,
-        padding,
-        elevation,
-        shadowColor,
-        scrimColor,
-        maxWidth,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    radius,
+    padding,
+    elevation,
+    shadowColor,
+    scrimColor,
+    maxWidth,
+  );
 }

@@ -84,16 +84,16 @@ class MCheckboxStyle {
 
   @override
   int get hashCode => Object.hash(
-        size,
-        borderColor,
-        borderWidth,
-        uncheckedBackgroundColor,
-        checkedBackgroundColor,
-        checkmarkColor,
-        checkmarkThickness,
-        radius,
-        disabledOpacity,
-      );
+    size,
+    borderColor,
+    borderWidth,
+    uncheckedBackgroundColor,
+    checkedBackgroundColor,
+    checkmarkColor,
+    checkmarkThickness,
+    radius,
+    disabledOpacity,
+  );
 }
 
 /// A nullable overlay of [MCheckboxStyle] fields.
@@ -160,14 +160,14 @@ class MCheckboxStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        size,
-        borderColor,
-        borderWidth,
-        uncheckedBackgroundColor,
-        checkedBackgroundColor,
-        checkmarkColor,
-        checkmarkThickness,
-        radius,
-        disabledOpacity,
-      );
+    size,
+    borderColor,
+    borderWidth,
+    uncheckedBackgroundColor,
+    checkedBackgroundColor,
+    checkmarkColor,
+    checkmarkThickness,
+    radius,
+    disabledOpacity,
+  );
 }

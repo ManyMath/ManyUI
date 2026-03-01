@@ -19,9 +19,7 @@ class MProgressStyles {
   const MProgressStyles();
 
   /// Returns the resolved [MProgressStyle] under the supplied theme tokens.
-  MProgressStyle resolve({
-    required MColorScheme colors,
-  }) {
+  MProgressStyle resolve({required MColorScheme colors}) {
     return MProgressStyle(
       thickness: 8,
       minWidth: 120,

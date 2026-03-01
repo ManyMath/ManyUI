@@ -79,15 +79,15 @@ class MRadioStyle {
 
   @override
   int get hashCode => Object.hash(
-        size,
-        borderColor,
-        borderWidth,
-        uncheckedBackgroundColor,
-        checkedBackgroundColor,
-        dotColor,
-        dotDiameter,
-        disabledOpacity,
-      );
+    size,
+    borderColor,
+    borderWidth,
+    uncheckedBackgroundColor,
+    checkedBackgroundColor,
+    dotColor,
+    dotDiameter,
+    disabledOpacity,
+  );
 }
 
 /// A nullable overlay of [MRadioStyle] fields.
@@ -149,13 +149,13 @@ class MRadioStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        size,
-        borderColor,
-        borderWidth,
-        uncheckedBackgroundColor,
-        checkedBackgroundColor,
-        dotColor,
-        dotDiameter,
-        disabledOpacity,
-      );
+    size,
+    borderColor,
+    borderWidth,
+    uncheckedBackgroundColor,
+    checkedBackgroundColor,
+    dotColor,
+    dotDiameter,
+    disabledOpacity,
+  );
 }

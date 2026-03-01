@@ -23,11 +23,7 @@ import 'card_style.dart';
 /// ```
 class MCard extends StatelessWidget {
   /// Builds a card.
-  const MCard({
-    this.style,
-    required this.child,
-    super.key,
-  });
+  const MCard({this.style, required this.child, super.key});
 
   /// Field-wise overrides for the theme-resolved [MCardStyle].
   final MCardStyleDelta? style;

@@ -135,15 +135,19 @@ class _MTabsState extends State<MTabs> {
 
   static const Map<ShortcutActivator, Intent> _shortcuts =
       <ShortcutActivator, Intent>{
-    SingleActivator(LogicalKeyboardKey.arrowLeft):
-        _MoveTabFocusIntent(_MoveDirection.previous),
-    SingleActivator(LogicalKeyboardKey.arrowRight):
-        _MoveTabFocusIntent(_MoveDirection.next),
-    SingleActivator(LogicalKeyboardKey.home):
-        _MoveTabFocusIntent(_MoveDirection.first),
-    SingleActivator(LogicalKeyboardKey.end):
-        _MoveTabFocusIntent(_MoveDirection.last),
-  };
+        SingleActivator(LogicalKeyboardKey.arrowLeft): _MoveTabFocusIntent(
+          _MoveDirection.previous,
+        ),
+        SingleActivator(LogicalKeyboardKey.arrowRight): _MoveTabFocusIntent(
+          _MoveDirection.next,
+        ),
+        SingleActivator(LogicalKeyboardKey.home): _MoveTabFocusIntent(
+          _MoveDirection.first,
+        ),
+        SingleActivator(LogicalKeyboardKey.end): _MoveTabFocusIntent(
+          _MoveDirection.last,
+        ),
+      };
 
   // One FocusNode per tab. Built lazily; rebuilt on tabs-list change. Keyed
   // by tab id so a reorder doesn't dispose nodes whose tabs survived.
@@ -189,8 +193,9 @@ class _MTabsState extends State<MTabs> {
 
   void _syncFocusNodes() {
     final Set<String> ids = widget.tabs.map((MTab t) => t.id).toSet();
-    final List<String> stale =
-        _focusNodes.keys.where((String id) => !ids.contains(id)).toList();
+    final List<String> stale = _focusNodes.keys
+        .where((String id) => !ids.contains(id))
+        .toList();
     for (final String id in stale) {
       _focusNodes.remove(id)?.dispose();
     }
@@ -229,8 +234,9 @@ class _MTabsState extends State<MTabs> {
   }
 
   void _moveFocus(_MoveDirection direction) {
-    final List<MTab> enabledTabs =
-        widget.tabs.where(_effectiveEnabledFor).toList();
+    final List<MTab> enabledTabs = widget.tabs
+        .where(_effectiveEnabledFor)
+        .toList();
     if (enabledTabs.isEmpty) return;
 
     final FocusNode? primary = FocusManager.instance.primaryFocus;
@@ -243,8 +249,7 @@ class _MTabsState extends State<MTabs> {
     }
     int currentInEnabled = -1;
     if (currentId != null) {
-      currentInEnabled =
-          enabledTabs.indexWhere((MTab t) => t.id == currentId);
+      currentInEnabled = enabledTabs.indexWhere((MTab t) => t.id == currentId);
     }
 
     MTab target;
@@ -254,7 +259,8 @@ class _MTabsState extends State<MTabs> {
             ? enabledTabs.last
             : enabledTabs[currentInEnabled - 1];
       case _MoveDirection.next:
-        target = currentInEnabled < 0 || currentInEnabled >= enabledTabs.length - 1
+        target =
+            currentInEnabled < 0 || currentInEnabled >= enabledTabs.length - 1
             ? enabledTabs.first
             : enabledTabs[currentInEnabled + 1];
       case _MoveDirection.first:
@@ -273,8 +279,10 @@ class _MTabsState extends State<MTabs> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality resolvedModality =
-        MInputModalityScope.resolve(context, widget.modality);
+    final MInputModality resolvedModality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
     final MTabsStyle resolved = theme.tabs
         .resolve(
           modality: resolvedModality,
@@ -345,10 +353,11 @@ class _MTabsState extends State<MTabs> {
         index: stackIndex,
         sizing: StackFit.loose,
         children: <Widget>[
-          for (final MTab tab in widget.tabs) KeyedSubtree(
-            key: ValueKey<String>('m-tab-content-${tab.id}'),
-            child: tab.content,
-          ),
+          for (final MTab tab in widget.tabs)
+            KeyedSubtree(
+              key: ValueKey<String>('m-tab-content-${tab.id}'),
+              child: tab.content,
+            ),
         ],
       ),
     );
@@ -419,7 +428,10 @@ class _MTabButtonState extends State<_MTabButton> {
       child: widget.tab.title,
     );
 
-    title = Padding(padding: style.tabPadding, child: Center(child: title));
+    title = Padding(
+      padding: style.tabPadding,
+      child: Center(child: title),
+    );
 
     Widget tabBody = DecoratedBox(
       decoration: BoxDecoration(

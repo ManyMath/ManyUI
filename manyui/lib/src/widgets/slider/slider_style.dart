@@ -88,16 +88,16 @@ class MSliderStyle {
 
   @override
   int get hashCode => Object.hash(
-        trackHeight,
-        thumbDiameter,
-        minTrackWidth,
-        activeTrackColor,
-        inactiveTrackColor,
-        thumbColor,
-        thumbBorderColor,
-        thumbBorderWidth,
-        disabledOpacity,
-      );
+    trackHeight,
+    thumbDiameter,
+    minTrackWidth,
+    activeTrackColor,
+    inactiveTrackColor,
+    thumbColor,
+    thumbBorderColor,
+    thumbBorderWidth,
+    disabledOpacity,
+  );
 }
 
 /// A nullable overlay of [MSliderStyle] fields.
@@ -164,14 +164,14 @@ class MSliderStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        trackHeight,
-        thumbDiameter,
-        minTrackWidth,
-        activeTrackColor,
-        inactiveTrackColor,
-        thumbColor,
-        thumbBorderColor,
-        thumbBorderWidth,
-        disabledOpacity,
-      );
+    trackHeight,
+    thumbDiameter,
+    minTrackWidth,
+    activeTrackColor,
+    inactiveTrackColor,
+    thumbColor,
+    thumbBorderColor,
+    thumbBorderWidth,
+    disabledOpacity,
+  );
 }

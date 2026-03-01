@@ -166,14 +166,13 @@ class _MSwitchState extends State<MSwitch> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality resolvedModality =
-        MInputModalityScope.resolve(context, widget.modality);
+    final MInputModality resolvedModality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
 
     final MSwitchStyle resolved = theme.switch_
-        .resolve(
-          modality: resolvedModality,
-          colors: theme.colors,
-        )
+        .resolve(modality: resolvedModality, colors: theme.colors)
         .applyDelta(widget.style);
 
     final bool on = _controller.value;
@@ -262,8 +261,10 @@ class _SwitchPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Rect trackRect = Offset.zero & size;
-    final RRect track =
-        RRect.fromRectAndRadius(trackRect, Radius.circular(size.height / 2));
+    final RRect track = RRect.fromRectAndRadius(
+      trackRect,
+      Radius.circular(size.height / 2),
+    );
 
     final Paint fill = Paint()
       ..style = PaintingStyle.fill

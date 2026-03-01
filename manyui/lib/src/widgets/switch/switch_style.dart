@@ -90,17 +90,17 @@ class MSwitchStyle {
 
   @override
   int get hashCode => Object.hash(
-        trackWidth,
-        trackHeight,
-        thumbDiameter,
-        thumbPadding,
-        offTrackColor,
-        onTrackColor,
-        thumbColor,
-        borderColor,
-        borderWidth,
-        disabledOpacity,
-      );
+    trackWidth,
+    trackHeight,
+    thumbDiameter,
+    thumbPadding,
+    offTrackColor,
+    onTrackColor,
+    thumbColor,
+    borderColor,
+    borderWidth,
+    disabledOpacity,
+  );
 }
 
 /// A nullable overlay of [MSwitchStyle] fields.
@@ -172,15 +172,15 @@ class MSwitchStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        trackWidth,
-        trackHeight,
-        thumbDiameter,
-        thumbPadding,
-        offTrackColor,
-        onTrackColor,
-        thumbColor,
-        borderColor,
-        borderWidth,
-        disabledOpacity,
-      );
+    trackWidth,
+    trackHeight,
+    thumbDiameter,
+    thumbPadding,
+    offTrackColor,
+    onTrackColor,
+    thumbColor,
+    borderColor,
+    borderWidth,
+    disabledOpacity,
+  );
 }

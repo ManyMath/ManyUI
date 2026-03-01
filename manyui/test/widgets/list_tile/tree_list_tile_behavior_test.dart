@@ -14,7 +14,9 @@ void main() {
       expect(find.text('Group'), findsOneWidget);
     });
 
-    testWidgets('deeper rows get more left padding', (WidgetTester tester) async {
+    testWidgets('deeper rows get more left padding', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         const Column(
@@ -25,18 +27,22 @@ void main() {
         ),
       );
 
-      final Container rootContainer = tester.widgetList<Container>(
-        find.descendant(
-          of: find.byType(MTreeListTile).first,
-          matching: find.byType(Container),
-        ),
-      ).first;
-      final Container childContainer = tester.widgetList<Container>(
-        find.descendant(
-          of: find.byType(MTreeListTile).last,
-          matching: find.byType(Container),
-        ),
-      ).first;
+      final Container rootContainer = tester
+          .widgetList<Container>(
+            find.descendant(
+              of: find.byType(MTreeListTile).first,
+              matching: find.byType(Container),
+            ),
+          )
+          .first;
+      final Container childContainer = tester
+          .widgetList<Container>(
+            find.descendant(
+              of: find.byType(MTreeListTile).last,
+              matching: find.byType(Container),
+            ),
+          )
+          .first;
 
       final EdgeInsetsDirectional rootPadding =
           rootContainer.padding! as EdgeInsetsDirectional;
@@ -45,8 +51,9 @@ void main() {
       expect(childPadding.start, greaterThan(rootPadding.start));
     });
 
-    testWidgets('hides chevron tap target when onToggle is null',
-        (WidgetTester tester) async {
+    testWidgets('hides chevron tap target when onToggle is null', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         const MTreeListTile(title: Text('Leaf'), depth: 0),
@@ -55,8 +62,9 @@ void main() {
       expect(find.byType(MIcon), findsNothing);
     });
 
-    testWidgets('shows a chevron when onToggle is set',
-        (WidgetTester tester) async {
+    testWidgets('shows a chevron when onToggle is set', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         MTreeListTile(title: const Text('Branch'), depth: 0, onToggle: () {}),
@@ -67,8 +75,9 @@ void main() {
   });
 
   group('MTreeListTile interaction', () {
-    testWidgets('onTap and onToggle fire independently',
-        (WidgetTester tester) async {
+    testWidgets('onTap and onToggle fire independently', (
+      WidgetTester tester,
+    ) async {
       int taps = 0;
       int toggles = 0;
       await pumpManyApp(
@@ -92,7 +101,9 @@ void main() {
       expect(toggles, 1);
     });
 
-    testWidgets('expanded flips the chevron glyph', (WidgetTester tester) async {
+    testWidgets('expanded flips the chevron glyph', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         MTreeListTile(
@@ -110,11 +121,7 @@ void main() {
     testWidgets('collapsed shows chevronRight', (WidgetTester tester) async {
       await pumpManyApp(
         tester,
-        MTreeListTile(
-          title: const Text('Branch'),
-          depth: 0,
-          onToggle: () {},
-        ),
+        MTreeListTile(title: const Text('Branch'), depth: 0, onToggle: () {}),
       );
 
       final MIcon icon = tester.widget<MIcon>(find.byType(MIcon));

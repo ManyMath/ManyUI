@@ -79,8 +79,9 @@ class MTooltip extends StatefulWidget {
 }
 
 class _MTooltipState extends State<MTooltip> {
-  final MOverlayAnchorController _anchor =
-      MOverlayAnchorController(debugLabel: 'MTooltip');
+  final MOverlayAnchorController _anchor = MOverlayAnchorController(
+    debugLabel: 'MTooltip',
+  );
 
   Timer? _showTimer;
   Timer? _hideTimer;
@@ -157,8 +158,7 @@ class _MTooltipState extends State<MTooltip> {
 
   void _detachOutsideTap() {
     if (_outsideTapRoute == null) return;
-    GestureBinding.instance.pointerRouter
-        .removeGlobalRoute(_outsideTapRoute!);
+    GestureBinding.instance.pointerRouter.removeGlobalRoute(_outsideTapRoute!);
     _outsideTapRoute = null;
   }
 
@@ -168,7 +168,8 @@ class _MTooltipState extends State<MTooltip> {
     final RenderBox? box = context.findRenderObject() as RenderBox?;
     if (box == null || !box.hasSize) return;
     final Offset local = box.globalToLocal(event.position);
-    final bool insideAnchor = local.dx >= 0 &&
+    final bool insideAnchor =
+        local.dx >= 0 &&
         local.dy >= 0 &&
         local.dx <= box.size.width &&
         local.dy <= box.size.height;
@@ -178,8 +179,10 @@ class _MTooltipState extends State<MTooltip> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality resolvedModality =
-        MInputModalityScope.resolve(context, widget.modality);
+    final MInputModality resolvedModality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
     final MTooltipStyle resolved = theme.tooltip
         .resolve(
           colors: theme.colors,

@@ -141,15 +141,19 @@ class _MAccordionState extends State<MAccordion> {
 
   static const Map<ShortcutActivator, Intent> _shortcuts =
       <ShortcutActivator, Intent>{
-    SingleActivator(LogicalKeyboardKey.arrowUp):
-        _MoveFocusIntent(_MoveDirection.previous),
-    SingleActivator(LogicalKeyboardKey.arrowDown):
-        _MoveFocusIntent(_MoveDirection.next),
-    SingleActivator(LogicalKeyboardKey.home):
-        _MoveFocusIntent(_MoveDirection.first),
-    SingleActivator(LogicalKeyboardKey.end):
-        _MoveFocusIntent(_MoveDirection.last),
-  };
+        SingleActivator(LogicalKeyboardKey.arrowUp): _MoveFocusIntent(
+          _MoveDirection.previous,
+        ),
+        SingleActivator(LogicalKeyboardKey.arrowDown): _MoveFocusIntent(
+          _MoveDirection.next,
+        ),
+        SingleActivator(LogicalKeyboardKey.home): _MoveFocusIntent(
+          _MoveDirection.first,
+        ),
+        SingleActivator(LogicalKeyboardKey.end): _MoveFocusIntent(
+          _MoveDirection.last,
+        ),
+      };
 
   @override
   void initState() {
@@ -173,8 +177,9 @@ class _MAccordionState extends State<MAccordion> {
       _controller = external;
       _ownsController = false;
     } else {
-      _controller =
-          MController<Set<String>>(Set<String>.from(widget.initialExpanded));
+      _controller = MController<Set<String>>(
+        Set<String>.from(widget.initialExpanded),
+      );
       _ownsController = true;
     }
     _controller.addListener(_onControllerChanged);
@@ -190,10 +195,12 @@ class _MAccordionState extends State<MAccordion> {
   }
 
   void _syncFocusNodes() {
-    final Set<String> ids =
-        widget.items.map((MAccordionItem i) => i.id).toSet();
-    final List<String> stale =
-        _focusNodes.keys.where((String id) => !ids.contains(id)).toList();
+    final Set<String> ids = widget.items
+        .map((MAccordionItem i) => i.id)
+        .toSet();
+    final List<String> stale = _focusNodes.keys
+        .where((String id) => !ids.contains(id))
+        .toList();
     for (final String id in stale) {
       _focusNodes.remove(id)?.dispose();
     }
@@ -248,8 +255,9 @@ class _MAccordionState extends State<MAccordion> {
   }
 
   void _moveFocus(_MoveDirection direction) {
-    final List<MAccordionItem> enabled =
-        widget.items.where(_effectiveEnabledFor).toList();
+    final List<MAccordionItem> enabled = widget.items
+        .where(_effectiveEnabledFor)
+        .toList();
     if (enabled.isEmpty) return;
 
     final FocusNode? primary = FocusManager.instance.primaryFocus;
@@ -262,8 +270,9 @@ class _MAccordionState extends State<MAccordion> {
     }
     int currentInEnabled = -1;
     if (currentId != null) {
-      currentInEnabled =
-          enabled.indexWhere((MAccordionItem i) => i.id == currentId);
+      currentInEnabled = enabled.indexWhere(
+        (MAccordionItem i) => i.id == currentId,
+      );
     }
 
     MAccordionItem target;
@@ -288,8 +297,10 @@ class _MAccordionState extends State<MAccordion> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality modality =
-        MInputModalityScope.resolve(context, widget.modality);
+    final MInputModality modality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
     final MAccordionStyle resolved = theme.accordion
         .resolve(
           modality: modality,
@@ -304,26 +315,31 @@ class _MAccordionState extends State<MAccordion> {
     final List<Widget> children = <Widget>[];
     for (int i = 0; i < widget.items.length; i++) {
       if (i > 0) {
-        children.add(Container(
-          height: resolved.itemDividerThickness,
-          color: resolved.itemDividerColor,
-        ));
+        children.add(
+          Container(
+            height: resolved.itemDividerThickness,
+            color: resolved.itemDividerColor,
+          ),
+        );
       }
       final MAccordionItem item = widget.items[i];
-      children.add(_MAccordionRow(
-        item: item,
-        isExpanded: expanded.contains(item.id),
-        enabled: _effectiveEnabledFor(item),
-        style: resolved,
-        focusNode: _focusNodes[item.id]!,
-        onTap: () => _toggle(item),
-      ));
+      children.add(
+        _MAccordionRow(
+          item: item,
+          isExpanded: expanded.contains(item.id),
+          enabled: _effectiveEnabledFor(item),
+          style: resolved,
+          focusNode: _focusNodes[item.id]!,
+          onTap: () => _toggle(item),
+        ),
+      );
     }
 
     final BoxDecoration decoration = BoxDecoration(
       color: resolved.surfaceBackgroundColor,
       borderRadius: resolved.surfaceRadius,
-      border: (resolved.surfaceBorderColor != null &&
+      border:
+          (resolved.surfaceBorderColor != null &&
               resolved.surfaceBorderWidth > 0)
           ? Border.all(
               color: resolved.surfaceBorderColor!,
@@ -415,28 +431,31 @@ class _MAccordionRowState extends State<_MAccordionRow> {
       child: widget.item.title,
     );
 
-    final List<Widget> headerChildren = <Widget>[
-      Expanded(child: title),
-    ];
+    final List<Widget> headerChildren = <Widget>[Expanded(child: title)];
     if (widget.item.trailing != null) {
-      headerChildren.add(Padding(
-        padding: const EdgeInsets.only(left: 8),
-        child: DefaultTextStyle.merge(
-          style: s.headerTitleTextStyle
-              .copyWith(color: s.headerForegroundColor),
-          child: widget.item.trailing!,
+      headerChildren.add(
+        Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: DefaultTextStyle.merge(
+            style: s.headerTitleTextStyle.copyWith(
+              color: s.headerForegroundColor,
+            ),
+            child: widget.item.trailing!,
+          ),
         ),
-      ));
+      );
     }
-    headerChildren.add(Padding(
-      padding: const EdgeInsets.only(left: 8),
-      child: AnimatedRotation(
-        turns: widget.isExpanded ? 0.5 : 0.0,
-        duration: s.expandDuration,
-        curve: Curves.easeOutCubic,
-        child: _Chevron(color: s.chevronColor, size: s.chevronSize),
+    headerChildren.add(
+      Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: AnimatedRotation(
+          turns: widget.isExpanded ? 0.5 : 0.0,
+          duration: s.expandDuration,
+          curve: Curves.easeOutCubic,
+          child: _Chevron(color: s.chevronColor, size: s.chevronSize),
+        ),
       ),
-    ));
+    );
 
     Widget header = Padding(
       padding: s.headerPadding,
@@ -452,10 +471,7 @@ class _MAccordionRowState extends State<_MAccordionRow> {
     );
 
     if (widget.enabled && _hovered) {
-      header = ColoredBox(
-        color: s.headerHoveredBackgroundColor,
-        child: header,
-      );
+      header = ColoredBox(color: s.headerHoveredBackgroundColor, child: header);
     }
 
     if (!widget.enabled) {
@@ -516,10 +532,7 @@ class _MAccordionRowState extends State<_MAccordionRow> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        headerInteractive,
-        body,
-      ],
+      children: <Widget>[headerInteractive, body],
     );
   }
 }
@@ -535,9 +548,7 @@ class _Chevron extends StatelessWidget {
     return SizedBox(
       width: size,
       height: size,
-      child: CustomPaint(
-        painter: _ChevronPainter(color: color),
-      ),
+      child: CustomPaint(painter: _ChevronPainter(color: color)),
     );
   }
 }

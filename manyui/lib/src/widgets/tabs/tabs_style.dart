@@ -105,19 +105,19 @@ class MTabsStyle {
 
   @override
   int get hashCode => Object.hash(
-        tabHeight,
-        tabPadding,
-        tabSpacing,
-        activeForegroundColor,
-        inactiveForegroundColor,
-        disabledOpacity,
-        indicatorColor,
-        indicatorThickness,
-        stripDividerColor,
-        stripDividerThickness,
-        contentPadding,
-        titleTextStyle,
-      );
+    tabHeight,
+    tabPadding,
+    tabSpacing,
+    activeForegroundColor,
+    inactiveForegroundColor,
+    disabledOpacity,
+    indicatorColor,
+    indicatorThickness,
+    stripDividerColor,
+    stripDividerThickness,
+    contentPadding,
+    titleTextStyle,
+  );
 }
 
 /// A nullable overlay of [MTabsStyle] fields.
@@ -199,17 +199,17 @@ class MTabsStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        tabHeight,
-        tabPadding,
-        tabSpacing,
-        activeForegroundColor,
-        inactiveForegroundColor,
-        disabledOpacity,
-        indicatorColor,
-        indicatorThickness,
-        stripDividerColor,
-        stripDividerThickness,
-        contentPadding,
-        titleTextStyle,
-      );
+    tabHeight,
+    tabPadding,
+    tabSpacing,
+    activeForegroundColor,
+    inactiveForegroundColor,
+    disabledOpacity,
+    indicatorColor,
+    indicatorThickness,
+    stripDividerColor,
+    stripDividerThickness,
+    contentPadding,
+    titleTextStyle,
+  );
 }

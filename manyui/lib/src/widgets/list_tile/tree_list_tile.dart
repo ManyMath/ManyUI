@@ -79,11 +79,13 @@ class MTreeListTile extends StatelessWidget {
         )
         .applyDelta(style);
 
-    final Color foreground =
-        selected ? resolved.selectedForegroundColor : resolved.foregroundColor;
+    final Color foreground = selected
+        ? resolved.selectedForegroundColor
+        : resolved.foregroundColor;
 
-    final EdgeInsets padding =
-        resolved.padding.resolve(Directionality.of(context));
+    final EdgeInsets padding = resolved.padding.resolve(
+      Directionality.of(context),
+    );
 
     final Widget chevronSlot = SizedBox(
       width: _chevronSlotWidth,
@@ -110,7 +112,9 @@ class MTreeListTile extends StatelessWidget {
         end: padding.right,
       ),
       decoration: BoxDecoration(
-        color: selected ? resolved.selectedBackgroundColor : resolved.backgroundColor,
+        color: selected
+            ? resolved.selectedBackgroundColor
+            : resolved.backgroundColor,
         borderRadius: resolved.radius,
       ),
       child: Row(

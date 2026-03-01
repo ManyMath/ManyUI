@@ -123,21 +123,21 @@ class MOTPFieldStyle {
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
-        cellSize,
-        cellGap,
-        cellPadding,
-        cellBackgroundColor,
-        cellBorderColor,
-        cellFocusedBorderColor,
-        cellFilledBorderColor,
-        cellErrorBorderColor,
-        cellBorderWidth,
-        cellRadius,
-        textStyle,
-        cursorColor,
-        selectionColor,
-        disabledOpacity,
-      ]);
+    cellSize,
+    cellGap,
+    cellPadding,
+    cellBackgroundColor,
+    cellBorderColor,
+    cellFocusedBorderColor,
+    cellFilledBorderColor,
+    cellErrorBorderColor,
+    cellBorderWidth,
+    cellRadius,
+    textStyle,
+    cursorColor,
+    selectionColor,
+    disabledOpacity,
+  ]);
 }
 
 /// A nullable overlay of [MOTPFieldStyle] fields.
@@ -229,19 +229,19 @@ class MOTPFieldStyleDelta {
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
-        cellSize,
-        cellGap,
-        cellPadding,
-        cellBackgroundColor,
-        cellBorderColor,
-        cellFocusedBorderColor,
-        cellFilledBorderColor,
-        cellErrorBorderColor,
-        cellBorderWidth,
-        cellRadius,
-        textStyle,
-        cursorColor,
-        selectionColor,
-        disabledOpacity,
-      ]);
+    cellSize,
+    cellGap,
+    cellPadding,
+    cellBackgroundColor,
+    cellBorderColor,
+    cellFocusedBorderColor,
+    cellFilledBorderColor,
+    cellErrorBorderColor,
+    cellBorderWidth,
+    cellRadius,
+    textStyle,
+    cursorColor,
+    selectionColor,
+    disabledOpacity,
+  ]);
 }

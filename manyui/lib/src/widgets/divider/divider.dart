@@ -40,8 +40,9 @@ class MDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MDividerStyle resolved =
-        theme.divider.resolve(colors: theme.colors).applyDelta(style);
+    final MDividerStyle resolved = theme.divider
+        .resolve(colors: theme.colors)
+        .applyDelta(style);
 
     final bool horizontal = orientation == MDividerOrientation.horizontal;
     return Semantics(

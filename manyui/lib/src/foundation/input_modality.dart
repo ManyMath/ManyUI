@@ -49,8 +49,8 @@ class MInputModalityScope extends InheritedWidget {
   /// Returns the nearest [MInputModality] above [context], or the platform
   /// default. For the full explicit -> scope -> platform chain, use [resolve].
   static MInputModality of(BuildContext context) {
-    final MInputModalityScope? scope =
-        context.dependOnInheritedWidgetOfExactType<MInputModalityScope>();
+    final MInputModalityScope? scope = context
+        .dependOnInheritedWidgetOfExactType<MInputModalityScope>();
     return scope?.modality ??
         MInputModality.defaultForPlatform(defaultTargetPlatform);
   }

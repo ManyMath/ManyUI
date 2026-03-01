@@ -52,8 +52,9 @@ class MCommandPalette<T> extends StatefulWidget {
 class _MCommandPaletteState<T> extends State<MCommandPalette<T>> {
   final TextEditingController _query = TextEditingController();
   final UndoHistoryController _undo = UndoHistoryController();
-  final FocusNode _searchFocus =
-      FocusNode(debugLabel: 'MCommandPalette search');
+  final FocusNode _searchFocus = FocusNode(
+    debugLabel: 'MCommandPalette search',
+  );
   final ScrollController _scroll = ScrollController();
 
   // The focused-item id while the palette is open. Drives the highlight and
@@ -81,11 +82,15 @@ class _MCommandPaletteState<T> extends State<MCommandPalette<T>> {
     final List<MCommandItem<T>> filtered = _filterItems(_query.text);
     // Preserve focused id if it's still in the filtered set; otherwise jump
     // to the first enabled item of the new set.
-    final bool stillVisible = _focusedItemId != null &&
-        filtered.any((MCommandItem<T> i) =>
-            i.id == _focusedItemId && i.enabled);
+    final bool stillVisible =
+        _focusedItemId != null &&
+        filtered.any(
+          (MCommandItem<T> i) => i.id == _focusedItemId && i.enabled,
+        );
     setState(() {
-      _focusedItemId = stillVisible ? _focusedItemId : _firstEnabledId(filtered);
+      _focusedItemId = stillVisible
+          ? _focusedItemId
+          : _firstEnabledId(filtered);
     });
   }
 
@@ -109,8 +114,9 @@ class _MCommandPaletteState<T> extends State<MCommandPalette<T>> {
   }
 
   void _moveItemFocus(int delta, List<MCommandItem<T>> filtered) {
-    final List<MCommandItem<T>> enabled =
-        filtered.where((MCommandItem<T> i) => i.enabled).toList();
+    final List<MCommandItem<T>> enabled = filtered
+        .where((MCommandItem<T> i) => i.enabled)
+        .toList();
     if (enabled.isEmpty) return;
     final int current = _focusedItemId == null
         ? -1
@@ -184,8 +190,9 @@ class _MCommandPaletteState<T> extends State<MCommandPalette<T>> {
         key == LogicalKeyboardKey.numpadEnter) {
       final String? focused = _focusedItemId;
       if (focused == null) return KeyEventResult.handled;
-      final int idx = filtered
-          .indexWhere((MCommandItem<T> i) => i.id == focused && i.enabled);
+      final int idx = filtered.indexWhere(
+        (MCommandItem<T> i) => i.id == focused && i.enabled,
+      );
       if (idx < 0) return KeyEventResult.handled;
       _activate(filtered[idx]);
       return KeyEventResult.handled;
@@ -274,8 +281,9 @@ class _MCommandPaletteState<T> extends State<MCommandPalette<T>> {
   }
 
   Widget _buildSearchField(MThemeData theme, MCommandPaletteStyle s) {
-    final TextStyle textStyle =
-        s.searchTextStyle.copyWith(color: s.surfaceForegroundColor);
+    final TextStyle textStyle = s.searchTextStyle.copyWith(
+      color: s.surfaceForegroundColor,
+    );
     final bool showPlaceholder =
         _query.text.isEmpty && (widget.placeholder?.isNotEmpty ?? false);
 
@@ -311,10 +319,7 @@ class _MCommandPaletteState<T> extends State<MCommandPalette<T>> {
               ),
             ),
           ),
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: editable,
-        ),
+        Align(alignment: AlignmentDirectional.centerStart, child: editable),
       ],
     );
   }
@@ -322,34 +327,28 @@ class _MCommandPaletteState<T> extends State<MCommandPalette<T>> {
   Widget _buildEmptyState(MCommandPaletteStyle s) {
     return Padding(
       padding: s.listPadding.add(const EdgeInsets.symmetric(vertical: 24)),
-      child: Center(
-        child: Text(
-          s.emptyText,
-          style: s.emptyTextStyle,
-        ),
-      ),
+      child: Center(child: Text(s.emptyText, style: s.emptyTextStyle)),
     );
   }
 
-  Widget _buildList(
-    MCommandPaletteStyle s,
-    List<MCommandItem<T>> filtered,
-  ) {
+  Widget _buildList(MCommandPaletteStyle s, List<MCommandItem<T>> filtered) {
     final List<Widget> rows = <Widget>[];
     for (int i = 0; i < filtered.length; i++) {
       if (i > 0) rows.add(SizedBox(height: s.itemSpacing));
       final MCommandItem<T> item = filtered[i];
-      rows.add(_CommandRow<T>(
-        item: item,
-        style: s,
-        isFocused: item.id == _focusedItemId,
-        onTap: () => _activate(item),
-        onHover: () {
-          if (_focusedItemId != item.id) {
-            setState(() => _focusedItemId = item.id);
-          }
-        },
-      ));
+      rows.add(
+        _CommandRow<T>(
+          item: item,
+          style: s,
+          isFocused: item.id == _focusedItemId,
+          onTap: () => _activate(item),
+          onHover: () {
+            if (_focusedItemId != item.id) {
+              setState(() => _focusedItemId = item.id);
+            }
+          },
+        ),
+      );
     }
     return Padding(
       padding: s.listPadding,
@@ -384,21 +383,25 @@ class _CommandRow<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Widget> rowChildren = <Widget>[];
     if (item.leading != null) {
-      rowChildren.add(DefaultTextStyle.merge(
-        style: style.itemTitleTextStyle
-            .copyWith(color: style.itemForegroundColor),
-        child: IconTheme.merge(
-          data: IconThemeData(color: style.itemForegroundColor),
-          child: item.leading!,
+      rowChildren.add(
+        DefaultTextStyle.merge(
+          style: style.itemTitleTextStyle.copyWith(
+            color: style.itemForegroundColor,
+          ),
+          child: IconTheme.merge(
+            data: IconThemeData(color: style.itemForegroundColor),
+            child: item.leading!,
+          ),
         ),
-      ));
+      );
       rowChildren.add(SizedBox(width: style.itemLeadingTrailingGap));
     }
 
     final Widget titleAndSubtitle = item.subtitle == null
         ? DefaultTextStyle.merge(
-            style: style.itemTitleTextStyle
-                .copyWith(color: style.itemForegroundColor),
+            style: style.itemTitleTextStyle.copyWith(
+              color: style.itemForegroundColor,
+            ),
             child: item.title,
           )
         : Column(
@@ -406,13 +409,15 @@ class _CommandRow<T> extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               DefaultTextStyle.merge(
-                style: style.itemTitleTextStyle
-                    .copyWith(color: style.itemForegroundColor),
+                style: style.itemTitleTextStyle.copyWith(
+                  color: style.itemForegroundColor,
+                ),
                 child: item.title,
               ),
               DefaultTextStyle.merge(
-                style: style.itemSubtitleTextStyle
-                    .copyWith(color: style.itemSubtitleForegroundColor),
+                style: style.itemSubtitleTextStyle.copyWith(
+                  color: style.itemSubtitleForegroundColor,
+                ),
                 child: item.subtitle!,
               ),
             ],
@@ -422,11 +427,14 @@ class _CommandRow<T> extends StatelessWidget {
 
     if (item.trailing != null) {
       rowChildren.add(SizedBox(width: style.itemLeadingTrailingGap));
-      rowChildren.add(DefaultTextStyle.merge(
-        style: style.itemTitleTextStyle
-            .copyWith(color: style.itemTrailingForegroundColor),
-        child: item.trailing!,
-      ));
+      rowChildren.add(
+        DefaultTextStyle.merge(
+          style: style.itemTitleTextStyle.copyWith(
+            color: style.itemTrailingForegroundColor,
+          ),
+          child: item.trailing!,
+        ),
+      );
     }
 
     Widget body = Padding(
@@ -573,10 +581,7 @@ class MCommandPaletteRoute<T> extends PopupRoute<MCommandItem<T>?> {
       builder: (BuildContext ctx, BoxConstraints c) {
         final double maxH = c.maxHeight * maxHeightFraction;
         return ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: maxWidth,
-            maxHeight: maxH,
-          ),
+          constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxH),
           child: absorbing,
         );
       },
@@ -585,10 +590,7 @@ class MCommandPaletteRoute<T> extends PopupRoute<MCommandItem<T>?> {
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.only(top: topOffset),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: sized,
-        ),
+        child: Align(alignment: Alignment.topCenter, child: sized),
       ),
     );
   }
@@ -662,16 +664,18 @@ Future<MCommandItem<T>?> showMCommandPalette<T>(
       )
       .applyDelta(style);
 
-  return Navigator.of(context).push<MCommandItem<T>?>(MCommandPaletteRoute<T>(
-    items: items,
-    placeholder: placeholder,
-    scrimColor: resolved.scrimColor,
-    themeData: theme,
-    topOffset: resolved.topOffset,
-    maxWidth: resolved.maxWidth,
-    maxHeightFraction: resolved.maxHeightFraction,
-    style: style,
-    semanticLabel: semanticLabel,
-    dismissible: dismissible,
-  ));
+  return Navigator.of(context).push<MCommandItem<T>?>(
+    MCommandPaletteRoute<T>(
+      items: items,
+      placeholder: placeholder,
+      scrimColor: resolved.scrimColor,
+      themeData: theme,
+      topOffset: resolved.topOffset,
+      maxWidth: resolved.maxWidth,
+      maxHeightFraction: resolved.maxHeightFraction,
+      style: style,
+      semanticLabel: semanticLabel,
+      dismissible: dismissible,
+    ),
+  );
 }

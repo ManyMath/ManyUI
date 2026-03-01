@@ -91,8 +91,9 @@ class _MContextMenuState extends State<MContextMenu> {
   bool _ownsController = false;
 
   final OverlayPortalController _portal = OverlayPortalController();
-  final FocusScopeNode _scope =
-      FocusScopeNode(debugLabel: 'MContextMenu scope');
+  final FocusScopeNode _scope = FocusScopeNode(
+    debugLabel: 'MContextMenu scope',
+  );
 
   // Pointer location captured by the gesture detector, in **global** coords.
   // The overlay layout delegate converts back to overlay-local at paint time.
@@ -208,8 +209,9 @@ class _MContextMenuState extends State<MContextMenu> {
   }
 
   void _moveItemFocus(int delta) {
-    final List<MMenuItem> enabled =
-        widget.items.where((MMenuItem i) => i.enabled).toList();
+    final List<MMenuItem> enabled = widget.items
+        .where((MMenuItem i) => i.enabled)
+        .toList();
     if (enabled.isEmpty) return;
     final int current = _focusedItemId == null
         ? -1
@@ -289,8 +291,10 @@ class _MContextMenuState extends State<MContextMenu> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality resolvedModality =
-        MInputModalityScope.resolve(context, widget.modality);
+    final MInputModality resolvedModality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
     final MContextMenuStyle resolved = theme.contextMenu
         .resolve(
           modality: resolvedModality,
@@ -504,10 +508,14 @@ class _PointerAnchoredMenuLayout extends SingleChildLayoutDelegate {
     // Allow the menu to grow up to the viewport size minus padding on
     // each side. The IntrinsicWidth + ConstrainedBox wrapping inside
     // takes care of the desired width.
-    final double maxW =
-        (constraints.maxWidth - 2 * viewportPadding).clamp(0.0, double.infinity);
-    final double maxH =
-        (constraints.maxHeight - 2 * viewportPadding).clamp(0.0, double.infinity);
+    final double maxW = (constraints.maxWidth - 2 * viewportPadding).clamp(
+      0.0,
+      double.infinity,
+    );
+    final double maxH = (constraints.maxHeight - 2 * viewportPadding).clamp(
+      0.0,
+      double.infinity,
+    );
     return BoxConstraints(
       minWidth: 0,
       maxWidth: maxW,
@@ -569,8 +577,9 @@ class _MContextMenuItemRow extends StatelessWidget {
       rowChildren.add(const SizedBox(width: 24));
       rowChildren.add(
         DefaultTextStyle.merge(
-          style: style.itemTextStyle
-              .copyWith(color: style.itemTrailingForegroundColor),
+          style: style.itemTextStyle.copyWith(
+            color: style.itemTrailingForegroundColor,
+          ),
           child: item.trailing!,
         ),
       );
@@ -610,8 +619,7 @@ class _MContextMenuItemRow extends StatelessWidget {
       container: true,
       child: MouseRegion(
         onEnter: enabled ? (_) => onHover() : null,
-        cursor:
-            enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: enabled ? onTap : null,

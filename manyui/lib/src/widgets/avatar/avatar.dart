@@ -70,17 +70,14 @@ class MAvatar extends StatelessWidget {
         : resolved.squareRadius;
 
     final Widget fallbackContent = DefaultTextStyle.merge(
-      style:
-          resolved.textStyle.copyWith(color: resolved.foregroundColor),
+      style: resolved.textStyle.copyWith(color: resolved.foregroundColor),
       textAlign: TextAlign.center,
       child: IconTheme.merge(
         data: IconThemeData(color: resolved.foregroundColor),
         child: Center(
           // The fallback is always semantically excluded — if the caller
           // wants the avatar announced, semanticLabel carries the label.
-          child: ExcludeSemantics(
-            child: fallback ?? const SizedBox.shrink(),
-          ),
+          child: ExcludeSemantics(child: fallback ?? const SizedBox.shrink()),
         ),
       ),
     );

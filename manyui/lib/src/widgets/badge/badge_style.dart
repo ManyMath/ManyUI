@@ -85,14 +85,14 @@ class MBadgeStyle {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        padding,
-        textStyle,
-        radius,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    padding,
+    textStyle,
+    radius,
+  );
 }
 
 /// A nullable overlay of [MBadgeStyle] fields.
@@ -145,12 +145,12 @@ class MBadgeStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        padding,
-        textStyle,
-        radius,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    padding,
+    textStyle,
+    radius,
+  );
 }

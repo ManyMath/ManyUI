@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 class MOverlayAnchorController {
   /// Creates a controller.
   MOverlayAnchorController({String? debugLabel})
-      : _scope = FocusScopeNode(debugLabel: debugLabel ?? 'MOverlayAnchor');
+    : _scope = FocusScopeNode(debugLabel: debugLabel ?? 'MOverlayAnchor');
 
   final OverlayPortalController _portal = OverlayPortalController();
   final LayerLink _link = LayerLink();
@@ -117,10 +117,7 @@ class MOverlayAnchor extends StatelessWidget {
       link: controller._link,
       showWhenUnlinked: false,
       offset: overlayOffset,
-      child: Align(
-        alignment: AlignmentDirectional.topStart,
-        child: body,
-      ),
+      child: Align(alignment: AlignmentDirectional.topStart, child: body),
     );
 
     final Widget focused = FocusScope(

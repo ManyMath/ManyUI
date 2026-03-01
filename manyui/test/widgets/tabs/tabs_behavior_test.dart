@@ -5,55 +5,49 @@ import 'package:manyui/manyui.dart';
 import 'package:manyui_testing/manyui_testing.dart';
 
 List<MTab> _threeTabs() => const <MTab>[
-      MTab(
-        id: 'one',
-        title: Text('One'),
-        content: KeyedSubtree(
-          key: ValueKey<String>('content-one'),
-          child: Text('Pane one'),
-        ),
-      ),
-      MTab(
-        id: 'two',
-        title: Text('Two'),
-        content: KeyedSubtree(
-          key: ValueKey<String>('content-two'),
-          child: Text('Pane two'),
-        ),
-      ),
-      MTab(
-        id: 'three',
-        title: Text('Three'),
-        content: KeyedSubtree(
-          key: ValueKey<String>('content-three'),
-          child: Text('Pane three'),
-        ),
-      ),
-    ];
+  MTab(
+    id: 'one',
+    title: Text('One'),
+    content: KeyedSubtree(
+      key: ValueKey<String>('content-one'),
+      child: Text('Pane one'),
+    ),
+  ),
+  MTab(
+    id: 'two',
+    title: Text('Two'),
+    content: KeyedSubtree(
+      key: ValueKey<String>('content-two'),
+      child: Text('Pane two'),
+    ),
+  ),
+  MTab(
+    id: 'three',
+    title: Text('Three'),
+    content: KeyedSubtree(
+      key: ValueKey<String>('content-three'),
+      child: Text('Pane three'),
+    ),
+  ),
+];
 
-Finder _tabFinder(String title) => find.ancestor(
-      of: find.text(title),
-      matching: find.byType(GestureDetector),
-    );
+Finder _tabFinder(String title) =>
+    find.ancestor(of: find.text(title), matching: find.byType(GestureDetector));
 
 void main() {
   group('MTabs initial state', () {
     testWidgets(
-        'defaults to the first tab when neither controller nor initialId given',
-        (WidgetTester tester) async {
-      await pumpManyApp(
-        tester,
-        MTabs(tabs: _threeTabs()),
-      );
-      expect(find.text('Pane one'), findsOneWidget);
-    });
+      'defaults to the first tab when neither controller nor initialId given',
+      (WidgetTester tester) async {
+        await pumpManyApp(tester, MTabs(tabs: _threeTabs()));
+        expect(find.text('Pane one'), findsOneWidget);
+      },
+    );
 
-    testWidgets('initialId selects a non-first tab',
-        (WidgetTester tester) async {
-      await pumpManyApp(
-        tester,
-        MTabs(tabs: _threeTabs(), initialId: 'two'),
-      );
+    testWidgets('initialId selects a non-first tab', (
+      WidgetTester tester,
+    ) async {
+      await pumpManyApp(tester, MTabs(tabs: _threeTabs(), initialId: 'two'));
       // IndexedStack keeps all children mounted; we assert by reading the
       // controller via UI selection instead. Use a controller for clarity.
       final MTabsController c = MTabsController('two');
@@ -62,21 +56,20 @@ void main() {
       expect(c.value, 'two');
     });
 
-    testWidgets('external controller seeds the active tab',
-        (WidgetTester tester) async {
+    testWidgets('external controller seeds the active tab', (
+      WidgetTester tester,
+    ) async {
       final MTabsController c = MTabsController('three');
       addTearDown(c.dispose);
-      await pumpManyApp(
-        tester,
-        MTabs(tabs: _threeTabs(), controller: c),
-      );
+      await pumpManyApp(tester, MTabs(tabs: _threeTabs(), controller: c));
       expect(c.value, 'three');
     });
   });
 
   group('MTabs UI selection', () {
-    testWidgets('tapping a tab writes its id into the controller',
-        (WidgetTester tester) async {
+    testWidgets('tapping a tab writes its id into the controller', (
+      WidgetTester tester,
+    ) async {
       final MTabsController c = MTabsController('one');
       addTearDown(c.dispose);
       String? reported;
@@ -100,26 +93,24 @@ void main() {
       expect(reported, 'three');
     });
 
-    testWidgets('tapping the active tab is a no-op',
-        (WidgetTester tester) async {
+    testWidgets('tapping the active tab is a no-op', (
+      WidgetTester tester,
+    ) async {
       final MTabsController c = MTabsController('one');
       addTearDown(c.dispose);
       int calls = 0;
       await pumpManyApp(
         tester,
-        MTabs(
-          tabs: _threeTabs(),
-          controller: c,
-          onChanged: (_) => calls++,
-        ),
+        MTabs(tabs: _threeTabs(), controller: c, onChanged: (_) => calls++),
       );
       await tester.tap(_tabFinder('One'));
       await tester.pump();
       expect(calls, 0);
     });
 
-    testWidgets('tap is a no-op when the strip is disabled',
-        (WidgetTester tester) async {
+    testWidgets('tap is a no-op when the strip is disabled', (
+      WidgetTester tester,
+    ) async {
       final MTabsController c = MTabsController('one');
       addTearDown(c.dispose);
       int calls = 0;
@@ -138,8 +129,9 @@ void main() {
       expect(calls, 0);
     });
 
-    testWidgets('tap is a no-op when the individual tab is disabled',
-        (WidgetTester tester) async {
+    testWidgets('tap is a no-op when the individual tab is disabled', (
+      WidgetTester tester,
+    ) async {
       final MTabsController c = MTabsController('one');
       addTearDown(c.dispose);
       int calls = 0;
@@ -167,8 +159,9 @@ void main() {
   });
 
   group('MTabs programmatic selection', () {
-    testWidgets('controller.value = id activates the matching tab',
-        (WidgetTester tester) async {
+    testWidgets('controller.value = id activates the matching tab', (
+      WidgetTester tester,
+    ) async {
       final MTabsController c = MTabsController('one');
       addTearDown(c.dispose);
       await pumpManyApp(tester, MTabs(tabs: _threeTabs(), controller: c));
@@ -183,8 +176,9 @@ void main() {
       expect(c.value, 'two');
     });
 
-    testWidgets('controller assignment to a disabled tab id is allowed',
-        (WidgetTester tester) async {
+    testWidgets('controller assignment to a disabled tab id is allowed', (
+      WidgetTester tester,
+    ) async {
       // Programmatic mutation is authoritative — controllers can land on
       // disabled ids. The DECISIONS entry pins this behavior.
       final MTabsController c = MTabsController('one');
@@ -211,13 +205,17 @@ void main() {
   });
 
   group('MTabs keyboard nav', () {
-    testWidgets('Right arrow activates the next enabled tab',
-        (WidgetTester tester) async {
+    testWidgets('Right arrow activates the next enabled tab', (
+      WidgetTester tester,
+    ) async {
       final MTabsController c = MTabsController('one');
       addTearDown(c.dispose);
       await pumpManyApp(
         tester,
-        Focus(autofocus: true, child: MTabs(tabs: _threeTabs(), controller: c)),
+        Focus(
+          autofocus: true,
+          child: MTabs(tabs: _threeTabs(), controller: c),
+        ),
       );
 
       await tester.tap(_tabFinder('One'));
@@ -232,14 +230,12 @@ void main() {
       expect(c.value, 'three');
     });
 
-    testWidgets('Left arrow activates the previous enabled tab',
-        (WidgetTester tester) async {
+    testWidgets('Left arrow activates the previous enabled tab', (
+      WidgetTester tester,
+    ) async {
       final MTabsController c = MTabsController('three');
       addTearDown(c.dispose);
-      await pumpManyApp(
-        tester,
-        MTabs(tabs: _threeTabs(), controller: c),
-      );
+      await pumpManyApp(tester, MTabs(tabs: _threeTabs(), controller: c));
       await tester.tap(_tabFinder('Three'));
       await tester.pump();
 
@@ -252,14 +248,12 @@ void main() {
       expect(c.value, 'one');
     });
 
-    testWidgets('Right arrow wraps around at the last enabled tab',
-        (WidgetTester tester) async {
+    testWidgets('Right arrow wraps around at the last enabled tab', (
+      WidgetTester tester,
+    ) async {
       final MTabsController c = MTabsController('three');
       addTearDown(c.dispose);
-      await pumpManyApp(
-        tester,
-        MTabs(tabs: _threeTabs(), controller: c),
-      );
+      await pumpManyApp(tester, MTabs(tabs: _threeTabs(), controller: c));
       await tester.tap(_tabFinder('Three'));
       await tester.pump();
 
@@ -268,14 +262,12 @@ void main() {
       expect(c.value, 'one');
     });
 
-    testWidgets('Left arrow wraps around at the first enabled tab',
-        (WidgetTester tester) async {
+    testWidgets('Left arrow wraps around at the first enabled tab', (
+      WidgetTester tester,
+    ) async {
       final MTabsController c = MTabsController('one');
       addTearDown(c.dispose);
-      await pumpManyApp(
-        tester,
-        MTabs(tabs: _threeTabs(), controller: c),
-      );
+      await pumpManyApp(tester, MTabs(tabs: _threeTabs(), controller: c));
       await tester.tap(_tabFinder('One'));
       await tester.pump();
 
@@ -284,14 +276,12 @@ void main() {
       expect(c.value, 'three');
     });
 
-    testWidgets('Home jumps to the first enabled tab; End jumps to the last',
-        (WidgetTester tester) async {
+    testWidgets('Home jumps to the first enabled tab; End jumps to the last', (
+      WidgetTester tester,
+    ) async {
       final MTabsController c = MTabsController('two');
       addTearDown(c.dispose);
-      await pumpManyApp(
-        tester,
-        MTabs(tabs: _threeTabs(), controller: c),
-      );
+      await pumpManyApp(tester, MTabs(tabs: _threeTabs(), controller: c));
       await tester.tap(_tabFinder('Two'));
       await tester.pump();
 
@@ -304,8 +294,7 @@ void main() {
       expect(c.value, 'three');
     });
 
-    testWidgets('arrow keys skip disabled tabs',
-        (WidgetTester tester) async {
+    testWidgets('arrow keys skip disabled tabs', (WidgetTester tester) async {
       final MTabsController c = MTabsController('one');
       addTearDown(c.dispose);
       await pumpManyApp(
@@ -338,58 +327,64 @@ void main() {
   });
 
   group('MTabs content state persistence', () {
-    testWidgets('IndexedStack keeps EditableText contents across tab switches',
-        (WidgetTester tester) async {
-      final MTabsController c = MTabsController('one');
-      addTearDown(c.dispose);
-      final TextEditingController text = TextEditingController();
-      addTearDown(text.dispose);
+    testWidgets(
+      'IndexedStack keeps EditableText contents across tab switches',
+      (WidgetTester tester) async {
+        final MTabsController c = MTabsController('one');
+        addTearDown(c.dispose);
+        final TextEditingController text = TextEditingController();
+        addTearDown(text.dispose);
 
-      await pumpManyApp(
-        tester,
-        MTabs(
-          tabs: <MTab>[
-            MTab(
-              id: 'one',
-              title: const Text('One'),
-              content: SizedBox(
-                width: 200,
-                child: EditableText(
-                  controller: text,
-                  focusNode: FocusNode(),
-                  style: const TextStyle(fontSize: 14, color: Color(0xFF000000)),
-                  cursorColor: const Color(0xFF000000),
-                  backgroundCursorColor: const Color(0xFF000000),
+        await pumpManyApp(
+          tester,
+          MTabs(
+            tabs: <MTab>[
+              MTab(
+                id: 'one',
+                title: const Text('One'),
+                content: SizedBox(
+                  width: 200,
+                  child: EditableText(
+                    controller: text,
+                    focusNode: FocusNode(),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF000000),
+                    ),
+                    cursorColor: const Color(0xFF000000),
+                    backgroundCursorColor: const Color(0xFF000000),
+                  ),
                 ),
               ),
-            ),
-            const MTab(
-              id: 'two',
-              title: Text('Two'),
-              content: Text('Pane two'),
-            ),
-          ],
-          controller: c,
-        ),
-      );
+              const MTab(
+                id: 'two',
+                title: Text('Two'),
+                content: Text('Pane two'),
+              ),
+            ],
+            controller: c,
+          ),
+        );
 
-      await tester.enterText(find.byType(EditableText), 'hello');
-      expect(text.text, 'hello');
+        await tester.enterText(find.byType(EditableText), 'hello');
+        expect(text.text, 'hello');
 
-      c.value = 'two';
-      await tester.pump();
-      c.value = 'one';
-      await tester.pump();
+        c.value = 'two';
+        await tester.pump();
+        c.value = 'one';
+        await tester.pump();
 
-      // The same EditableText instance survived the swap because the content
-      // panes all stay mounted under IndexedStack.
-      expect(text.text, 'hello');
-    });
+        // The same EditableText instance survived the swap because the content
+        // panes all stay mounted under IndexedStack.
+        expect(text.text, 'hello');
+      },
+    );
   });
 
   group('MTabs style', () {
-    testWidgets('mouse modality uses the 36px tab height',
-        (WidgetTester tester) async {
+    testWidgets('mouse modality uses the 36px tab height', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         MTabs(tabs: _threeTabs()),
@@ -402,8 +397,9 @@ void main() {
       expect(size.height, 36);
     });
 
-    testWidgets('touch modality uses the 48px tab height',
-        (WidgetTester tester) async {
+    testWidgets('touch modality uses the 48px tab height', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         MTabs(tabs: _threeTabs()),
@@ -414,14 +410,12 @@ void main() {
       expect(size.height, 48);
     });
 
-    testWidgets('style delta tabHeight overrides the theme-resolved height',
-        (WidgetTester tester) async {
+    testWidgets('style delta tabHeight overrides the theme-resolved height', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
-        MTabs(
-          tabs: _threeTabs(),
-          style: const MTabsStyleDelta(tabHeight: 60),
-        ),
+        MTabs(tabs: _threeTabs(), style: const MTabsStyleDelta(tabHeight: 60)),
         modality: MInputModality.mouse,
       );
       expect(tester.getSize(_tabFinder('One')).height, 60);
@@ -444,8 +438,9 @@ void main() {
       throw StateError('No tab Semantics with `selected` set found.');
     }
 
-    testWidgets('the active tab reports selected: true; others false',
-        (WidgetTester tester) async {
+    testWidgets('the active tab reports selected: true; others false', (
+      WidgetTester tester,
+    ) async {
       final MTabsController c = MTabsController('two');
       addTearDown(c.dispose);
       await pumpManyApp(tester, MTabs(tabs: _threeTabs(), controller: c));
@@ -454,8 +449,9 @@ void main() {
       expect(tabSemantics(tester, 'Two').properties.selected, isTrue);
     });
 
-    testWidgets('semanticLabel is applied to the strip container',
-        (WidgetTester tester) async {
+    testWidgets('semanticLabel is applied to the strip container', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         MTabs(tabs: _threeTabs(), semanticLabel: 'Account sections'),
@@ -463,8 +459,9 @@ void main() {
       expect(find.bySemanticsLabel('Account sections'), findsOneWidget);
     });
 
-    testWidgets('a disabled tab reports enabled: false',
-        (WidgetTester tester) async {
+    testWidgets('a disabled tab reports enabled: false', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         const MTabs(
@@ -484,8 +481,9 @@ void main() {
   });
 
   group('MTabs controller rebind', () {
-    testWidgets('swapping the caller-supplied controller rebinds the strip',
-        (WidgetTester tester) async {
+    testWidgets('swapping the caller-supplied controller rebinds the strip', (
+      WidgetTester tester,
+    ) async {
       final MTabsController first = MTabsController('one');
       final MTabsController second = MTabsController('three');
       addTearDown(first.dispose);
@@ -494,11 +492,7 @@ void main() {
       final _RebindHarnessState stateRef = _RebindHarnessState();
       await pumpManyApp(
         tester,
-        _RebindHarness(
-          stateRef: stateRef,
-          first: first,
-          second: second,
-        ),
+        _RebindHarness(stateRef: stateRef, first: first, second: second),
       );
 
       // Initially bound to 'first'. Tapping 'two' updates first.
@@ -521,15 +515,11 @@ void main() {
     });
 
     testWidgets('disposing the strip with an externally-owned controller '
-        'does NOT dispose the controller',
-        (WidgetTester tester) async {
+        'does NOT dispose the controller', (WidgetTester tester) async {
       final MTabsController owned = MTabsController('one');
       addTearDown(owned.dispose);
 
-      await pumpManyApp(
-        tester,
-        MTabs(tabs: _threeTabs(), controller: owned),
-      );
+      await pumpManyApp(tester, MTabs(tabs: _threeTabs(), controller: owned));
       // Replace with an empty scene to trigger MTabs.dispose().
       await pumpManyApp(tester, const SizedBox.shrink());
 
@@ -540,8 +530,9 @@ void main() {
   });
 
   group('MTabs tab reordering', () {
-    testWidgets('removing a non-active tab keeps the active tab live',
-        (WidgetTester tester) async {
+    testWidgets('removing a non-active tab keeps the active tab live', (
+      WidgetTester tester,
+    ) async {
       final MTabsController c = MTabsController('three');
       addTearDown(c.dispose);
 

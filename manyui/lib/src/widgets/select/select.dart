@@ -134,8 +134,9 @@ class _MSelectState<T> extends State<MSelect<T>> {
   late MController<T?> _controller;
   bool _ownsController = false;
 
-  final MOverlayAnchorController _anchor =
-      MOverlayAnchorController(debugLabel: 'MSelect popover');
+  final MOverlayAnchorController _anchor = MOverlayAnchorController(
+    debugLabel: 'MSelect popover',
+  );
 
   FocusNode? _ownedAnchorNode;
   bool _anchorFocused = false;
@@ -147,8 +148,7 @@ class _MSelectState<T> extends State<MSelect<T>> {
 
   static const Duration _searchTimeout = Duration(milliseconds: 600);
 
-  late final Map<Type, Action<Intent>> _anchorActions =
-      <Type, Action<Intent>>{
+  late final Map<Type, Action<Intent>> _anchorActions = <Type, Action<Intent>>{
     ActivateIntent: CallbackAction<ActivateIntent>(
       onInvoke: (_) {
         _open ? _closePopover(commit: false) : _openPopover();
@@ -168,14 +168,16 @@ class _MSelectState<T> extends State<MSelect<T>> {
 
   static const Map<ShortcutActivator, Intent> _anchorShortcuts =
       <ShortcutActivator, Intent>{
-    SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
-    SingleActivator(LogicalKeyboardKey.numpadEnter): ActivateIntent(),
-    SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
-    SingleActivator(LogicalKeyboardKey.arrowDown):
-        DirectionalFocusIntent(TraversalDirection.down),
-    SingleActivator(LogicalKeyboardKey.arrowUp):
-        DirectionalFocusIntent(TraversalDirection.up),
-  };
+        SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+        SingleActivator(LogicalKeyboardKey.numpadEnter): ActivateIntent(),
+        SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+        SingleActivator(LogicalKeyboardKey.arrowDown): DirectionalFocusIntent(
+          TraversalDirection.down,
+        ),
+        SingleActivator(LogicalKeyboardKey.arrowUp): DirectionalFocusIntent(
+          TraversalDirection.up,
+        ),
+      };
 
   FocusNode get _anchorNode {
     if (widget.focusNode != null) return widget.focusNode!;
@@ -347,8 +349,10 @@ class _MSelectState<T> extends State<MSelect<T>> {
       return KeyEventResult.handled;
     }
     if (key == LogicalKeyboardKey.end) {
-      final int last =
-          _firstEnabledIndex(from: widget.items.length - 1, step: -1);
+      final int last = _firstEnabledIndex(
+        from: widget.items.length - 1,
+        step: -1,
+      );
       if (last >= 0) setState(() => _focusedIndex = last);
       return KeyEventResult.handled;
     }
@@ -375,8 +379,10 @@ class _MSelectState<T> extends State<MSelect<T>> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality resolvedModality =
-        MInputModalityScope.resolve(context, widget.modality);
+    final MInputModality resolvedModality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
     final MSelectStyle resolved = theme.select
         .resolve(
           modality: resolvedModality,
@@ -387,8 +393,9 @@ class _MSelectState<T> extends State<MSelect<T>> {
         .applyDelta(widget.style);
 
     final int selectedIndex = _indexOfValue(_controller.value);
-    final MSelectItem<T>? selectedItem =
-        selectedIndex >= 0 ? widget.items[selectedIndex] : null;
+    final MSelectItem<T>? selectedItem = selectedIndex >= 0
+        ? widget.items[selectedIndex]
+        : null;
 
     Widget anchor = _buildAnchor(resolved, selectedItem);
     anchor = MFocusRing(focused: _anchorFocused, child: anchor);
@@ -435,8 +442,9 @@ class _MSelectState<T> extends State<MSelect<T>> {
   Widget _buildAnchor(MSelectStyle s, MSelectItem<T>? selectedItem) {
     final String? label = selectedItem?.label;
     final bool showPlaceholder = label == null;
-    final Color foreground =
-        showPlaceholder ? s.placeholderColor : s.anchorForegroundColor;
+    final Color foreground = showPlaceholder
+        ? s.placeholderColor
+        : s.anchorForegroundColor;
     final TextStyle textStyle = s.textStyle.copyWith(color: foreground);
 
     final Widget content = Row(
@@ -537,8 +545,7 @@ class _MSelectState<T> extends State<MSelect<T>> {
                     selected: i == selectedIndex,
                     style: s,
                     onHover: () {
-                      if (widget.items[i].enabled &&
-                          _focusedIndex != i) {
+                      if (widget.items[i].enabled && _focusedIndex != i) {
                         setState(() => _focusedIndex = i);
                       }
                     },
@@ -585,7 +592,7 @@ class _SelectItemRow<T> extends StatelessWidget {
     final Color background = focused
         ? style.itemFocusedBackgroundColor
         : (selected ? style.itemSelectedBackgroundColor : null) ??
-            const Color(0x00000000);
+              const Color(0x00000000);
     final Color foreground = selected
         ? style.itemSelectedForegroundColor
         : style.itemForegroundColor;

@@ -56,10 +56,7 @@ class MFocusRing extends StatelessWidget {
         radius: resolved.radius,
       );
     }
-    return CustomPaint(
-      foregroundPainter: painter,
-      child: child,
-    );
+    return CustomPaint(foregroundPainter: painter, child: child);
   }
 }
 

@@ -18,11 +18,9 @@ class MResizableChild {
     this.minSize = 0.05,
     this.maxSize = 1.0,
     this.id,
-  })  : assert(minSize >= 0 && minSize <= 1,
-            'minSize must be in [0, 1].'),
-        assert(maxSize > 0 && maxSize <= 1,
-            'maxSize must be in (0, 1].'),
-        assert(minSize <= maxSize, 'minSize must be <= maxSize.');
+  }) : assert(minSize >= 0 && minSize <= 1, 'minSize must be in [0, 1].'),
+       assert(maxSize > 0 && maxSize <= 1, 'maxSize must be in (0, 1].'),
+       assert(minSize <= maxSize, 'minSize must be <= maxSize.');
 
   /// The widget rendered inside this pane.
   final Widget child;
@@ -71,8 +69,10 @@ class MResizable extends StatefulWidget {
     this.style,
     this.semanticLabel,
     super.key,
-  }) : assert(children.length >= 2,
-            'MResizable requires at least two children.');
+  }) : assert(
+         children.length >= 2,
+         'MResizable requires at least two children.',
+       );
 
   /// The pane declarations rendered in main-axis order. Must contain at least
   /// two entries.
@@ -154,17 +154,23 @@ class _MResizableState extends State<MResizable> {
 
   void _bindController(MController<List<double>>? external) {
     if (external != null) {
-      assert(external.value.length == widget.children.length,
-          'Controller value length must equal children.length.');
+      assert(
+        external.value.length == widget.children.length,
+        'Controller value length must equal children.length.',
+      );
       _controller = external;
       _ownsController = false;
     } else {
       final List<double> seed = widget.initialSizes != null
           ? List<double>.from(widget.initialSizes!)
           : List<double>.filled(
-              widget.children.length, 1.0 / widget.children.length);
-      assert(seed.length == widget.children.length,
-          'initialSizes length must equal children.length.');
+              widget.children.length,
+              1.0 / widget.children.length,
+            );
+      assert(
+        seed.length == widget.children.length,
+        'initialSizes length must equal children.length.',
+      );
       _controller = MController<List<double>>(_normalize(seed));
       _ownsController = true;
     }
@@ -185,8 +191,9 @@ class _MResizableState extends State<MResizable> {
     for (int i = 0; i < widget.children.length - 1; i++) {
       ids.add('handle-$i');
     }
-    final List<String> stale =
-        _focusNodes.keys.where((String id) => !ids.contains(id)).toList();
+    final List<String> stale = _focusNodes.keys
+        .where((String id) => !ids.contains(id))
+        .toList();
     for (final String id in stale) {
       _focusNodes.remove(id)?.dispose();
     }
@@ -278,7 +285,11 @@ class _MResizableState extends State<MResizable> {
     setState(() => _activeHandleIndex = handleIndex);
   }
 
-  void _onHandleDragUpdate(int handleIndex, double deltaPx, double mainAxisExtent) {
+  void _onHandleDragUpdate(
+    int handleIndex,
+    double deltaPx,
+    double mainAxisExtent,
+  ) {
     if (mainAxisExtent <= 0) return;
     final double deltaFrac = deltaPx / mainAxisExtent;
     final List<double> next = _applyDrag(handleIndex, deltaFrac);
@@ -309,8 +320,10 @@ class _MResizableState extends State<MResizable> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality modality =
-        MInputModalityScope.resolve(context, widget.modality);
+    final MInputModality modality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
     final MResizableStyle resolved = theme.resizable
         .resolve(modality: modality, colors: theme.colors)
         .applyDelta(widget.style);
@@ -326,31 +339,35 @@ class _MResizableState extends State<MResizable> {
         final List<Widget> slats = <Widget>[];
         for (int i = 0; i < widget.children.length; i++) {
           final int flex = (fractions[i] * 1000000).round().clamp(1, 1 << 30);
-          slats.add(Flexible(
-            fit: FlexFit.tight,
-            flex: flex,
-            child: widget.children[i].child,
-          ));
+          slats.add(
+            Flexible(
+              fit: FlexFit.tight,
+              flex: flex,
+              child: widget.children[i].child,
+            ),
+          );
           if (i < widget.children.length - 1) {
-            slats.add(_Handle(
-              axis: widget.axis,
-              style: resolved,
-              enabled: widget.enabled,
-              focusNode: _focusNodes['handle-$i']!,
-              isActive: _activeHandleIndex == i,
-              currentFraction: fractions[i],
-              nextFraction: fractions[i + 1],
-              onDragStart: () => _onHandleDragStart(i),
-              onDragDelta: (double d) =>
-                  _onHandleDragUpdate(i, d, mainExtent),
-              onDragEnd: _onHandleDragEnd,
-              onNudgeForward: () => _nudge(i, resolved.keyboardStep),
-              onNudgeBackward: () => _nudge(i, -resolved.keyboardStep),
-              onFineForward: () => _nudge(i, resolved.keyboardFineStep),
-              onFineBackward: () => _nudge(i, -resolved.keyboardFineStep),
-              onJumpEnd: () => _jumpToEdge(i, toEnd: true),
-              onJumpStart: () => _jumpToEdge(i, toEnd: false),
-            ));
+            slats.add(
+              _Handle(
+                axis: widget.axis,
+                style: resolved,
+                enabled: widget.enabled,
+                focusNode: _focusNodes['handle-$i']!,
+                isActive: _activeHandleIndex == i,
+                currentFraction: fractions[i],
+                nextFraction: fractions[i + 1],
+                onDragStart: () => _onHandleDragStart(i),
+                onDragDelta: (double d) =>
+                    _onHandleDragUpdate(i, d, mainExtent),
+                onDragEnd: _onHandleDragEnd,
+                onNudgeForward: () => _nudge(i, resolved.keyboardStep),
+                onNudgeBackward: () => _nudge(i, -resolved.keyboardStep),
+                onFineForward: () => _nudge(i, resolved.keyboardFineStep),
+                onFineBackward: () => _nudge(i, -resolved.keyboardFineStep),
+                onJumpEnd: () => _jumpToEdge(i, toEnd: true),
+                onJumpStart: () => _jumpToEdge(i, toEnd: false),
+              ),
+            );
           }
         }
 
@@ -461,8 +478,7 @@ class _HandleState extends State<_Handle> {
     if (_hovered != value) setState(() => _hovered = value);
   }
 
-  String _formatPercent(double f) =>
-      '${(f * 100).round()}%';
+  String _formatPercent(double f) => '${(f * 100).round()}%';
 
   @override
   Widget build(BuildContext context) {
@@ -472,8 +488,8 @@ class _HandleState extends State<_Handle> {
     final Color visibleColor = !widget.enabled
         ? s.handleColor
         : (widget.isActive
-            ? s.handleActiveColor
-            : (_hovered ? s.handleHoveredColor : s.handleColor));
+              ? s.handleActiveColor
+              : (_hovered ? s.handleHoveredColor : s.handleColor));
 
     final Widget stroke = Container(
       width: horizontal ? s.handleThickness : double.infinity,
@@ -511,38 +527,46 @@ class _HandleState extends State<_Handle> {
 
     final SystemMouseCursor cursor = widget.enabled
         ? (horizontal
-            ? SystemMouseCursors.resizeColumn
-            : SystemMouseCursors.resizeRow)
+              ? SystemMouseCursors.resizeColumn
+              : SystemMouseCursors.resizeRow)
         : SystemMouseCursors.basic;
 
     final Map<ShortcutActivator, Intent> shortcuts = horizontal
         ? const <ShortcutActivator, Intent>{
-            SingleActivator(LogicalKeyboardKey.arrowRight):
-                _NudgeIntent(_NudgeKind.forward),
-            SingleActivator(LogicalKeyboardKey.arrowLeft):
-                _NudgeIntent(_NudgeKind.backward),
+            SingleActivator(LogicalKeyboardKey.arrowRight): _NudgeIntent(
+              _NudgeKind.forward,
+            ),
+            SingleActivator(LogicalKeyboardKey.arrowLeft): _NudgeIntent(
+              _NudgeKind.backward,
+            ),
             SingleActivator(LogicalKeyboardKey.arrowRight, shift: true):
                 _NudgeIntent(_NudgeKind.fineForward),
             SingleActivator(LogicalKeyboardKey.arrowLeft, shift: true):
                 _NudgeIntent(_NudgeKind.fineBackward),
-            SingleActivator(LogicalKeyboardKey.home):
-                _NudgeIntent(_NudgeKind.jumpStart),
-            SingleActivator(LogicalKeyboardKey.end):
-                _NudgeIntent(_NudgeKind.jumpEnd),
+            SingleActivator(LogicalKeyboardKey.home): _NudgeIntent(
+              _NudgeKind.jumpStart,
+            ),
+            SingleActivator(LogicalKeyboardKey.end): _NudgeIntent(
+              _NudgeKind.jumpEnd,
+            ),
           }
         : const <ShortcutActivator, Intent>{
-            SingleActivator(LogicalKeyboardKey.arrowDown):
-                _NudgeIntent(_NudgeKind.forward),
-            SingleActivator(LogicalKeyboardKey.arrowUp):
-                _NudgeIntent(_NudgeKind.backward),
+            SingleActivator(LogicalKeyboardKey.arrowDown): _NudgeIntent(
+              _NudgeKind.forward,
+            ),
+            SingleActivator(LogicalKeyboardKey.arrowUp): _NudgeIntent(
+              _NudgeKind.backward,
+            ),
             SingleActivator(LogicalKeyboardKey.arrowDown, shift: true):
                 _NudgeIntent(_NudgeKind.fineForward),
             SingleActivator(LogicalKeyboardKey.arrowUp, shift: true):
                 _NudgeIntent(_NudgeKind.fineBackward),
-            SingleActivator(LogicalKeyboardKey.home):
-                _NudgeIntent(_NudgeKind.jumpStart),
-            SingleActivator(LogicalKeyboardKey.end):
-                _NudgeIntent(_NudgeKind.jumpEnd),
+            SingleActivator(LogicalKeyboardKey.home): _NudgeIntent(
+              _NudgeKind.jumpStart,
+            ),
+            SingleActivator(LogicalKeyboardKey.end): _NudgeIntent(
+              _NudgeKind.jumpEnd,
+            ),
           };
 
     final Widget detector = FocusableActionDetector(
@@ -558,41 +582,40 @@ class _HandleState extends State<_Handle> {
         gestures: widget.enabled
             ? <Type, GestureRecognizerFactory>{
                 horizontal
-                        ? HorizontalDragGestureRecognizer
-                        : VerticalDragGestureRecognizer:
-                    horizontal
-                        ? GestureRecognizerFactoryWithHandlers<
-                            HorizontalDragGestureRecognizer>(
-                            HorizontalDragGestureRecognizer.new,
-                            (HorizontalDragGestureRecognizer r) {
-                              r.onStart = (DragStartDetails _) {
-                                widget.onDragStart();
-                              };
-                              r.onUpdate = (DragUpdateDetails d) {
-                                widget.onDragDelta(d.delta.dx);
-                              };
-                              r.onEnd = (DragEndDetails _) {
-                                widget.onDragEnd();
-                              };
-                              r.onCancel = widget.onDragEnd;
-                            },
-                          )
-                        : GestureRecognizerFactoryWithHandlers<
-                            VerticalDragGestureRecognizer>(
-                            VerticalDragGestureRecognizer.new,
-                            (VerticalDragGestureRecognizer r) {
-                              r.onStart = (DragStartDetails _) {
-                                widget.onDragStart();
-                              };
-                              r.onUpdate = (DragUpdateDetails d) {
-                                widget.onDragDelta(d.delta.dy);
-                              };
-                              r.onEnd = (DragEndDetails _) {
-                                widget.onDragEnd();
-                              };
-                              r.onCancel = widget.onDragEnd;
-                            },
-                          ),
+                    ? HorizontalDragGestureRecognizer
+                    : VerticalDragGestureRecognizer: horizontal
+                    ? GestureRecognizerFactoryWithHandlers<
+                        HorizontalDragGestureRecognizer
+                      >(HorizontalDragGestureRecognizer.new, (
+                        HorizontalDragGestureRecognizer r,
+                      ) {
+                        r.onStart = (DragStartDetails _) {
+                          widget.onDragStart();
+                        };
+                        r.onUpdate = (DragUpdateDetails d) {
+                          widget.onDragDelta(d.delta.dx);
+                        };
+                        r.onEnd = (DragEndDetails _) {
+                          widget.onDragEnd();
+                        };
+                        r.onCancel = widget.onDragEnd;
+                      })
+                    : GestureRecognizerFactoryWithHandlers<
+                        VerticalDragGestureRecognizer
+                      >(VerticalDragGestureRecognizer.new, (
+                        VerticalDragGestureRecognizer r,
+                      ) {
+                        r.onStart = (DragStartDetails _) {
+                          widget.onDragStart();
+                        };
+                        r.onUpdate = (DragUpdateDetails d) {
+                          widget.onDragDelta(d.delta.dy);
+                        };
+                        r.onEnd = (DragEndDetails _) {
+                          widget.onDragEnd();
+                        };
+                        r.onCancel = widget.onDragEnd;
+                      }),
               }
             : const <Type, GestureRecognizerFactory>{},
         child: hitArea,
@@ -669,7 +692,14 @@ class _GripPainter extends CustomPainter {
       old.strokeWidth != strokeWidth;
 }
 
-enum _NudgeKind { forward, backward, fineForward, fineBackward, jumpEnd, jumpStart }
+enum _NudgeKind {
+  forward,
+  backward,
+  fineForward,
+  fineBackward,
+  jumpEnd,
+  jumpStart,
+}
 
 class _NudgeIntent extends Intent {
   const _NudgeIntent(this.kind);

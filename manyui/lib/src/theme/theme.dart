@@ -14,8 +14,8 @@ class MTheme extends InheritedWidget {
 
   /// Returns the nearest [MThemeData], falling back to `MThemeData.light()`.
   static MThemeData of(BuildContext context) {
-    final MTheme? inherited =
-        context.dependOnInheritedWidgetOfExactType<MTheme>();
+    final MTheme? inherited = context
+        .dependOnInheritedWidgetOfExactType<MTheme>();
     return inherited?.data ?? MThemeData.light();
   }
 

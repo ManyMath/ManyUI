@@ -100,9 +100,12 @@ class _MButtonState extends State<MButton> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality resolvedModality =
-        MInputModalityScope.resolve(context, widget.modality);
-    final bool hoverCapable = resolvedModality == MInputModality.mouse ||
+    final MInputModality resolvedModality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
+    final bool hoverCapable =
+        resolvedModality == MInputModality.mouse ||
         resolvedModality == MInputModality.stylus;
 
     final MButtonStyle baseStyle = theme.button.resolve(
@@ -116,8 +119,9 @@ class _MButtonState extends State<MButton> {
     final MButtonStyle resolved = baseStyle.applyDelta(widget.style);
 
     final bool showHover = hoverCapable && _hovered && widget._enabled;
-    final Color background =
-        showHover ? resolved.hoverBackgroundColor : resolved.backgroundColor;
+    final Color background = showHover
+        ? resolved.hoverBackgroundColor
+        : resolved.backgroundColor;
 
     Widget labelContent = DefaultTextStyle.merge(
       style: resolved.textStyle.copyWith(color: resolved.foregroundColor),

@@ -26,62 +26,62 @@ class MTypography {
   ///
   /// No font family is set — the surrounding `DefaultTextStyle` wins.
   const MTypography.standard()
-      : displayLarge = const TextStyle(
-          fontSize: 48,
-          height: 1.1,
-          fontWeight: FontWeight.w700,
-          letterSpacing: -0.5,
-        ),
-        displaySmall = const TextStyle(
-          fontSize: 36,
-          height: 1.15,
-          fontWeight: FontWeight.w700,
-          letterSpacing: -0.4,
-        ),
-        headlineLarge = const TextStyle(
-          fontSize: 28,
-          height: 1.2,
-          fontWeight: FontWeight.w600,
-          letterSpacing: -0.3,
-        ),
-        headlineSmall = const TextStyle(
-          fontSize: 22,
-          height: 1.25,
-          fontWeight: FontWeight.w600,
-          letterSpacing: -0.2,
-        ),
-        title = const TextStyle(
-          fontSize: 18,
-          height: 1.3,
-          fontWeight: FontWeight.w600,
-        ),
-        body = const TextStyle(
-          fontSize: 14,
-          height: 1.45,
-          fontWeight: FontWeight.w400,
-        ),
-        bodySmall = const TextStyle(
-          fontSize: 13,
-          height: 1.45,
-          fontWeight: FontWeight.w400,
-        ),
-        label = const TextStyle(
-          fontSize: 14,
-          height: 1.2,
-          fontWeight: FontWeight.w500,
-        ),
-        caption = const TextStyle(
-          fontSize: 12,
-          height: 1.35,
-          fontWeight: FontWeight.w400,
-        ),
-        code = const TextStyle(
-          fontSize: 13,
-          height: 1.45,
-          fontFamily: 'monospace',
-          fontFamilyFallback: <String>['ui-monospace', 'Menlo', 'Consolas'],
-          fontWeight: FontWeight.w400,
-        );
+    : displayLarge = const TextStyle(
+        fontSize: 48,
+        height: 1.1,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.5,
+      ),
+      displaySmall = const TextStyle(
+        fontSize: 36,
+        height: 1.15,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.4,
+      ),
+      headlineLarge = const TextStyle(
+        fontSize: 28,
+        height: 1.2,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.3,
+      ),
+      headlineSmall = const TextStyle(
+        fontSize: 22,
+        height: 1.25,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.2,
+      ),
+      title = const TextStyle(
+        fontSize: 18,
+        height: 1.3,
+        fontWeight: FontWeight.w600,
+      ),
+      body = const TextStyle(
+        fontSize: 14,
+        height: 1.45,
+        fontWeight: FontWeight.w400,
+      ),
+      bodySmall = const TextStyle(
+        fontSize: 13,
+        height: 1.45,
+        fontWeight: FontWeight.w400,
+      ),
+      label = const TextStyle(
+        fontSize: 14,
+        height: 1.2,
+        fontWeight: FontWeight.w500,
+      ),
+      caption = const TextStyle(
+        fontSize: 12,
+        height: 1.35,
+        fontWeight: FontWeight.w400,
+      ),
+      code = const TextStyle(
+        fontSize: 13,
+        height: 1.45,
+        fontFamily: 'monospace',
+        fontFamilyFallback: <String>['ui-monospace', 'Menlo', 'Consolas'],
+        fontWeight: FontWeight.w400,
+      );
 
   /// Display-sized text (largest), used for marketing headers.
   final TextStyle displayLarge;
@@ -176,15 +176,15 @@ class MTypography {
 
   @override
   int get hashCode => Object.hash(
-        displayLarge,
-        displaySmall,
-        headlineLarge,
-        headlineSmall,
-        title,
-        body,
-        bodySmall,
-        label,
-        caption,
-        code,
-      );
+    displayLarge,
+    displaySmall,
+    headlineLarge,
+    headlineSmall,
+    title,
+    body,
+    bodySmall,
+    label,
+    caption,
+    code,
+  );
 }

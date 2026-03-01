@@ -70,13 +70,13 @@ class MAvatarStyle {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        textStyle,
-        squareRadius,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    textStyle,
+    squareRadius,
+  );
 }
 
 /// A nullable overlay of [MAvatarStyle] fields.
@@ -124,11 +124,11 @@ class MAvatarStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        textStyle,
-        squareRadius,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    textStyle,
+    squareRadius,
+  );
 }

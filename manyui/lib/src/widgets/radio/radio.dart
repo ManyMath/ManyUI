@@ -99,10 +99,7 @@ class _MRadioState<T> extends State<MRadio<T>> {
     super.didChangeDependencies();
     final _MRadioGroupScope<T>? next = context
         .dependOnInheritedWidgetOfExactType<_MRadioGroupScope<T>>();
-    assert(
-      next != null,
-      'MRadio<$T> must be a descendant of MRadioGroup<$T>.',
-    );
+    assert(next != null, 'MRadio<$T> must be a descendant of MRadioGroup<$T>.');
     if (!identical(_scope, next)) {
       _scope?.controller.removeListener(_onGroupChanged);
       _scope = next;
@@ -127,8 +124,7 @@ class _MRadioState<T> extends State<MRadio<T>> {
     if (_focused != value) setState(() => _focused = value);
   }
 
-  bool get _effectiveEnabled =>
-      widget.enabled && (_scope?.enabled ?? true);
+  bool get _effectiveEnabled => widget.enabled && (_scope?.enabled ?? true);
 
   @override
   void dispose() {
@@ -139,14 +135,13 @@ class _MRadioState<T> extends State<MRadio<T>> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality resolvedModality =
-        MInputModalityScope.resolve(context, widget.modality);
+    final MInputModality resolvedModality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
 
     final MRadioStyle resolved = theme.radio
-        .resolve(
-          modality: resolvedModality,
-          colors: theme.colors,
-        )
+        .resolve(modality: resolvedModality, colors: theme.colors)
         .applyDelta(widget.style);
 
     final bool selected = _scope?.controller.value == widget.value;
@@ -284,15 +279,19 @@ class _MRadioGroupState<T> extends State<MRadioGroup<T>> {
 
   static const Map<ShortcutActivator, Intent> _shortcuts =
       <ShortcutActivator, Intent>{
-    SingleActivator(LogicalKeyboardKey.arrowDown):
-        DirectionalFocusIntent(TraversalDirection.down),
-    SingleActivator(LogicalKeyboardKey.arrowUp):
-        DirectionalFocusIntent(TraversalDirection.up),
-    SingleActivator(LogicalKeyboardKey.arrowRight):
-        DirectionalFocusIntent(TraversalDirection.right),
-    SingleActivator(LogicalKeyboardKey.arrowLeft):
-        DirectionalFocusIntent(TraversalDirection.left),
-  };
+        SingleActivator(LogicalKeyboardKey.arrowDown): DirectionalFocusIntent(
+          TraversalDirection.down,
+        ),
+        SingleActivator(LogicalKeyboardKey.arrowUp): DirectionalFocusIntent(
+          TraversalDirection.up,
+        ),
+        SingleActivator(LogicalKeyboardKey.arrowRight): DirectionalFocusIntent(
+          TraversalDirection.right,
+        ),
+        SingleActivator(LogicalKeyboardKey.arrowLeft): DirectionalFocusIntent(
+          TraversalDirection.left,
+        ),
+      };
 
   @override
   void initState() {
@@ -351,10 +350,7 @@ class _MRadioGroupState<T> extends State<MRadioGroup<T>> {
         policy: ReadingOrderTraversalPolicy(),
         child: Shortcuts(
           shortcuts: _shortcuts,
-          child: Actions(
-            actions: _actions,
-            child: widget.child,
-          ),
+          child: Actions(actions: _actions, child: widget.child),
         ),
       ),
     );
@@ -404,8 +400,7 @@ class _RadioPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size canvasSize) {
-    final Offset center =
-        Offset(canvasSize.width / 2, canvasSize.height / 2);
+    final Offset center = Offset(canvasSize.width / 2, canvasSize.height / 2);
     final double outerRadius = canvasSize.shortestSide / 2;
 
     final Paint fill = Paint()

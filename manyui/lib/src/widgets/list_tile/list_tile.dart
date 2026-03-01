@@ -75,13 +75,16 @@ class MListTile extends StatelessWidget {
         )
         .applyDelta(style);
 
-    final Color foreground =
-        selected ? resolved.selectedForegroundColor : resolved.foregroundColor;
+    final Color foreground = selected
+        ? resolved.selectedForegroundColor
+        : resolved.foregroundColor;
 
     final Widget content = Container(
       padding: resolved.padding,
       decoration: BoxDecoration(
-        color: selected ? resolved.selectedBackgroundColor : resolved.backgroundColor,
+        color: selected
+            ? resolved.selectedBackgroundColor
+            : resolved.backgroundColor,
         borderRadius: resolved.radius,
       ),
       child: Row(
@@ -100,9 +103,13 @@ class MListTile extends StatelessWidget {
                   Semantics(excludeSemantics: true, child: title),
                   if (subtitle != null)
                     DefaultTextStyle.merge(
-                      style: resolved.subtitleStyle
-                          .copyWith(color: resolved.subtitleColor),
-                      child: Semantics(excludeSemantics: true, child: subtitle!),
+                      style: resolved.subtitleStyle.copyWith(
+                        color: resolved.subtitleColor,
+                      ),
+                      child: Semantics(
+                        excludeSemantics: true,
+                        child: subtitle!,
+                      ),
                     ),
                 ],
               ),

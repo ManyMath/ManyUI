@@ -29,14 +29,16 @@ Future<void> _pumpTooltip(
 }) async {
   await pumpManyApp(
     tester,
-    Center(child: MTooltip(
-      message: message,
-      placement: placement,
-      modality: modality,
-      style: style,
-      enabled: enabled,
-      child: child,
-    )),
+    Center(
+      child: MTooltip(
+        message: message,
+        placement: placement,
+        modality: modality,
+        style: style,
+        enabled: enabled,
+        child: child,
+      ),
+    ),
     modality: modality,
     installOverlay: true,
   );
@@ -45,8 +47,9 @@ Future<void> _pumpTooltip(
 
 void main() {
   group('MTooltip mouse modality', () {
-    testWidgets('hovering shows the tooltip after showDelay',
-        (WidgetTester tester) async {
+    testWidgets('hovering shows the tooltip after showDelay', (
+      WidgetTester tester,
+    ) async {
       await _pumpTooltip(
         tester,
         message: 'Hello',
@@ -73,8 +76,7 @@ void main() {
       expect(find.text('Hello'), findsOneWidget);
     });
 
-    testWidgets('pointer exit hides the tooltip',
-        (WidgetTester tester) async {
+    testWidgets('pointer exit hides the tooltip', (WidgetTester tester) async {
       await _pumpTooltip(
         tester,
         message: 'Hello',
@@ -103,9 +105,7 @@ void main() {
         tester,
         message: 'Delayed',
         child: _anchor(key: const ValueKey<String>('a')),
-        style: const MTooltipStyleDelta(
-          hideDelay: Duration(milliseconds: 200),
-        ),
+        style: const MTooltipStyleDelta(hideDelay: Duration(milliseconds: 200)),
       );
 
       final TestGesture g = await tester.createGesture(
@@ -122,8 +122,11 @@ void main() {
       // Move pointer away — hideDelay must elapse before hide.
       await g.moveTo(const Offset(2000, 2000));
       await tester.pump(const Duration(milliseconds: 100));
-      expect(find.text('Delayed'), findsOneWidget,
-          reason: 'hideDelay (200 ms) not yet elapsed');
+      expect(
+        find.text('Delayed'),
+        findsOneWidget,
+        reason: 'hideDelay (200 ms) not yet elapsed',
+      );
       await tester.pump(const Duration(milliseconds: 150));
       expect(find.text('Delayed'), findsNothing);
     });
@@ -180,8 +183,9 @@ void main() {
   });
 
   group('MTooltip enabled flag', () {
-    testWidgets('disabled tooltip never shows on hover',
-        (WidgetTester tester) async {
+    testWidgets('disabled tooltip never shows on hover', (
+      WidgetTester tester,
+    ) async {
       await _pumpTooltip(
         tester,
         message: 'Nope',
@@ -202,8 +206,9 @@ void main() {
   });
 
   group('MTooltip placement', () {
-    testWidgets('below places tooltip beneath the anchor',
-        (WidgetTester tester) async {
+    testWidgets('below places tooltip beneath the anchor', (
+      WidgetTester tester,
+    ) async {
       await _pumpTooltip(
         tester,
         message: 'Below',
@@ -221,15 +226,20 @@ void main() {
       await tester.pump();
       await tester.pump(_kShowDelay + const Duration(milliseconds: 50));
 
-      final Offset anchorBottomLeft =
-          tester.getBottomLeft(find.byKey(const ValueKey<String>('a')));
+      final Offset anchorBottomLeft = tester.getBottomLeft(
+        find.byKey(const ValueKey<String>('a')),
+      );
       final Offset surfaceTopLeft = tester.getTopLeft(find.text('Below'));
-      expect(surfaceTopLeft.dy, greaterThan(anchorBottomLeft.dy),
-          reason: 'Below placement should sit beneath the anchor');
+      expect(
+        surfaceTopLeft.dy,
+        greaterThan(anchorBottomLeft.dy),
+        reason: 'Below placement should sit beneath the anchor',
+      );
     });
 
-    testWidgets('above places tooltip over the anchor',
-        (WidgetTester tester) async {
+    testWidgets('above places tooltip over the anchor', (
+      WidgetTester tester,
+    ) async {
       await _pumpTooltip(
         tester,
         message: 'Above',
@@ -246,17 +256,22 @@ void main() {
       await tester.pump();
       await tester.pump(_kShowDelay + const Duration(milliseconds: 50));
 
-      final Offset anchorTopLeft =
-          tester.getTopLeft(find.byKey(const ValueKey<String>('a')));
+      final Offset anchorTopLeft = tester.getTopLeft(
+        find.byKey(const ValueKey<String>('a')),
+      );
       final Offset surfaceTopLeft = tester.getTopLeft(find.text('Above'));
-      expect(surfaceTopLeft.dy, lessThan(anchorTopLeft.dy),
-          reason: 'Above placement should sit over the anchor');
+      expect(
+        surfaceTopLeft.dy,
+        lessThan(anchorTopLeft.dy),
+        reason: 'Above placement should sit over the anchor',
+      );
     });
   });
 
   group('MTooltip dispose', () {
-    testWidgets('disposing while show timer is pending does not throw',
-        (WidgetTester tester) async {
+    testWidgets('disposing while show timer is pending does not throw', (
+      WidgetTester tester,
+    ) async {
       await _pumpTooltip(
         tester,
         message: 'Pending',
@@ -279,8 +294,9 @@ void main() {
   });
 
   group('MTooltip semantics', () {
-    testWidgets('anchor exposes the message as Semantics.tooltip',
-        (WidgetTester tester) async {
+    testWidgets('anchor exposes the message as Semantics.tooltip', (
+      WidgetTester tester,
+    ) async {
       final SemanticsHandle handle = tester.ensureSemantics();
       await _pumpTooltip(
         tester,

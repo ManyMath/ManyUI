@@ -111,19 +111,19 @@ class MSheetStyle {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        radius,
-        padding,
-        elevation,
-        shadowColor,
-        scrimColor,
-        sideWidth,
-        maxHeightFraction,
-        dragHandleColor,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    radius,
+    padding,
+    elevation,
+    shadowColor,
+    scrimColor,
+    sideWidth,
+    maxHeightFraction,
+    dragHandleColor,
+  );
 }
 
 /// A nullable overlay of [MSheetStyle] fields.
@@ -201,17 +201,17 @@ class MSheetStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        radius,
-        padding,
-        elevation,
-        shadowColor,
-        scrimColor,
-        sideWidth,
-        maxHeightFraction,
-        dragHandleColor,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    radius,
+    padding,
+    elevation,
+    shadowColor,
+    scrimColor,
+    sideWidth,
+    maxHeightFraction,
+    dragHandleColor,
+  );
 }

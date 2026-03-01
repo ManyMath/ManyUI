@@ -33,40 +33,57 @@ class MIconData {
   Path buildPath(double size) => _buildPath(size);
 
   /// Sun glyph, used for light/dark theme toggles.
-  static const MIconData sun =
-      MIconData._(_sunPath, semanticLabel: 'Light theme', filled: true);
+  static const MIconData sun = MIconData._(
+    _sunPath,
+    semanticLabel: 'Light theme',
+    filled: true,
+  );
 
   /// Moon glyph, used for light/dark theme toggles.
-  static const MIconData moon =
-      MIconData._(_moonPath, semanticLabel: 'Dark theme', filled: true);
+  static const MIconData moon = MIconData._(
+    _moonPath,
+    semanticLabel: 'Dark theme',
+    filled: true,
+  );
 
   /// Downward chevron, used for expand affordances.
-  static const MIconData chevronDown =
-      MIconData._(_chevronDownPath, semanticLabel: 'Expand');
+  static const MIconData chevronDown = MIconData._(
+    _chevronDownPath,
+    semanticLabel: 'Expand',
+  );
 
   /// Rightward chevron, used for collapse/forward affordances.
-  static const MIconData chevronRight =
-      MIconData._(_chevronRightPath, semanticLabel: 'Collapse');
+  static const MIconData chevronRight = MIconData._(
+    _chevronRightPath,
+    semanticLabel: 'Collapse',
+  );
 
   /// Leftward chevron, used for back navigation.
-  static const MIconData chevronLeft =
-      MIconData._(_chevronLeftPath, semanticLabel: 'Back');
+  static const MIconData chevronLeft = MIconData._(
+    _chevronLeftPath,
+    semanticLabel: 'Back',
+  );
 
   /// Checkmark, for confirmation affordances outside `MCheckbox`.
-  static const MIconData check =
-      MIconData._(_checkPath, semanticLabel: 'Checked');
+  static const MIconData check = MIconData._(
+    _checkPath,
+    semanticLabel: 'Checked',
+  );
 
   /// Close/dismiss glyph.
-  static const MIconData close =
-      MIconData._(_closePath, semanticLabel: 'Close');
+  static const MIconData close = MIconData._(
+    _closePath,
+    semanticLabel: 'Close',
+  );
 
   /// Open eye glyph, for a "reveal secret" toggle in its shown state.
-  static const MIconData eye =
-      MIconData._(_eyePath, semanticLabel: 'Show');
+  static const MIconData eye = MIconData._(_eyePath, semanticLabel: 'Show');
 
   /// Eye-with-slash glyph, for a "reveal secret" toggle in its hidden state.
-  static const MIconData eyeOff =
-      MIconData._(_eyeOffPath, semanticLabel: 'Hide');
+  static const MIconData eyeOff = MIconData._(
+    _eyeOffPath,
+    semanticLabel: 'Hide',
+  );
 
   static Path _sunPath(double size) {
     final double s = size;

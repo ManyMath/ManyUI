@@ -9,7 +9,9 @@ import 'package:manyui_testing/manyui_testing.dart';
 /// `pumpManyApp(..., installOverlay: true)` so EditableText's
 /// interactive-selection magnifier path finds an ambient Overlay.
 Widget _hosted(Widget child, {double width = 240}) {
-  return Center(child: SizedBox(width: width, child: child));
+  return Center(
+    child: SizedBox(width: width, child: child),
+  );
 }
 
 Future<void> _pumpField(
@@ -32,22 +34,24 @@ Future<void> _pumpField(
 }) async {
   await pumpManyApp(
     tester,
-    _hosted(MTextField(
-      controller: controller,
-      initialValue: initialValue,
-      onChanged: onChanged,
-      onSubmitted: onSubmitted,
-      placeholder: placeholder,
-      enabled: enabled,
-      readOnly: readOnly,
-      error: error,
-      obscureText: obscureText,
-      maxLength: maxLength,
-      leading: leading,
-      trailing: trailing,
-      focusNode: focusNode,
-      autofocus: autofocus,
-    )),
+    _hosted(
+      MTextField(
+        controller: controller,
+        initialValue: initialValue,
+        onChanged: onChanged,
+        onSubmitted: onSubmitted,
+        placeholder: placeholder,
+        enabled: enabled,
+        readOnly: readOnly,
+        error: error,
+        obscureText: obscureText,
+        maxLength: maxLength,
+        leading: leading,
+        trailing: trailing,
+        focusNode: focusNode,
+        autofocus: autofocus,
+      ),
+    ),
     modality: modality,
     installOverlay: true,
   );
@@ -57,17 +61,14 @@ Future<void> _pumpField(
 
 void main() {
   group('MTextField typing', () {
-    testWidgets('entering text propagates to controller and onChanged',
-        (WidgetTester tester) async {
+    testWidgets('entering text propagates to controller and onChanged', (
+      WidgetTester tester,
+    ) async {
       final List<String> reports = <String>[];
       final MController<String> controller = MController<String>('');
       addTearDown(controller.dispose);
 
-      await _pumpField(
-        tester,
-        controller: controller,
-        onChanged: reports.add,
-      );
+      await _pumpField(tester, controller: controller, onChanged: reports.add);
 
       await tester.tap(find.byType(MTextField));
       await tester.pump();
@@ -79,8 +80,9 @@ void main() {
       expect(reports.last, 'hello');
     });
 
-    testWidgets('external controller mutation updates the displayed text',
-        (WidgetTester tester) async {
+    testWidgets('external controller mutation updates the displayed text', (
+      WidgetTester tester,
+    ) async {
       final MController<String> controller = MController<String>('start');
       addTearDown(controller.dispose);
 
@@ -92,14 +94,16 @@ void main() {
       expect(find.text('changed'), findsOneWidget);
     });
 
-    testWidgets('initialValue seeds the internally-owned controller',
-        (WidgetTester tester) async {
+    testWidgets('initialValue seeds the internally-owned controller', (
+      WidgetTester tester,
+    ) async {
       await _pumpField(tester, initialValue: 'seed');
       expect(find.text('seed'), findsOneWidget);
     });
 
-    testWidgets('placeholder shows only when the field is empty',
-        (WidgetTester tester) async {
+    testWidgets('placeholder shows only when the field is empty', (
+      WidgetTester tester,
+    ) async {
       final MController<String> controller = MController<String>('');
       addTearDown(controller.dispose);
 
@@ -119,8 +123,7 @@ void main() {
       expect(find.text('enter something'), findsOneWidget);
     });
 
-    testWidgets('maxLength caps the entered text',
-        (WidgetTester tester) async {
+    testWidgets('maxLength caps the entered text', (WidgetTester tester) async {
       final MController<String> controller = MController<String>('');
       addTearDown(controller.dispose);
 
@@ -136,8 +139,9 @@ void main() {
   });
 
   group('MTextField focus + enable', () {
-    testWidgets('tapping the surface routes focus into the editor',
-        (WidgetTester tester) async {
+    testWidgets('tapping the surface routes focus into the editor', (
+      WidgetTester tester,
+    ) async {
       final FocusNode node = FocusNode();
       addTearDown(node.dispose);
 
@@ -150,8 +154,9 @@ void main() {
       expect(node.hasFocus, isTrue);
     });
 
-    testWidgets('disabled field refuses focus and edits',
-        (WidgetTester tester) async {
+    testWidgets('disabled field refuses focus and edits', (
+      WidgetTester tester,
+    ) async {
       final FocusNode node = FocusNode();
       addTearDown(node.dispose);
       final MController<String> controller = MController<String>('seed');
@@ -176,8 +181,9 @@ void main() {
       expect(controller.value, 'seed');
     });
 
-    testWidgets('readOnly accepts focus but refuses edits',
-        (WidgetTester tester) async {
+    testWidgets('readOnly accepts focus but refuses edits', (
+      WidgetTester tester,
+    ) async {
       final FocusNode node = FocusNode();
       addTearDown(node.dispose);
       final MController<String> controller = MController<String>('seed');
@@ -199,8 +205,9 @@ void main() {
       expect(controller.value, 'seed');
     });
 
-    testWidgets('autofocus requests focus on mount',
-        (WidgetTester tester) async {
+    testWidgets('autofocus requests focus on mount', (
+      WidgetTester tester,
+    ) async {
       final FocusNode node = FocusNode();
       addTearDown(node.dispose);
 
@@ -212,26 +219,29 @@ void main() {
 
   group('MTextField undo/redo', () {
     testWidgets(
-        'EditableText receives an UndoHistoryController so Cmd-Z wiring is live',
-        (WidgetTester tester) async {
-      await _pumpField(tester, initialValue: 'hello');
+      'EditableText receives an UndoHistoryController so Cmd-Z wiring is live',
+      (WidgetTester tester) async {
+        await _pumpField(tester, initialValue: 'hello');
 
-      final EditableText editable =
-          tester.widget(find.byType(EditableText)) as EditableText;
-      expect(editable.undoController, isNotNull,
-          reason: 'MTextField must hand EditableText an UndoHistoryController '
-              'so the platform Cmd/Ctrl-Z shortcuts route through it');
-    });
+        final EditableText editable =
+            tester.widget(find.byType(EditableText)) as EditableText;
+        expect(
+          editable.undoController,
+          isNotNull,
+          reason:
+              'MTextField must hand EditableText an UndoHistoryController '
+              'so the platform Cmd/Ctrl-Z shortcuts route through it',
+        );
+      },
+    );
   });
 
   group('MTextField onSubmitted', () {
-    testWidgets('Enter while focused fires onSubmitted with the current text',
-        (WidgetTester tester) async {
+    testWidgets('Enter while focused fires onSubmitted with the current text', (
+      WidgetTester tester,
+    ) async {
       String? submitted;
-      await _pumpField(
-        tester,
-        onSubmitted: (String v) => submitted = v,
-      );
+      await _pumpField(tester, onSubmitted: (String v) => submitted = v);
 
       // Tap to establish focus and the IME connection — autofocus alone
       // doesn't wire the test text-input channel to this EditableText.
@@ -249,73 +259,91 @@ void main() {
 
   group('MTextField controller rebinding', () {
     testWidgets(
-        'swapping from internal to external controller picks up the new value',
-        (WidgetTester tester) async {
-      final MController<String> external = MController<String>('external');
-      addTearDown(external.dispose);
+      'swapping from internal to external controller picks up the new value',
+      (WidgetTester tester) async {
+        final MController<String> external = MController<String>('external');
+        addTearDown(external.dispose);
 
-      final _RebindHarnessState ref = _RebindHarnessState();
-      await pumpManyApp(
-        tester,
-        _hosted(_RebindHarness(
-          stateRef: ref,
-          external: external,
-          initialInternal: 'internal',
-        )),
-        installOverlay: true,
-      );
-      expect(find.text('internal'), findsOneWidget);
+        final _RebindHarnessState ref = _RebindHarnessState();
+        await pumpManyApp(
+          tester,
+          _hosted(
+            _RebindHarness(
+              stateRef: ref,
+              external: external,
+              initialInternal: 'internal',
+            ),
+          ),
+          installOverlay: true,
+        );
+        expect(find.text('internal'), findsOneWidget);
 
-      ref.swapToExternal();
-      await tester.pump();
+        ref.swapToExternal();
+        await tester.pump();
 
-      expect(find.text('external'), findsOneWidget,
-          reason: 'rebind should pick up the external controller value');
-    });
+        expect(
+          find.text('external'),
+          findsOneWidget,
+          reason: 'rebind should pick up the external controller value',
+        );
+      },
+    );
 
-    testWidgets('caller-supplied controller is not disposed when the field unmounts',
-        (WidgetTester tester) async {
-      final MController<String> controller = MController<String>('x');
+    testWidgets(
+      'caller-supplied controller is not disposed when the field unmounts',
+      (WidgetTester tester) async {
+        final MController<String> controller = MController<String>('x');
 
-      await _pumpField(tester, controller: controller);
-      await pumpManyApp(tester, const SizedBox.shrink());
+        await _pumpField(tester, controller: controller);
+        await pumpManyApp(tester, const SizedBox.shrink());
 
-      // Should be alive after the widget unmounts.
-      expect(() => controller.value = 'still-here', returnsNormally);
-      controller.dispose();
-    });
+        // Should be alive after the widget unmounts.
+        expect(() => controller.value = 'still-here', returnsNormally);
+        controller.dispose();
+      },
+    );
   });
 
   group('MTextField error state', () {
-    testWidgets('error=true swaps the border to colors.destructive',
-        (WidgetTester tester) async {
+    testWidgets('error=true swaps the border to colors.destructive', (
+      WidgetTester tester,
+    ) async {
       await _pumpField(tester, error: true);
 
       // The first DecoratedBox inside the field carries the visible border.
-      final DecoratedBox box = tester.widget(find
-          .descendant(
-            of: find.byType(MTextField),
-            matching: find.byType(DecoratedBox),
-          )
-          .first) as DecoratedBox;
+      final DecoratedBox box =
+          tester.widget(
+                find
+                    .descendant(
+                      of: find.byType(MTextField),
+                      matching: find.byType(DecoratedBox),
+                    )
+                    .first,
+              )
+              as DecoratedBox;
       final BoxDecoration deco = box.decoration as BoxDecoration;
       final BorderSide side = (deco.border! as Border).top;
       expect(side.color, MThemeData.light().colors.destructive);
     });
 
-    testWidgets('error=false focused-border swaps to colors.ring',
-        (WidgetTester tester) async {
+    testWidgets('error=false focused-border swaps to colors.ring', (
+      WidgetTester tester,
+    ) async {
       final FocusNode node = FocusNode();
       addTearDown(node.dispose);
 
       await _pumpField(tester, focusNode: node, autofocus: true);
 
-      final DecoratedBox box = tester.widget(find
-          .descendant(
-            of: find.byType(MTextField),
-            matching: find.byType(DecoratedBox),
-          )
-          .first) as DecoratedBox;
+      final DecoratedBox box =
+          tester.widget(
+                find
+                    .descendant(
+                      of: find.byType(MTextField),
+                      matching: find.byType(DecoratedBox),
+                    )
+                    .first,
+              )
+              as DecoratedBox;
       final BoxDecoration deco = box.decoration as BoxDecoration;
       final BorderSide side = (deco.border! as Border).top;
       expect(side.color, MThemeData.light().colors.ring);
@@ -323,89 +351,116 @@ void main() {
   });
 
   group('MTextField modality', () {
-    testWidgets('mouse modality renders the compact field height',
-        (WidgetTester tester) async {
+    testWidgets('mouse modality renders the compact field height', (
+      WidgetTester tester,
+    ) async {
       await _pumpField(tester, modality: MInputModality.mouse);
-      final ConstrainedBox box = tester.widget(find
-          .descendant(
-            of: find.byType(MTextField),
-            matching: find.byType(ConstrainedBox),
-          )
-          .first) as ConstrainedBox;
+      final ConstrainedBox box =
+          tester.widget(
+                find
+                    .descendant(
+                      of: find.byType(MTextField),
+                      matching: find.byType(ConstrainedBox),
+                    )
+                    .first,
+              )
+              as ConstrainedBox;
       expect(box.constraints.minHeight, 36);
     });
 
-    testWidgets('touch modality bumps to the larger hit target',
-        (WidgetTester tester) async {
+    testWidgets('touch modality bumps to the larger hit target', (
+      WidgetTester tester,
+    ) async {
       await _pumpField(tester, modality: MInputModality.touch);
-      final ConstrainedBox box = tester.widget(find
-          .descendant(
-            of: find.byType(MTextField),
-            matching: find.byType(ConstrainedBox),
-          )
-          .first) as ConstrainedBox;
+      final ConstrainedBox box =
+          tester.widget(
+                find
+                    .descendant(
+                      of: find.byType(MTextField),
+                      matching: find.byType(ConstrainedBox),
+                    )
+                    .first,
+              )
+              as ConstrainedBox;
       expect(box.constraints.minHeight, 44);
     });
   });
 
   group('MTextField semantics', () {
-    testWidgets('reports textField, enabled, label, and value',
-        (WidgetTester tester) async {
+    testWidgets('reports textField, enabled, label, and value', (
+      WidgetTester tester,
+    ) async {
       await _pumpField(
         tester,
         initialValue: 'visible',
         placeholder: 'unused-here',
       );
 
-      final Semantics s = tester.widget(find
-          .descendant(
-            of: find.byType(MTextField),
-            matching: find.byType(Semantics),
-          )
-          .first) as Semantics;
+      final Semantics s =
+          tester.widget(
+                find
+                    .descendant(
+                      of: find.byType(MTextField),
+                      matching: find.byType(Semantics),
+                    )
+                    .first,
+              )
+              as Semantics;
       expect(s.properties.textField, true);
       expect(s.properties.enabled, true);
       expect(s.properties.value, 'visible');
     });
 
-    testWidgets('disabled field reports enabled=false',
-        (WidgetTester tester) async {
+    testWidgets('disabled field reports enabled=false', (
+      WidgetTester tester,
+    ) async {
       await _pumpField(tester, enabled: false);
 
-      final Semantics s = tester.widget(find
-          .descendant(
-            of: find.byType(MTextField),
-            matching: find.byType(Semantics),
-          )
-          .first) as Semantics;
+      final Semantics s =
+          tester.widget(
+                find
+                    .descendant(
+                      of: find.byType(MTextField),
+                      matching: find.byType(Semantics),
+                    )
+                    .first,
+              )
+              as Semantics;
       expect(s.properties.enabled, false);
     });
 
-    testWidgets('obscureText is reflected in semantics',
-        (WidgetTester tester) async {
+    testWidgets('obscureText is reflected in semantics', (
+      WidgetTester tester,
+    ) async {
       await _pumpField(tester, obscureText: true);
 
-      final Semantics s = tester.widget(find
-          .descendant(
-            of: find.byType(MTextField),
-            matching: find.byType(Semantics),
-          )
-          .first) as Semantics;
+      final Semantics s =
+          tester.widget(
+                find
+                    .descendant(
+                      of: find.byType(MTextField),
+                      matching: find.byType(Semantics),
+                    )
+                    .first,
+              )
+              as Semantics;
       expect(s.properties.obscured, true);
     });
   });
 
   group('MTextField multiline', () {
-    testWidgets('defaults to single-line (maxLines: 1)',
-        (WidgetTester tester) async {
+    testWidgets('defaults to single-line (maxLines: 1)', (
+      WidgetTester tester,
+    ) async {
       await _pumpField(tester);
       final EditableText editable =
           tester.widget(find.byType(EditableText)) as EditableText;
       expect(editable.maxLines, 1);
     });
 
-    testWidgets('maxLines passes through to EditableText',
-        (WidgetTester tester) async {
+    testWidgets('maxLines passes through to EditableText', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         _hosted(const MTextField(maxLines: 4)),
@@ -427,8 +482,9 @@ void main() {
       expect(editable.maxLines, isNull);
     });
 
-    testWidgets('entering a newline is accepted in multiline mode',
-        (WidgetTester tester) async {
+    testWidgets('entering a newline is accepted in multiline mode', (
+      WidgetTester tester,
+    ) async {
       final MController<String> controller = MController<String>('');
       addTearDown(controller.dispose);
       await pumpManyApp(
@@ -447,8 +503,9 @@ void main() {
   });
 
   group('MTextField helper/error text', () {
-    testWidgets('helperText renders below the field',
-        (WidgetTester tester) async {
+    testWidgets('helperText renders below the field', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         _hosted(const MTextField(helperText: 'must be unique')),
@@ -457,56 +514,63 @@ void main() {
       expect(find.text('must be unique'), findsOneWidget);
     });
 
-    testWidgets('errorText replaces helperText while error is true',
-        (WidgetTester tester) async {
+    testWidgets('errorText replaces helperText while error is true', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
-        _hosted(const MTextField(
-          error: true,
-          helperText: 'must be unique',
-          errorText: 'already taken',
-        )),
+        _hosted(
+          const MTextField(
+            error: true,
+            helperText: 'must be unique',
+            errorText: 'already taken',
+          ),
+        ),
         installOverlay: true,
       );
       expect(find.text('already taken'), findsOneWidget);
       expect(find.text('must be unique'), findsNothing);
     });
 
-    testWidgets('helperText still shows when error is true but errorText is null',
-        (WidgetTester tester) async {
-      await pumpManyApp(
-        tester,
-        _hosted(const MTextField(error: true, helperText: 'must be unique')),
-        installOverlay: true,
-      );
-      expect(find.text('must be unique'), findsOneWidget);
-    });
+    testWidgets(
+      'helperText still shows when error is true but errorText is null',
+      (WidgetTester tester) async {
+        await pumpManyApp(
+          tester,
+          _hosted(const MTextField(error: true, helperText: 'must be unique')),
+          installOverlay: true,
+        );
+        expect(find.text('must be unique'), findsOneWidget);
+      },
+    );
 
-    testWidgets('no footer text renders when both are null',
-        (WidgetTester tester) async {
+    testWidgets('no footer text renders when both are null', (
+      WidgetTester tester,
+    ) async {
       await _pumpField(tester);
       expect(find.byType(Text), findsNothing);
     });
   });
 
   group('MTextField style', () {
-    testWidgets('applyDelta overrides minHeight',
-        (WidgetTester tester) async {
+    testWidgets('applyDelta overrides minHeight', (WidgetTester tester) async {
       await pumpManyApp(
         tester,
-        _hosted(const MTextField(
-          style: MTextFieldStyleDelta(minHeight: 60),
-        )),
+        _hosted(const MTextField(style: MTextFieldStyleDelta(minHeight: 60))),
         modality: MInputModality.mouse,
         installOverlay: true,
       );
 
-      final ConstrainedBox box = tester.widget(find
-          .descendant(
-            of: find.byType(MTextField),
-            matching: find.byType(ConstrainedBox),
-          )
-          .first) as ConstrainedBox;
+      final ConstrainedBox box =
+          tester.widget(
+                find
+                    .descendant(
+                      of: find.byType(MTextField),
+                      matching: find.byType(ConstrainedBox),
+                    )
+                    .first,
+              )
+              as ConstrainedBox;
       expect(box.constraints.minHeight, 60);
     });
   });

@@ -136,16 +136,16 @@ class MButtonStyle {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        hoverBackgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        padding,
-        minHeight,
-        textStyle,
-        radius,
-      );
+    backgroundColor,
+    hoverBackgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    padding,
+    minHeight,
+    textStyle,
+    radius,
+  );
 }
 
 /// A nullable overlay of [MButtonStyle] fields.
@@ -212,14 +212,14 @@ class MButtonStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        hoverBackgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        padding,
-        minHeight,
-        textStyle,
-        radius,
-      );
+    backgroundColor,
+    hoverBackgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    padding,
+    minHeight,
+    textStyle,
+    radius,
+  );
 }

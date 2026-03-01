@@ -112,18 +112,18 @@ class MToastStyle {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        radius,
-        padding,
-        elevation,
-        shadowColor,
-        maxWidth,
-        edgeInset,
-        gap,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    radius,
+    padding,
+    elevation,
+    shadowColor,
+    maxWidth,
+    edgeInset,
+    gap,
+  );
 }
 
 /// A nullable overlay of [MToastStyle] fields.
@@ -196,16 +196,16 @@ class MToastStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        radius,
-        padding,
-        elevation,
-        shadowColor,
-        maxWidth,
-        edgeInset,
-        gap,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    radius,
+    padding,
+    elevation,
+    shadowColor,
+    maxWidth,
+    edgeInset,
+    gap,
+  );
 }

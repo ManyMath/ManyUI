@@ -14,7 +14,9 @@ void main() {
 
     test('copyWith overrides only the supplied tokens', () {
       const MColorScheme base = MColorScheme.light();
-      final MColorScheme tweaked = base.copyWith(primary: const Color(0xFF00FF00));
+      final MColorScheme tweaked = base.copyWith(
+        primary: const Color(0xFF00FF00),
+      );
       expect(tweaked.primary, const Color(0xFF00FF00));
       expect(tweaked.foreground, base.foreground);
       expect(tweaked.background, base.background);
@@ -22,10 +24,7 @@ void main() {
 
     test('equality uses field-wise comparison', () {
       expect(const MColorScheme.light(), const MColorScheme.light());
-      expect(
-        const MColorScheme.light() == const MColorScheme.dark(),
-        isFalse,
-      );
+      expect(const MColorScheme.light() == const MColorScheme.dark(), isFalse);
     });
   });
 
@@ -42,8 +41,9 @@ void main() {
       expect(t.code.fontFamily, 'monospace');
     });
 
-    testWidgets('inheritFromContext merges DefaultTextStyle.style into slots',
-        (WidgetTester tester) async {
+    testWidgets('inheritFromContext merges DefaultTextStyle.style into slots', (
+      WidgetTester tester,
+    ) async {
       MTypography? captured;
       await tester.pumpWidget(
         Directionality(
@@ -52,7 +52,9 @@ void main() {
             style: const TextStyle(fontSize: 99, color: Color(0xFF112233)),
             child: Builder(
               builder: (BuildContext context) {
-                captured = const MTypography.standard().inheritFromContext(context);
+                captured = const MTypography.standard().inheritFromContext(
+                  context,
+                );
                 return const SizedBox.shrink();
               },
             ),
@@ -67,10 +69,14 @@ void main() {
 
   group('MThemeData', () {
     test('light/dark factories pair the matching color scheme', () {
-      expect(MThemeData.light().colors.background,
-          const MColorScheme.light().background);
-      expect(MThemeData.dark().colors.background,
-          const MColorScheme.dark().background);
+      expect(
+        MThemeData.light().colors.background,
+        const MColorScheme.light().background,
+      );
+      expect(
+        MThemeData.dark().colors.background,
+        const MColorScheme.dark().background,
+      );
     });
 
     test('copyWith preserves untouched fields', () {
@@ -84,8 +90,9 @@ void main() {
   });
 
   group('MTheme', () {
-    testWidgets('of returns the nearest ancestor data',
-        (WidgetTester tester) async {
+    testWidgets('of returns the nearest ancestor data', (
+      WidgetTester tester,
+    ) async {
       late MThemeData seen;
       final MThemeData themed = MThemeData.dark();
       await tester.pumpWidget(
@@ -105,8 +112,9 @@ void main() {
       expect(seen, themed);
     });
 
-    testWidgets('of falls back to light when no ancestor is installed',
-        (WidgetTester tester) async {
+    testWidgets('of falls back to light when no ancestor is installed', (
+      WidgetTester tester,
+    ) async {
       late MThemeData seen;
       await tester.pumpWidget(
         Directionality(
@@ -122,8 +130,9 @@ void main() {
       expect(seen.colors.background, const MColorScheme.light().background);
     });
 
-    testWidgets('maybeOf returns null when no ancestor is installed',
-        (WidgetTester tester) async {
+    testWidgets('maybeOf returns null when no ancestor is installed', (
+      WidgetTester tester,
+    ) async {
       MThemeData? seen;
       await tester.pumpWidget(
         Directionality(
@@ -139,37 +148,40 @@ void main() {
       expect(seen, isNull);
     });
 
-    testWidgets('updateShouldNotify rebuilds dependents when data changes',
-        (WidgetTester tester) async {
+    testWidgets('updateShouldNotify rebuilds dependents when data changes', (
+      WidgetTester tester,
+    ) async {
       MThemeData? lastSeen;
       int builds = 0;
       Widget app(MThemeData data) => Directionality(
-            textDirection: TextDirection.ltr,
-            child: MTheme(
-              data: data,
-              child: Builder(
-                builder: (BuildContext context) {
-                  builds++;
-                  lastSeen = MTheme.of(context);
-                  return const SizedBox.shrink();
-                },
-              ),
-            ),
-          );
+        textDirection: TextDirection.ltr,
+        child: MTheme(
+          data: data,
+          child: Builder(
+            builder: (BuildContext context) {
+              builds++;
+              lastSeen = MTheme.of(context);
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
 
       await tester.pumpWidget(app(MThemeData.light()));
       final int after1 = builds;
-      expect(lastSeen!.colors.background,
-          const MColorScheme.light().background);
+      expect(
+        lastSeen!.colors.background,
+        const MColorScheme.light().background,
+      );
 
       await tester.pumpWidget(app(MThemeData.dark()));
       expect(builds, greaterThan(after1));
-      expect(lastSeen!.colors.background,
-          const MColorScheme.dark().background);
+      expect(lastSeen!.colors.background, const MColorScheme.dark().background);
     });
 
-    testWidgets('context.mTheme sugar matches MTheme.of',
-        (WidgetTester tester) async {
+    testWidgets('context.mTheme sugar matches MTheme.of', (
+      WidgetTester tester,
+    ) async {
       late MThemeData viaSugar;
       late MThemeData viaOf;
       await tester.pumpWidget(

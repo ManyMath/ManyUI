@@ -357,8 +357,9 @@ class _MOTPFieldState extends State<MOTPField> {
     // Focus moves to the cell after the last one we filled, or stays on
     // the final cell if we filled to the end.
     final int landed = startIndex + chars.length - 1;
-    final int focusTarget =
-        landed >= widget.length - 1 ? widget.length - 1 : landed + 1;
+    final int focusTarget = landed >= widget.length - 1
+        ? widget.length - 1
+        : landed + 1;
     _cellFocus[focusTarget].requestFocus();
 
     final String assembled = _assembled();
@@ -424,8 +425,10 @@ class _MOTPFieldState extends State<MOTPField> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality resolvedModality =
-        MInputModalityScope.resolve(context, widget.modality);
+    final MInputModality resolvedModality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
     final MOTPFieldStyle resolved = theme.otpField
         .resolve(
           modality: resolvedModality,
@@ -436,34 +439,35 @@ class _MOTPFieldState extends State<MOTPField> {
         .applyDelta(widget.style);
 
     final RegExp filter = widget.inputFilter ?? _defaultFilter;
-    final TextInputType keyboard = widget.keyboardType ??
-        (filter == _defaultFilter
-            ? TextInputType.number
-            : TextInputType.text);
+    final TextInputType keyboard =
+        widget.keyboardType ??
+        (filter == _defaultFilter ? TextInputType.number : TextInputType.text);
 
     final List<Widget> children = <Widget>[];
     for (int i = 0; i < widget.length; i++) {
       if (i > 0) {
         children.add(SizedBox(width: resolved.cellGap));
       }
-      children.add(_OTPCell(
-        index: i,
-        length: widget.length,
-        editing: _cellEditing[i],
-        focus: _cellFocus[i],
-        undo: _undo,
-        style: resolved,
-        enabled: widget.enabled,
-        readOnly: widget.readOnly,
-        error: widget.error,
-        focused: _focusedCell == i,
-        obscureText: widget.obscureText,
-        obscureCharacter: widget.obscureCharacter,
-        filter: filter,
-        keyboardType: keyboard,
-        autofocus: widget.autofocus && i == 0,
-        onKey: (FocusNode node, KeyEvent event) => _onCellKey(i, node, event),
-      ));
+      children.add(
+        _OTPCell(
+          index: i,
+          length: widget.length,
+          editing: _cellEditing[i],
+          focus: _cellFocus[i],
+          undo: _undo,
+          style: resolved,
+          enabled: widget.enabled,
+          readOnly: widget.readOnly,
+          error: widget.error,
+          focused: _focusedCell == i,
+          obscureText: widget.obscureText,
+          obscureCharacter: widget.obscureCharacter,
+          filter: filter,
+          keyboardType: keyboard,
+          autofocus: widget.autofocus && i == 0,
+          onKey: (FocusNode node, KeyEvent event) => _onCellKey(i, node, event),
+        ),
+      );
     }
 
     Widget row = Row(
@@ -538,10 +542,10 @@ class _OTPCell extends StatelessWidget {
     final Color border = error
         ? style.cellErrorBorderColor
         : focused
-            ? style.cellFocusedBorderColor
-            : filled
-                ? style.cellFilledBorderColor
-                : style.cellBorderColor;
+        ? style.cellFocusedBorderColor
+        : filled
+        ? style.cellFilledBorderColor
+        : style.cellBorderColor;
 
     final TextStyle textStyle = style.textStyle.copyWith(
       color: theme.colors.foreground,
@@ -561,9 +565,7 @@ class _OTPCell extends StatelessWidget {
           ? TextInputAction.done
           : TextInputAction.next,
       textAlign: TextAlign.center,
-      inputFormatters: <TextInputFormatter>[
-        _OTPCellFormatter(filter),
-      ],
+      inputFormatters: <TextInputFormatter>[_OTPCellFormatter(filter)],
       style: textStyle,
       cursorColor: style.cursorColor,
       backgroundCursorColor: style.cursorColor,

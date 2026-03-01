@@ -65,13 +65,13 @@ class MCardStyle {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        padding,
-        radius,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    padding,
+    radius,
+  );
 }
 
 /// A nullable overlay of [MCardStyle] fields.
@@ -123,11 +123,11 @@ class MCardStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        borderColor,
-        borderWidth,
-        padding,
-        radius,
-      );
+    backgroundColor,
+    foregroundColor,
+    borderColor,
+    borderWidth,
+    padding,
+    radius,
+  );
 }

@@ -39,9 +39,11 @@ class MSlider extends StatefulWidget {
     this.autofocus = false,
     this.focusNode,
     super.key,
-  })  : assert(min < max, 'min must be strictly less than max'),
-        assert(divisions == null || divisions > 0,
-            'divisions must be null or positive');
+  }) : assert(min < max, 'min must be strictly less than max'),
+       assert(
+         divisions == null || divisions > 0,
+         'divisions must be null or positive',
+       );
 
   /// The state source for this slider.
   ///
@@ -137,15 +139,15 @@ class _MSliderState extends State<MSlider> {
 
   static const Map<ShortcutActivator, Intent> _shortcuts =
       <ShortcutActivator, Intent>{
-    SingleActivator(LogicalKeyboardKey.arrowRight): _IncrementIntent(1),
-    SingleActivator(LogicalKeyboardKey.arrowLeft): _IncrementIntent(-1),
-    SingleActivator(LogicalKeyboardKey.arrowUp): _IncrementIntent(1),
-    SingleActivator(LogicalKeyboardKey.arrowDown): _IncrementIntent(-1),
-    SingleActivator(LogicalKeyboardKey.pageUp): _IncrementIntent(10),
-    SingleActivator(LogicalKeyboardKey.pageDown): _IncrementIntent(-10),
-    SingleActivator(LogicalKeyboardKey.home): _JumpIntent(false),
-    SingleActivator(LogicalKeyboardKey.end): _JumpIntent(true),
-  };
+        SingleActivator(LogicalKeyboardKey.arrowRight): _IncrementIntent(1),
+        SingleActivator(LogicalKeyboardKey.arrowLeft): _IncrementIntent(-1),
+        SingleActivator(LogicalKeyboardKey.arrowUp): _IncrementIntent(1),
+        SingleActivator(LogicalKeyboardKey.arrowDown): _IncrementIntent(-1),
+        SingleActivator(LogicalKeyboardKey.pageUp): _IncrementIntent(10),
+        SingleActivator(LogicalKeyboardKey.pageDown): _IncrementIntent(-10),
+        SingleActivator(LogicalKeyboardKey.home): _JumpIntent(false),
+        SingleActivator(LogicalKeyboardKey.end): _JumpIntent(true),
+      };
 
   @override
   void initState() {
@@ -271,19 +273,20 @@ class _MSliderState extends State<MSlider> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality resolvedModality =
-        MInputModalityScope.resolve(context, widget.modality);
+    final MInputModality resolvedModality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
 
     final MSliderStyle resolved = theme.slider
-        .resolve(
-          modality: resolvedModality,
-          colors: theme.colors,
-        )
+        .resolve(modality: resolvedModality, colors: theme.colors)
         .applyDelta(widget.style);
 
     final double current = _controller.value;
-    final double t =
-        ((current - widget.min) / (widget.max - widget.min)).clamp(0.0, 1.0);
+    final double t = ((current - widget.min) / (widget.max - widget.min)).clamp(
+      0.0,
+      1.0,
+    );
 
     final double rowHeight = resolved.thumbDiameter;
     final double step = _stepIncrement;
@@ -295,8 +298,9 @@ class _MSliderState extends State<MSlider> {
         final double available = constraints.maxWidth.isFinite
             ? constraints.maxWidth
             : resolved.minTrackWidth;
-        final double trackWidth =
-            available < resolved.minTrackWidth ? resolved.minTrackWidth : available;
+        final double trackWidth = available < resolved.minTrackWidth
+            ? resolved.minTrackWidth
+            : available;
 
         Widget surface = SizedBox(
           width: trackWidth,
@@ -318,8 +322,7 @@ class _MSliderState extends State<MSlider> {
         );
 
         if (!widget.enabled) {
-          surface =
-              Opacity(opacity: resolved.disabledOpacity, child: surface);
+          surface = Opacity(opacity: resolved.disabledOpacity, child: surface);
         }
 
         surface = MFocusRing(focused: _focused, child: surface);
@@ -415,8 +418,7 @@ class _SliderPainter extends CustomPainter {
     // with the thumb's painted center at (radius, centerY).
     final double thumbRadius = thumbDiameter / 2;
     final double trackTop = centerY - trackHeight / 2;
-    final Rect trackRect =
-        Rect.fromLTWH(0, trackTop, trackWidth, trackHeight);
+    final Rect trackRect = Rect.fromLTWH(0, trackTop, trackWidth, trackHeight);
     final RRect track = RRect.fromRectAndRadius(
       trackRect,
       Radius.circular(trackHeight / 2),
@@ -429,8 +431,7 @@ class _SliderPainter extends CustomPainter {
 
     final double thumbX = t * trackWidth;
     if (thumbX > 0) {
-      final Rect activeRect =
-          Rect.fromLTWH(0, trackTop, thumbX, trackHeight);
+      final Rect activeRect = Rect.fromLTWH(0, trackTop, thumbX, trackHeight);
       final RRect activeRRect = RRect.fromRectAndRadius(
         activeRect,
         Radius.circular(trackHeight / 2),
@@ -452,11 +453,7 @@ class _SliderPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..color = thumbBorderColor
         ..strokeWidth = thumbBorderWidth;
-      canvas.drawCircle(
-        thumbCenter,
-        thumbRadius - thumbBorderWidth / 2,
-        ring,
-      );
+      canvas.drawCircle(thumbCenter, thumbRadius - thumbBorderWidth / 2, ring);
     }
   }
 

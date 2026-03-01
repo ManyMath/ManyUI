@@ -55,13 +55,13 @@ class MTextField extends StatefulWidget {
     this.focusNode,
     super.key,
   }) : assert(
-          maxLines == null || maxLines >= 1,
-          'maxLines must be null (unbounded) or >= 1',
-        ),
-        assert(
-          maxLines == 1 || !obscureText,
-          'obscureText only makes sense for a single-line field',
-        );
+         maxLines == null || maxLines >= 1,
+         'maxLines must be null (unbounded) or >= 1',
+       ),
+       assert(
+         maxLines == 1 || !obscureText,
+         'obscureText only makes sense for a single-line field',
+       );
 
   /// The state source for this field.
   ///
@@ -303,8 +303,10 @@ class _MTextFieldState extends State<MTextField> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality resolvedModality =
-        MInputModalityScope.resolve(context, widget.modality);
+    final MInputModality resolvedModality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
     final MTextFieldStyle resolved = theme.textField
         .resolve(
           modality: resolvedModality,
@@ -335,7 +337,8 @@ class _MTextFieldState extends State<MTextField> {
       enableSuggestions: !widget.obscureText,
       maxLines: widget.maxLines,
       minLines: widget.minLines,
-      keyboardType: widget.keyboardType ??
+      keyboardType:
+          widget.keyboardType ??
           (widget.obscureText
               ? TextInputType.visiblePassword
               : TextInputType.text),
@@ -383,10 +386,7 @@ class _MTextFieldState extends State<MTextField> {
               ),
             ),
           ),
-        Align(
-          alignment: textAlignment,
-          child: editable,
-        ),
+        Align(alignment: textAlignment, child: editable),
       ],
     );
 
@@ -485,8 +485,9 @@ class _MTextFieldState extends State<MTextField> {
     // errorText takes over from helperText whenever the field is flagged in
     // error and an errorText was actually supplied, so a caller can pass both
     // and let the field switch rather than swapping the child itself.
-    final String? footer =
-        (widget.error && widget.errorText != null) ? widget.errorText : widget.helperText;
+    final String? footer = (widget.error && widget.errorText != null)
+        ? widget.errorText
+        : widget.helperText;
     if (footer == null) {
       return field;
     }

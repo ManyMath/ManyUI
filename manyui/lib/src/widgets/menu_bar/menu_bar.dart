@@ -178,8 +178,7 @@ class _MMenuBarState extends State<MMenuBar> {
       onInvoke: (_MoveItemFocusIntent intent) {
         final String? openId = _controller.value;
         if (openId == null) return null;
-        final MMenu menu =
-            widget.menus.firstWhere((MMenu m) => m.id == openId);
+        final MMenu menu = widget.menus.firstWhere((MMenu m) => m.id == openId);
         _moveItemFocus(menu, intent.delta);
         return null;
       },
@@ -188,8 +187,7 @@ class _MMenuBarState extends State<MMenuBar> {
       onInvoke: (_) {
         if (_controller.value == null) return null;
         final String openId = _controller.value!;
-        final MMenu menu =
-            widget.menus.firstWhere((MMenu m) => m.id == openId);
+        final MMenu menu = widget.menus.firstWhere((MMenu m) => m.id == openId);
         _closeFromPopover(menu);
         return null;
       },
@@ -198,18 +196,22 @@ class _MMenuBarState extends State<MMenuBar> {
 
   static const Map<ShortcutActivator, Intent> _stripShortcuts =
       <ShortcutActivator, Intent>{
-    SingleActivator(LogicalKeyboardKey.arrowLeft):
-        _MoveMenuFocusIntent(_MoveDirection.previous),
-    SingleActivator(LogicalKeyboardKey.arrowRight):
-        _MoveMenuFocusIntent(_MoveDirection.next),
-    SingleActivator(LogicalKeyboardKey.home):
-        _MoveMenuFocusIntent(_MoveDirection.first),
-    SingleActivator(LogicalKeyboardKey.end):
-        _MoveMenuFocusIntent(_MoveDirection.last),
-    SingleActivator(LogicalKeyboardKey.arrowDown): _OpenFocusedMenuIntent(),
-    SingleActivator(LogicalKeyboardKey.arrowUp): _MoveItemFocusIntent(-1),
-    SingleActivator(LogicalKeyboardKey.escape): _CloseMenuIntent(),
-  };
+        SingleActivator(LogicalKeyboardKey.arrowLeft): _MoveMenuFocusIntent(
+          _MoveDirection.previous,
+        ),
+        SingleActivator(LogicalKeyboardKey.arrowRight): _MoveMenuFocusIntent(
+          _MoveDirection.next,
+        ),
+        SingleActivator(LogicalKeyboardKey.home): _MoveMenuFocusIntent(
+          _MoveDirection.first,
+        ),
+        SingleActivator(LogicalKeyboardKey.end): _MoveMenuFocusIntent(
+          _MoveDirection.last,
+        ),
+        SingleActivator(LogicalKeyboardKey.arrowDown): _OpenFocusedMenuIntent(),
+        SingleActivator(LogicalKeyboardKey.arrowUp): _MoveItemFocusIntent(-1),
+        SingleActivator(LogicalKeyboardKey.escape): _CloseMenuIntent(),
+      };
 
   @override
   void initState() {
@@ -295,8 +297,9 @@ class _MMenuBarState extends State<MMenuBar> {
 
   void _syncTitleNodes() {
     final Set<String> ids = widget.menus.map((MMenu m) => m.id).toSet();
-    final List<String> stale =
-        _titleNodes.keys.where((String id) => !ids.contains(id)).toList();
+    final List<String> stale = _titleNodes.keys
+        .where((String id) => !ids.contains(id))
+        .toList();
     for (final String id in stale) {
       _titleNodes.remove(id)?.dispose();
     }
@@ -310,8 +313,9 @@ class _MMenuBarState extends State<MMenuBar> {
 
   void _syncAnchors() {
     final Set<String> ids = widget.menus.map((MMenu m) => m.id).toSet();
-    final List<String> stale =
-        _anchors.keys.where((String id) => !ids.contains(id)).toList();
+    final List<String> stale = _anchors.keys
+        .where((String id) => !ids.contains(id))
+        .toList();
     for (final String id in stale) {
       _anchors.remove(id)?.dispose();
     }
@@ -365,8 +369,9 @@ class _MMenuBarState extends State<MMenuBar> {
     // because the GestureDetector calls _activateTitle directly without
     // any focused-item context.
     if (_controller.value == menu.id && _focusedItemId != null) {
-      final MMenuItem item =
-          menu.items.firstWhere((MMenuItem i) => i.id == _focusedItemId);
+      final MMenuItem item = menu.items.firstWhere(
+        (MMenuItem i) => i.id == _focusedItemId,
+      );
       _activateItem(menu, item);
       return;
     }
@@ -395,8 +400,9 @@ class _MMenuBarState extends State<MMenuBar> {
   // Title-strip keyboard nav.
 
   void _moveTitleFocus(_MoveDirection direction) {
-    final List<MMenu> enabled =
-        widget.menus.where(_effectiveEnabledFor).toList();
+    final List<MMenu> enabled = widget.menus
+        .where(_effectiveEnabledFor)
+        .toList();
     if (enabled.isEmpty) return;
 
     final String? currentId = _focusedTitleId;
@@ -435,8 +441,7 @@ class _MMenuBarState extends State<MMenuBar> {
     // is navigating through the open popover.
     final String? focusedId = _focusedTitleId;
     if (focusedId == null) return;
-    final MMenu menu =
-        widget.menus.firstWhere((MMenu m) => m.id == focusedId);
+    final MMenu menu = widget.menus.firstWhere((MMenu m) => m.id == focusedId);
     if (!_effectiveEnabledFor(menu)) return;
     if (_controller.value == menu.id) {
       _moveItemFocus(menu, 1);
@@ -447,11 +452,10 @@ class _MMenuBarState extends State<MMenuBar> {
   }
 
   void _focusFirstItem(MMenu menu) {
-    final MMenuItem? first =
-        menu.items.where((MMenuItem i) => i.enabled).cast<MMenuItem?>().firstWhere(
-              (MMenuItem? _) => true,
-              orElse: () => null,
-            );
+    final MMenuItem? first = menu.items
+        .where((MMenuItem i) => i.enabled)
+        .cast<MMenuItem?>()
+        .firstWhere((MMenuItem? _) => true, orElse: () => null);
     if (first == null) return;
     setState(() => _focusedItemId = first.id);
   }
@@ -467,8 +471,9 @@ class _MMenuBarState extends State<MMenuBar> {
   }
 
   void _moveItemFocus(MMenu menu, int delta) {
-    final List<MMenuItem> enabled =
-        menu.items.where((MMenuItem i) => i.enabled).toList();
+    final List<MMenuItem> enabled = menu.items
+        .where((MMenuItem i) => i.enabled)
+        .toList();
     if (enabled.isEmpty) return;
     final int current = _focusedItemId == null
         ? -1
@@ -555,8 +560,10 @@ class _MMenuBarState extends State<MMenuBar> {
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MInputModality resolvedModality =
-        MInputModalityScope.resolve(context, widget.modality);
+    final MInputModality resolvedModality = MInputModalityScope.resolve(
+      context,
+      widget.modality,
+    );
     final MMenuBarStyle resolved = theme.menuBar
         .resolve(
           modality: resolvedModality,
@@ -589,8 +596,7 @@ class _MMenuBarState extends State<MMenuBar> {
           },
           buildOverlay: (BuildContext overlayContext) =>
               _buildPopover(overlayContext, menu, resolved),
-          onKeyEvent: (FocusNode n, KeyEvent e) =>
-              _popoverKeyEvent(menu, n, e),
+          onKeyEvent: (FocusNode n, KeyEvent e) => _popoverKeyEvent(menu, n, e),
         ),
       );
     }
@@ -769,13 +775,13 @@ class _MMenuTitleState extends State<_MMenuTitle> {
       child: widget.menu.title,
     );
 
-    label = Padding(padding: s.titlePadding, child: Center(child: label));
+    label = Padding(
+      padding: s.titlePadding,
+      child: Center(child: label),
+    );
 
     Widget body = DecoratedBox(
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: s.titleRadius,
-      ),
+      decoration: BoxDecoration(color: background, borderRadius: s.titleRadius),
       child: label,
     );
 
@@ -831,7 +837,10 @@ class _MMenuTitleState extends State<_MMenuTitle> {
     return MOverlayAnchor(
       controller: widget.anchor,
       anchor: semantic,
-      overlayOffset: Offset(0, widget.style.titleHeight + widget.style.popoverGap),
+      overlayOffset: Offset(
+        0,
+        widget.style.titleHeight + widget.style.popoverGap,
+      ),
       modalBarrier: false,
       onKeyEvent: widget.onKeyEvent,
       overlayBuilder: widget.buildOverlay,
@@ -868,8 +877,9 @@ class _MMenuItemRow extends StatelessWidget {
       rowChildren.add(const SizedBox(width: 24));
       rowChildren.add(
         DefaultTextStyle.merge(
-          style: style.itemTextStyle
-              .copyWith(color: style.itemTrailingForegroundColor),
+          style: style.itemTextStyle.copyWith(
+            color: style.itemTrailingForegroundColor,
+          ),
           child: item.trailing!,
         ),
       );
@@ -909,9 +919,7 @@ class _MMenuItemRow extends StatelessWidget {
       container: true,
       child: MouseRegion(
         onEnter: enabled ? (_) => onHover() : null,
-        cursor: enabled
-            ? SystemMouseCursors.click
-            : SystemMouseCursors.basic,
+        cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: enabled ? onTap : null,

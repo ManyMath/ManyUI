@@ -14,17 +14,14 @@ Widget _anchor({Key? key, String label = 'Open'}) {
 }
 
 Widget _content({String text = 'Popover body'}) {
-  return SizedBox(
-    width: 200,
-    height: 80,
-    child: Center(child: Text(text)),
-  );
+  return SizedBox(width: 200, height: 80, child: Center(child: Text(text)));
 }
 
 void main() {
   group('MPopover open/close', () {
-    testWidgets('controller.open shows the popover surface',
-        (WidgetTester tester) async {
+    testWidgets('controller.open shows the popover surface', (
+      WidgetTester tester,
+    ) async {
       final MPopoverController c = MPopoverController();
       addTearDown(c.dispose);
 
@@ -47,8 +44,9 @@ void main() {
       expect(find.text('Popover body'), findsOneWidget);
     });
 
-    testWidgets('controller.close hides the popover',
-        (WidgetTester tester) async {
+    testWidgets('controller.close hides the popover', (
+      WidgetTester tester,
+    ) async {
       final MPopoverController c = MPopoverController();
       addTearDown(c.dispose);
 
@@ -74,8 +72,9 @@ void main() {
       expect(find.text('Popover body'), findsNothing);
     });
 
-    testWidgets('controller.toggle alternates state',
-        (WidgetTester tester) async {
+    testWidgets('controller.toggle alternates state', (
+      WidgetTester tester,
+    ) async {
       final MPopoverController c = MPopoverController();
       addTearDown(c.dispose);
 
@@ -103,8 +102,9 @@ void main() {
       expect(find.text('Popover body'), findsNothing);
     });
 
-    testWidgets('tapping the anchor toggles when controller is internal',
-        (WidgetTester tester) async {
+    testWidgets('tapping the anchor toggles when controller is internal', (
+      WidgetTester tester,
+    ) async {
       await pumpManyApp(
         tester,
         Center(
@@ -127,8 +127,9 @@ void main() {
       expect(find.text('Popover body'), findsNothing);
     });
 
-    testWidgets('content callback close() dismisses the popover',
-        (WidgetTester tester) async {
+    testWidgets('content callback close() dismisses the popover', (
+      WidgetTester tester,
+    ) async {
       final MPopoverController c = MPopoverController();
       addTearDown(c.dispose);
 
@@ -165,8 +166,7 @@ void main() {
   });
 
   group('MPopover dismiss', () {
-    testWidgets('outside tap closes the popover',
-        (WidgetTester tester) async {
+    testWidgets('outside tap closes the popover', (WidgetTester tester) async {
       final MPopoverController c = MPopoverController();
       addTearDown(c.dispose);
 
@@ -221,8 +221,9 @@ void main() {
       expect(c.isOpen, isFalse);
     });
 
-    testWidgets('onClose fires on outside-tap close',
-        (WidgetTester tester) async {
+    testWidgets('onClose fires on outside-tap close', (
+      WidgetTester tester,
+    ) async {
       final MPopoverController c = MPopoverController();
       addTearDown(c.dispose);
       int closeCount = 0;
@@ -248,8 +249,9 @@ void main() {
       expect(closeCount, 1);
     });
 
-    testWidgets('onClose fires on programmatic close',
-        (WidgetTester tester) async {
+    testWidgets('onClose fires on programmatic close', (
+      WidgetTester tester,
+    ) async {
       final MPopoverController c = MPopoverController();
       addTearDown(c.dispose);
       int closeCount = 0;
@@ -277,8 +279,9 @@ void main() {
   });
 
   group('MPopover onKeyEvent', () {
-    testWidgets('caller onKeyEvent receives keys before default handling',
-        (WidgetTester tester) async {
+    testWidgets('caller onKeyEvent receives keys before default handling', (
+      WidgetTester tester,
+    ) async {
       final MPopoverController c = MPopoverController();
       addTearDown(c.dispose);
       LogicalKeyboardKey? seenKey;
@@ -311,8 +314,9 @@ void main() {
       expect(c.isOpen, isTrue);
     });
 
-    testWidgets('caller returning handled blocks default Escape close',
-        (WidgetTester tester) async {
+    testWidgets('caller returning handled blocks default Escape close', (
+      WidgetTester tester,
+    ) async {
       final MPopoverController c = MPopoverController();
       addTearDown(c.dispose);
 
@@ -335,8 +339,11 @@ void main() {
       await tester.pump();
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
       await tester.pump();
-      expect(c.isOpen, isTrue,
-          reason: 'caller-handled key should suppress default Escape close');
+      expect(
+        c.isOpen,
+        isTrue,
+        reason: 'caller-handled key should suppress default Escape close',
+      );
     });
   });
 
@@ -359,31 +366,40 @@ void main() {
         installOverlay: true,
       );
 
-      Semantics root = tester.widget(find
-          .descendant(
-            of: find.byType(MPopover),
-            matching: find.byType(Semantics),
-          )
-          .first) as Semantics;
+      Semantics root =
+          tester.widget(
+                find
+                    .descendant(
+                      of: find.byType(MPopover),
+                      matching: find.byType(Semantics),
+                    )
+                    .first,
+              )
+              as Semantics;
       expect(root.properties.expanded, false);
       expect(root.properties.label, 'Filters');
 
       c.open();
       await tester.pump();
 
-      root = tester.widget(find
-          .descendant(
-            of: find.byType(MPopover),
-            matching: find.byType(Semantics),
-          )
-          .first) as Semantics;
+      root =
+          tester.widget(
+                find
+                    .descendant(
+                      of: find.byType(MPopover),
+                      matching: find.byType(Semantics),
+                    )
+                    .first,
+              )
+              as Semantics;
       expect(root.properties.expanded, true);
     });
   });
 
   group('MPopover style', () {
-    testWidgets('applyDelta overrides padding on the surface',
-        (WidgetTester tester) async {
+    testWidgets('applyDelta overrides padding on the surface', (
+      WidgetTester tester,
+    ) async {
       final MPopoverController c = MPopoverController();
       addTearDown(c.dispose);
 
@@ -392,9 +408,7 @@ void main() {
         Center(
           child: MPopover(
             controller: c,
-            style: const MPopoverStyleDelta(
-              padding: EdgeInsets.all(24),
-            ),
+            style: const MPopoverStyleDelta(padding: EdgeInsets.all(24)),
             popoverBuilder: (BuildContext context, VoidCallback close) =>
                 _content(),
             child: _anchor(),
@@ -411,15 +425,17 @@ void main() {
       final Iterable<Padding> paddings = tester.widgetList<Padding>(
         find.byType(Padding),
       );
-      final bool anyMatch = paddings.any((Padding p) =>
-          p.padding == const EdgeInsets.all(24));
+      final bool anyMatch = paddings.any(
+        (Padding p) => p.padding == const EdgeInsets.all(24),
+      );
       expect(anyMatch, isTrue);
     });
   });
 
   group('MPopover controller rebind', () {
-    testWidgets('swapping the external controller picks up its state',
-        (WidgetTester tester) async {
+    testWidgets('swapping the external controller picks up its state', (
+      WidgetTester tester,
+    ) async {
       final MPopoverController initial = MPopoverController();
       addTearDown(initial.dispose);
       final MPopoverController replacement = MPopoverController()..open();
@@ -444,14 +460,18 @@ void main() {
       // so pump once for the swap frame and once more for the deferred open.
       await tester.pump();
       await tester.pump();
-      expect(find.text('Popover body'), findsOneWidget,
-          reason: 'rebind should pick up replacement controller open state');
+      expect(
+        find.text('Popover body'),
+        findsOneWidget,
+        reason: 'rebind should pick up replacement controller open state',
+      );
     });
   });
 
   group('MPopover dispose', () {
-    testWidgets('disposing while open releases resources without throwing',
-        (WidgetTester tester) async {
+    testWidgets('disposing while open releases resources without throwing', (
+      WidgetTester tester,
+    ) async {
       final MPopoverController c = MPopoverController();
       addTearDown(c.dispose);
 

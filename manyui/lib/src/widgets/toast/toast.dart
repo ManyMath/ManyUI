@@ -192,10 +192,7 @@ class _ToastHandle {
   final GlobalKey<_ToastHostState> hostKey = GlobalKey<_ToastHostState>();
 
   Widget _buildHost(BuildContext context) {
-    return _ToastHost(
-      key: hostKey,
-      handle: this,
-    );
+    return _ToastHost(key: hostKey, handle: this);
   }
 
   void dismiss() {
@@ -276,8 +273,8 @@ class _ToastRegistry {
           .applyDelta(handle.styleDelta)
           .gap;
       handle.stackOffset.value = offset;
-      final RenderBox? box = handle.hostKey.currentContext?.findRenderObject()
-          as RenderBox?;
+      final RenderBox? box =
+          handle.hostKey.currentContext?.findRenderObject() as RenderBox?;
       final double height = (box != null && box.hasSize) ? box.size.height : 0;
       offset += height + gap;
     }
@@ -434,18 +431,17 @@ class _ToastHostState extends State<_ToastHost>
     return Positioned(
       top: top ? edge : null,
       bottom: top ? null : edge,
-      left: (handle.anchor == MToastAnchor.topStart ||
+      left:
+          (handle.anchor == MToastAnchor.topStart ||
               handle.anchor == MToastAnchor.bottomStart)
           ? edge
           : null,
-      right: (handle.anchor == MToastAnchor.topEnd ||
+      right:
+          (handle.anchor == MToastAnchor.topEnd ||
               handle.anchor == MToastAnchor.bottomEnd)
           ? edge
           : null,
-      child: Align(
-        alignment: _alignmentFor(handle.anchor),
-        child: animated,
-      ),
+      child: Align(alignment: _alignmentFor(handle.anchor), child: animated),
     );
   }
 }

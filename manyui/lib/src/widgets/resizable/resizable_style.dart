@@ -102,19 +102,19 @@ class MResizableStyle {
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
-        handleColor,
-        handleHoveredColor,
-        handleActiveColor,
-        handleThickness,
-        handleHitThickness,
-        gripColor,
-        gripLength,
-        gripStrokeWidth,
-        showGripIndicator,
-        keyboardStep,
-        keyboardFineStep,
-        disabledOpacity,
-      ]);
+    handleColor,
+    handleHoveredColor,
+    handleActiveColor,
+    handleThickness,
+    handleHitThickness,
+    gripColor,
+    gripLength,
+    gripStrokeWidth,
+    showGripIndicator,
+    keyboardStep,
+    keyboardFineStep,
+    disabledOpacity,
+  ]);
 }
 
 /// A nullable overlay of [MResizableStyle] fields.
@@ -197,17 +197,17 @@ class MResizableStyleDelta {
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
-        handleColor,
-        handleHoveredColor,
-        handleActiveColor,
-        handleThickness,
-        handleHitThickness,
-        gripColor,
-        gripLength,
-        gripStrokeWidth,
-        showGripIndicator,
-        keyboardStep,
-        keyboardFineStep,
-        disabledOpacity,
-      ]);
+    handleColor,
+    handleHoveredColor,
+    handleActiveColor,
+    handleThickness,
+    handleHitThickness,
+    gripColor,
+    gripLength,
+    gripStrokeWidth,
+    showGripIndicator,
+    keyboardStep,
+    keyboardFineStep,
+    disabledOpacity,
+  ]);
 }

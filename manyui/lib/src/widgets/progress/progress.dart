@@ -25,7 +25,7 @@ class MProgress extends StatefulWidget {
     this.style,
     this.semanticLabel,
     super.key,
-  })  : indeterminate = false;
+  }) : indeterminate = false;
 
   /// Builds an indeterminate progress bar.
   ///
@@ -36,9 +36,9 @@ class MProgress extends StatefulWidget {
     this.style,
     this.semanticLabel,
     super.key,
-  })  : controller = null,
-        initialValue = 0,
-        indeterminate = true;
+  }) : controller = null,
+       initialValue = 0,
+       indeterminate = true;
 
   /// The state source for this progress bar (determinate only).
   ///
@@ -111,8 +111,9 @@ class _MProgressState extends State<MProgress>
       _controller = external;
       _ownsController = false;
     } else {
-      _controller =
-          MController<double>(widget.initialValue.clamp(0.0, 1.0).toDouble());
+      _controller = MController<double>(
+        widget.initialValue.clamp(0.0, 1.0).toDouble(),
+      );
       _ownsController = true;
     }
     _controller!.addListener(_onControllerChanged);
@@ -131,8 +132,9 @@ class _MProgressState extends State<MProgress>
 
   void _ensureIndeterminate() {
     final MThemeData theme = MTheme.of(context);
-    final MProgressStyle resolved =
-        theme.progress.resolve(colors: theme.colors).applyDelta(widget.style);
+    final MProgressStyle resolved = theme.progress
+        .resolve(colors: theme.colors)
+        .applyDelta(widget.style);
     if (_indeterminateController == null) {
       _indeterminateController = AnimationController(
         vsync: this,
@@ -140,7 +142,8 @@ class _MProgressState extends State<MProgress>
       );
       if (widget.enabled) _indeterminateController!.repeat();
     } else {
-      if (_indeterminateController!.duration != resolved.indeterminateDuration) {
+      if (_indeterminateController!.duration !=
+          resolved.indeterminateDuration) {
         _indeterminateController!.duration = resolved.indeterminateDuration;
       }
       if (widget.enabled && !_indeterminateController!.isAnimating) {
@@ -170,8 +173,9 @@ class _MProgressState extends State<MProgress>
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MProgressStyle resolved =
-        theme.progress.resolve(colors: theme.colors).applyDelta(widget.style);
+    final MProgressStyle resolved = theme.progress
+        .resolve(colors: theme.colors)
+        .applyDelta(widget.style);
 
     Widget bar = LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -258,7 +262,7 @@ class MCircularProgress extends StatefulWidget {
     this.style,
     this.semanticLabel,
     super.key,
-  })  : indeterminate = false;
+  }) : indeterminate = false;
 
   /// Builds an indeterminate circular progress indicator.
   const MCircularProgress.indeterminate({
@@ -266,9 +270,9 @@ class MCircularProgress extends StatefulWidget {
     this.style,
     this.semanticLabel,
     super.key,
-  })  : controller = null,
-        initialValue = 0,
-        indeterminate = true;
+  }) : controller = null,
+       initialValue = 0,
+       indeterminate = true;
 
   /// The state source for this circular progress indicator (determinate only).
   final MController<double>? controller;
@@ -337,8 +341,9 @@ class _MCircularProgressState extends State<MCircularProgress>
       _controller = external;
       _ownsController = false;
     } else {
-      _controller =
-          MController<double>(widget.initialValue.clamp(0.0, 1.0).toDouble());
+      _controller = MController<double>(
+        widget.initialValue.clamp(0.0, 1.0).toDouble(),
+      );
       _ownsController = true;
     }
     _controller!.addListener(_onControllerChanged);
@@ -357,8 +362,9 @@ class _MCircularProgressState extends State<MCircularProgress>
 
   void _ensureIndeterminate() {
     final MThemeData theme = MTheme.of(context);
-    final MProgressStyle resolved =
-        theme.progress.resolve(colors: theme.colors).applyDelta(widget.style);
+    final MProgressStyle resolved = theme.progress
+        .resolve(colors: theme.colors)
+        .applyDelta(widget.style);
     if (_indeterminateController == null) {
       _indeterminateController = AnimationController(
         vsync: this,
@@ -366,7 +372,8 @@ class _MCircularProgressState extends State<MCircularProgress>
       );
       if (widget.enabled) _indeterminateController!.repeat();
     } else {
-      if (_indeterminateController!.duration != resolved.indeterminateDuration) {
+      if (_indeterminateController!.duration !=
+          resolved.indeterminateDuration) {
         _indeterminateController!.duration = resolved.indeterminateDuration;
       }
       if (widget.enabled && !_indeterminateController!.isAnimating) {
@@ -388,8 +395,9 @@ class _MCircularProgressState extends State<MCircularProgress>
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
-    final MProgressStyle resolved =
-        theme.progress.resolve(colors: theme.colors).applyDelta(widget.style);
+    final MProgressStyle resolved = theme.progress
+        .resolve(colors: theme.colors)
+        .applyDelta(widget.style);
 
     final double diameter = resolved.diameter;
     Widget body;
@@ -476,7 +484,10 @@ class _LinearDeterminatePainter extends CustomPainter {
       ..color = trackColor;
     canvas.drawRRect(track, trackPaint);
 
-    final double w = (size.width * value.clamp(0.0, 1.0)).clamp(0.0, size.width);
+    final double w = (size.width * value.clamp(0.0, 1.0)).clamp(
+      0.0,
+      size.width,
+    );
     if (w > 0) {
       final RRect bar = RRect.fromRectAndRadius(
         Rect.fromLTWH(0, 0, w, size.height),

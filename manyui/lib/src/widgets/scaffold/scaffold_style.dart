@@ -58,12 +58,12 @@ class MScaffoldStyle {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        bodyPadding,
-        headerPadding,
-        footerPadding,
-      );
+    backgroundColor,
+    foregroundColor,
+    bodyPadding,
+    headerPadding,
+    footerPadding,
+  );
 }
 
 /// A nullable overlay of [MScaffoldStyle] fields.
@@ -111,10 +111,10 @@ class MScaffoldStyleDelta {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        bodyPadding,
-        headerPadding,
-        footerPadding,
-      );
+    backgroundColor,
+    foregroundColor,
+    bodyPadding,
+    headerPadding,
+    footerPadding,
+  );
 }
