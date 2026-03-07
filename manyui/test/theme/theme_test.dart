@@ -41,6 +41,19 @@ void main() {
       expect(t.code.fontFamily, 'monospace');
     });
 
+    test('standard and workbench typography never tighten letter spacing', () {
+      const sets = <MTypography>[
+        MTypography.standard(),
+        MTypography.workbench(),
+      ];
+      for (final MTypography typography in sets) {
+        expect(typography.displayLarge.letterSpacing, 0);
+        expect(typography.displaySmall.letterSpacing, 0);
+        expect(typography.headlineLarge.letterSpacing, 0);
+        expect(typography.headlineSmall.letterSpacing, 0);
+      }
+    });
+
     testWidgets('inheritFromContext merges DefaultTextStyle.style into slots', (
       WidgetTester tester,
     ) async {
@@ -86,6 +99,29 @@ void main() {
       expect(tweaked.colors, base.colors);
       expect(tweaked.typography, base.typography);
       expect(tweaked.platform, base.platform);
+    });
+
+    test('workbench factories create layered, branded surfaces', () {
+      final light = MThemeData.workbenchLight(primary: const Color(0xFF176D5B));
+      final dark = MThemeData.workbenchDark(primary: const Color(0xFF62D1B3));
+
+      expect(light.colors.card, isNot(light.colors.background));
+      expect(dark.colors.card, isNot(dark.colors.background));
+      expect(light.colors.primary, const Color(0xFF176D5B));
+      expect(dark.colors.primary, const Color(0xFF62D1B3));
+      expect(light.typography, const MTypography.workbench());
+      expect(dark.radius, 7);
+    });
+
+    test('workbench dark destructive text meets normal-text contrast', () {
+      final colors = MThemeData.workbenchDark(
+        primary: const Color(0xFF62D1B3),
+      ).colors;
+      final double lighter = colors.destructiveForeground.computeLuminance();
+      final double darker = colors.destructive.computeLuminance();
+      final double ratio = (lighter + 0.05) / (darker + 0.05);
+
+      expect(ratio, greaterThanOrEqualTo(4.5));
     });
   });
 

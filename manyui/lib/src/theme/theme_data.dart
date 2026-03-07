@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/painting.dart';
 
 import '../widgets/accordion/accordion_styles.dart';
 import '../widgets/avatar/avatar_styles.dart';
@@ -117,6 +118,90 @@ class MThemeData {
   /// The default dark theme.
   factory MThemeData.dark({TargetPlatform? platform}) {
     return MThemeData(colors: const MColorScheme.dark(), platform: platform);
+  }
+
+  /// A layered light product theme for information-dense workspaces.
+  ///
+  /// Unlike the neutral compatibility preset, this gives the page, panels,
+  /// controls, and selected states distinct surfaces while allowing each app
+  /// to supply its own restrained [primary] accent.
+  factory MThemeData.workbenchLight({
+    required Color primary,
+    Color primaryForeground = const Color(0xFFFFFFFF),
+    TargetPlatform? platform,
+  }) {
+    const Color background = Color(0xFFF3F6F4);
+    const Color foreground = Color(0xFF17201C);
+    final Color accent = Color.alphaBlend(
+      primary.withValues(alpha: 0.12),
+      const Color(0xFFEAF0ED),
+    );
+    return MThemeData(
+      colors: MColorScheme(
+        background: background,
+        foreground: foreground,
+        card: const Color(0xFFFFFFFF),
+        cardForeground: foreground,
+        popover: const Color(0xFFFFFFFF),
+        popoverForeground: foreground,
+        primary: primary,
+        primaryForeground: primaryForeground,
+        secondary: const Color(0xFFE5ECE8),
+        secondaryForeground: const Color(0xFF22322B),
+        muted: const Color(0xFFEBF0ED),
+        mutedForeground: const Color(0xFF64716B),
+        accent: accent,
+        accentForeground: const Color(0xFF17241E),
+        destructive: const Color(0xFFC33E4B),
+        destructiveForeground: const Color(0xFFFFFFFF),
+        border: const Color(0xFFD5DED9),
+        input: const Color(0xFFC6D1CB),
+        ring: primary,
+      ),
+      typography: const MTypography.workbench(),
+      radius: 7,
+      platform: platform,
+    );
+  }
+
+  /// A layered dark product theme for information-dense workspaces.
+  factory MThemeData.workbenchDark({
+    required Color primary,
+    Color primaryForeground = const Color(0xFF0E1713),
+    TargetPlatform? platform,
+  }) {
+    const Color background = Color(0xFF101512);
+    const Color foreground = Color(0xFFF0F5F2);
+    final Color accent = Color.alphaBlend(
+      primary.withValues(alpha: 0.14),
+      const Color(0xFF222B26),
+    );
+    return MThemeData(
+      colors: MColorScheme(
+        background: background,
+        foreground: foreground,
+        card: const Color(0xFF181E1A),
+        cardForeground: foreground,
+        popover: const Color(0xFF1C231F),
+        popoverForeground: foreground,
+        primary: primary,
+        primaryForeground: primaryForeground,
+        secondary: const Color(0xFF26312B),
+        secondaryForeground: const Color(0xFFEAF1ED),
+        muted: const Color(0xFF202823),
+        mutedForeground: const Color(0xFFA5B1AA),
+        accent: accent,
+        accentForeground: const Color(0xFFF3F7F5),
+        destructive: const Color(0xFFB94350),
+        destructiveForeground: const Color(0xFFFFFFFF),
+        border: const Color(0xFF303A34),
+        input: const Color(0xFF3A463F),
+        ring: primary,
+      ),
+      typography: const MTypography.workbench(),
+      radius: 7,
+      platform: platform,
+    );
   }
 
   /// The 19-token color scheme.

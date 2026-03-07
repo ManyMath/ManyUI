@@ -30,25 +30,25 @@ class MTypography {
         fontSize: 48,
         height: 1.1,
         fontWeight: FontWeight.w700,
-        letterSpacing: -0.5,
+        letterSpacing: 0,
       ),
       displaySmall = const TextStyle(
         fontSize: 36,
         height: 1.15,
         fontWeight: FontWeight.w700,
-        letterSpacing: -0.4,
+        letterSpacing: 0,
       ),
       headlineLarge = const TextStyle(
         fontSize: 28,
         height: 1.2,
         fontWeight: FontWeight.w600,
-        letterSpacing: -0.3,
+        letterSpacing: 0,
       ),
       headlineSmall = const TextStyle(
         fontSize: 22,
         height: 1.25,
         fontWeight: FontWeight.w600,
-        letterSpacing: -0.2,
+        letterSpacing: 0,
       ),
       title = const TextStyle(
         fontSize: 18,
@@ -81,6 +81,91 @@ class MTypography {
         fontFamily: 'monospace',
         fontFamilyFallback: <String>['ui-monospace', 'Menlo', 'Consolas'],
         fontWeight: FontWeight.w400,
+      );
+
+  /// A slightly more generous typography set for desktop and mobile product
+  /// workspaces. It uses a humanist system-font stack and zero letter spacing
+  /// so dense tools remain calm and readable across platforms.
+  const MTypography.workbench()
+    : displayLarge = const TextStyle(
+        fontSize: 46,
+        height: 1.08,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0,
+        fontFamily: 'Avenir Next',
+        fontFamilyFallback: <String>['Segoe UI', 'Noto Sans', 'sans-serif'],
+      ),
+      displaySmall = const TextStyle(
+        fontSize: 34,
+        height: 1.14,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0,
+        fontFamily: 'Avenir Next',
+        fontFamilyFallback: <String>['Segoe UI', 'Noto Sans', 'sans-serif'],
+      ),
+      headlineLarge = const TextStyle(
+        fontSize: 27,
+        height: 1.2,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0,
+        fontFamily: 'Avenir Next',
+        fontFamilyFallback: <String>['Segoe UI', 'Noto Sans', 'sans-serif'],
+      ),
+      headlineSmall = const TextStyle(
+        fontSize: 21,
+        height: 1.25,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0,
+        fontFamily: 'Avenir Next',
+        fontFamilyFallback: <String>['Segoe UI', 'Noto Sans', 'sans-serif'],
+      ),
+      title = const TextStyle(
+        fontSize: 17,
+        height: 1.3,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0,
+        fontFamily: 'Avenir Next',
+        fontFamilyFallback: <String>['Segoe UI', 'Noto Sans', 'sans-serif'],
+      ),
+      body = const TextStyle(
+        fontSize: 15,
+        height: 1.5,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        fontFamily: 'Avenir Next',
+        fontFamilyFallback: <String>['Segoe UI', 'Noto Sans', 'sans-serif'],
+      ),
+      bodySmall = const TextStyle(
+        fontSize: 13.5,
+        height: 1.48,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        fontFamily: 'Avenir Next',
+        fontFamilyFallback: <String>['Segoe UI', 'Noto Sans', 'sans-serif'],
+      ),
+      label = const TextStyle(
+        fontSize: 14,
+        height: 1.25,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0,
+        fontFamily: 'Avenir Next',
+        fontFamilyFallback: <String>['Segoe UI', 'Noto Sans', 'sans-serif'],
+      ),
+      caption = const TextStyle(
+        fontSize: 12.5,
+        height: 1.4,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        fontFamily: 'Avenir Next',
+        fontFamilyFallback: <String>['Segoe UI', 'Noto Sans', 'sans-serif'],
+      ),
+      code = const TextStyle(
+        fontSize: 13,
+        height: 1.5,
+        fontFamily: 'ui-monospace',
+        fontFamilyFallback: <String>['SFMono-Regular', 'Menlo', 'Consolas'],
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
       );
 
   /// Display-sized text (largest), used for marketing headers.
