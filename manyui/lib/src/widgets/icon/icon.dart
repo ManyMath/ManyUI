@@ -23,6 +23,7 @@ class MIcon extends StatelessWidget {
     this.size,
     this.color,
     this.semanticLabel,
+    this.excludeFromSemantics = false,
     this.strokeWidth,
     super.key,
   });
@@ -40,6 +41,9 @@ class MIcon extends StatelessWidget {
   /// Overrides [MIconData.semanticLabel] for this call site.
   final String? semanticLabel;
 
+  /// Whether this icon is purely decorative and should not be announced.
+  final bool excludeFromSemantics;
+
   /// Stroke width for line-based glyphs (chevrons, check, close, sun rays).
   /// Falls back to a size-proportional default.
   final double? strokeWidth;
@@ -53,20 +57,22 @@ class MIcon extends StatelessWidget {
         color ?? iconTheme.color ?? theme.colors.foreground;
     final double resolvedStrokeWidth = strokeWidth ?? resolvedSize / 12;
 
+    final Widget paintedIcon = SizedBox(
+      width: resolvedSize,
+      height: resolvedSize,
+      child: CustomPaint(
+        painter: _IconPainter(
+          icon: icon,
+          color: resolvedColor,
+          strokeWidth: resolvedStrokeWidth,
+        ),
+      ),
+    );
+    if (excludeFromSemantics) return ExcludeSemantics(child: paintedIcon);
     return Semantics(
       label: semanticLabel ?? icon.semanticLabel,
       image: true,
-      child: SizedBox(
-        width: resolvedSize,
-        height: resolvedSize,
-        child: CustomPaint(
-          painter: _IconPainter(
-            icon: icon,
-            color: resolvedColor,
-            strokeWidth: resolvedStrokeWidth,
-          ),
-        ),
-      ),
+      child: paintedIcon,
     );
   }
 }

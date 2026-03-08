@@ -84,5 +84,34 @@ void main() {
       await pumpManyApp(tester, const MIcon(MIconData.eyeOff));
       expect(find.bySemanticsLabel('Hide'), findsOneWidget);
     });
+
+    testWidgets('play defaults to its action label', (
+      WidgetTester tester,
+    ) async {
+      await pumpManyApp(tester, const MIcon(MIconData.play));
+
+      expect(find.bySemanticsLabel('Play'), findsOneWidget);
+    });
+
+    testWidgets('maximize and restore expose their action labels', (
+      WidgetTester tester,
+    ) async {
+      await pumpManyApp(tester, const MIcon(MIconData.maximize));
+      expect(find.bySemanticsLabel('Maximize'), findsOneWidget);
+
+      await pumpManyApp(tester, const MIcon(MIconData.restore));
+      expect(find.bySemanticsLabel('Restore'), findsOneWidget);
+    });
+
+    testWidgets('decorative icons can be excluded from semantics', (
+      WidgetTester tester,
+    ) async {
+      await pumpManyApp(
+        tester,
+        const MIcon(MIconData.network, excludeFromSemantics: true),
+      );
+
+      expect(find.bySemanticsLabel('Network'), findsNothing);
+    });
   });
 }
