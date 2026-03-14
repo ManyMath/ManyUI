@@ -62,6 +62,7 @@ export 'src/widgets/empty_state/empty_state.dart';
 export 'src/widgets/field/field.dart';
 export 'src/widgets/icon/icon.dart';
 export 'src/widgets/icon/icon_data.dart';
+export 'src/widgets/icon_button/icon_button.dart';
 export 'src/widgets/inset_panel/inset_panel.dart';
 export 'src/widgets/label/label.dart';
 export 'src/widgets/label/label_style.dart';
