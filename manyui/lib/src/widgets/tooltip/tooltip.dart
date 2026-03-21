@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
@@ -11,9 +12,11 @@ import 'tooltip_style.dart';
 
 /// A small floating label anchored to a child widget.
 ///
-/// `MTooltip` wraps any widget and surfaces a textual hint above (or below)
-/// it on hover (mouse), long-press (touch), or programmatic trigger. The
-/// hint never blocks pointer events on the rest of the screen — unlike
+/// `MTooltip` wraps any widget and surfaces a textual hint on its preferred
+/// side on hover (mouse), long-press (touch), or programmatic trigger. If the
+/// hint would cross a viewport edge, it automatically flips vertically and
+/// shifts horizontally to remain readable. The hint never blocks pointer
+/// events on the rest of the screen — unlike
 /// [MSelect]'s popover, the tooltip surface is fully click-through, and an
 /// outside tap dismisses it without being swallowed.
 ///
@@ -59,7 +62,10 @@ class MTooltip extends StatefulWidget {
   /// The widget the tooltip is anchored to.
   final Widget child;
 
-  /// Where the tooltip sits relative to [child].
+  /// The preferred side for the tooltip relative to [child].
+  ///
+  /// The tooltip automatically flips to the opposite side when there is not
+  /// enough room, and shifts within the viewport at horizontal edges.
   final MTooltipPlacement placement;
 
   /// The input modality this tooltip should respond to.
@@ -86,6 +92,7 @@ class _MTooltipState extends State<MTooltip> {
   Timer? _showTimer;
   Timer? _hideTimer;
   Size _anchorSize = Size.zero;
+  Offset _anchorOffset = Offset.zero;
   bool _pointerInsideAnchor = false;
   // Subscribed to GestureBinding.pointerRouter while the tooltip is open so a
   // tap anywhere on the screen can dismiss it without being swallowed.
@@ -108,7 +115,16 @@ class _MTooltipState extends State<MTooltip> {
 
   void _measureAnchor() {
     final RenderBox? box = context.findRenderObject() as RenderBox?;
-    if (box != null && box.hasSize) _anchorSize = box.size;
+    if (box == null || !box.hasSize) return;
+    _anchorSize = box.size;
+
+    final RenderBox? overlayBox =
+        Overlay.maybeOf(context)?.context.findRenderObject() as RenderBox?;
+    if (overlayBox != null && overlayBox.hasSize) {
+      _anchorOffset = box.localToGlobal(Offset.zero, ancestor: overlayBox);
+    } else {
+      _anchorOffset = box.localToGlobal(Offset.zero);
+    }
   }
 
   void _scheduleShow(Duration delay) {
@@ -224,18 +240,18 @@ class _MTooltipState extends State<MTooltip> {
       child: anchor,
     );
 
-    final Offset overlayOffset = _resolveOffset(resolved);
-
     return MOverlayAnchor(
       controller: _anchor,
       anchor: anchor,
-      overlayOffset: overlayOffset,
+      // Move the follower's coordinate origin back to the overlay origin. The
+      // layout delegate can then measure its child and place it against all
+      // four viewport edges while the follower still tracks its anchor layer.
+      overlayOffset: -_anchorOffset,
       modalBarrier: false,
       overlayBuilder: (BuildContext overlayContext) {
-        return _TooltipSurface(
+        final Widget surface = _TooltipSurface(
           message: widget.message,
           style: resolved,
-          placement: widget.placement,
           onHoverEnter: () {
             // Pointer crossed into the tooltip — cancel any pending hide so
             // users can move from anchor to surface without losing it.
@@ -246,23 +262,101 @@ class _MTooltipState extends State<MTooltip> {
             if (!_pointerInsideAnchor) _scheduleHide(resolved.hideDelay);
           },
         );
+        return CustomSingleChildLayout(
+          delegate: _TooltipLayoutDelegate(
+            anchor: _anchorOffset & _anchorSize,
+            preferredPlacement: widget.placement,
+            gap: resolved.gap,
+          ),
+          child: ExcludeSemantics(child: surface),
+        );
       },
     );
   }
+}
 
-  Offset _resolveOffset(MTooltipStyle s) {
-    // We can't measure the tooltip surface ahead of time, so for "above" we
-    // shift up by the tooltip's likely line height plus padding plus gap.
-    // The Stack inside _TooltipSurface uses Align(bottomStart) so the
-    // surface lines up with the offset's top — works for either placement.
-    switch (widget.placement) {
-      case MTooltipPlacement.above:
-        // Negative y. We don't know exact tooltip height; the surface uses
-        // Align(bottomStart) so its bottom edge meets the anchor's top.
-        return Offset(0, -s.gap);
-      case MTooltipPlacement.below:
-        return Offset(0, _anchorSize.height + s.gap);
-    }
+const double _kTooltipViewportInset = 8;
+
+/// Positions a measured tooltip inside the overlay viewport.
+///
+/// The preferred side wins whenever it fits. If it does not, the opposite
+/// side wins when it fits; when neither side fits, the side with more room is
+/// chosen and clamped. Horizontal placement is centered on the anchor and
+/// shifted at either edge.
+class _TooltipLayoutDelegate extends SingleChildLayoutDelegate {
+  const _TooltipLayoutDelegate({
+    required this.anchor,
+    required this.preferredPlacement,
+    required this.gap,
+  });
+
+  final Rect anchor;
+  final MTooltipPlacement preferredPlacement;
+  final double gap;
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
+    final double horizontalInset = math.min(
+      _kTooltipViewportInset,
+      constraints.maxWidth / 2,
+    );
+    final double verticalInset = math.min(
+      _kTooltipViewportInset,
+      constraints.maxHeight / 2,
+    );
+    final double maxWidth = math.max(
+      0,
+      constraints.maxWidth - (horizontalInset * 2),
+    );
+    final double maxHeight = math.max(
+      0,
+      constraints.maxHeight - (verticalInset * 2),
+    );
+    return BoxConstraints.loose(Size(maxWidth, maxHeight));
+  }
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) {
+    final double horizontalInset = math.min(
+      _kTooltipViewportInset,
+      size.width / 2,
+    );
+    final double verticalInset = math.min(
+      _kTooltipViewportInset,
+      size.height / 2,
+    );
+    final double minX = horizontalInset;
+    final double maxX = size.width - horizontalInset - childSize.width;
+    final double centeredX = anchor.center.dx - (childSize.width / 2);
+    final double x = centeredX.clamp(minX, maxX).toDouble();
+
+    final double minY = verticalInset;
+    final double maxY = size.height - verticalInset - childSize.height;
+    final double aboveY = anchor.top - gap - childSize.height;
+    final double belowY = anchor.bottom + gap;
+    final bool fitsAbove = aboveY >= minY;
+    final bool fitsBelow = belowY <= maxY;
+    final double availableAbove = anchor.top - gap - minY;
+    final double availableBelow =
+        size.height - verticalInset - gap - anchor.bottom;
+
+    final bool placeAbove = switch (preferredPlacement) {
+      MTooltipPlacement.above when fitsAbove => true,
+      MTooltipPlacement.below when fitsBelow => false,
+      MTooltipPlacement.above when fitsBelow => false,
+      MTooltipPlacement.below when fitsAbove => true,
+      MTooltipPlacement.above => availableAbove >= availableBelow,
+      MTooltipPlacement.below => availableAbove > availableBelow,
+    };
+    final double preferredY = placeAbove ? aboveY : belowY;
+    return Offset(x, preferredY.clamp(minY, maxY).toDouble());
+  }
+
+  @override
+  bool shouldRelayout(_TooltipLayoutDelegate oldDelegate) {
+    return anchor != oldDelegate.anchor ||
+        preferredPlacement != oldDelegate.preferredPlacement ||
+        gap != oldDelegate.gap;
   }
 }
 
@@ -270,14 +364,12 @@ class _TooltipSurface extends StatelessWidget {
   const _TooltipSurface({
     required this.message,
     required this.style,
-    required this.placement,
     required this.onHoverEnter,
     required this.onHoverExit,
   });
 
   final String message;
   final MTooltipStyle style;
-  final MTooltipPlacement placement;
   final VoidCallback onHoverEnter;
   final VoidCallback onHoverExit;
 
@@ -316,23 +408,11 @@ class _TooltipSurface extends StatelessWidget {
       ),
     );
 
-    final Widget hoverable = MouseRegion(
+    return MouseRegion(
+      key: const ValueKey<String>('MTooltip.surface'),
       onEnter: (_) => onHoverEnter(),
       onExit: (_) => onHoverExit(),
       child: body,
     );
-
-    // For above-placement we don't know the surface height in advance, so
-    // FractionalTranslation(0, -1) along Y lifts the surface so its bottom
-    // edge sits at the anchored Y origin. Below-placement needs no shift.
-    // The MouseRegion lives INSIDE the translation so its hit-test bounds
-    // sit on the painted surface, not on the pre-translation origin.
-    if (placement == MTooltipPlacement.above) {
-      return FractionalTranslation(
-        translation: const Offset(0, -1),
-        child: hoverable,
-      );
-    }
-    return hoverable;
   }
 }

@@ -2,14 +2,15 @@ import 'package:flutter/widgets.dart';
 
 /// Where the tooltip's surface sits relative to its anchor.
 ///
-/// v0.1 ships two placements. The popover is positioned via
-/// `CompositedTransformFollower` and does not auto-flip when it would
-/// overflow the viewport.
+/// The selected placement is preferred, rather than absolute. [MTooltip]
+/// automatically uses the opposite side when the preferred side would leave
+/// the surface outside the overlay viewport, then shifts the surface as needed
+/// to keep it inside the viewport.
 enum MTooltipPlacement {
-  /// Above the anchor, separated by `gap` logical pixels.
+  /// Prefer above the anchor, separated by `gap` logical pixels.
   above,
 
-  /// Below the anchor, separated by `gap` logical pixels.
+  /// Prefer below the anchor, separated by `gap` logical pixels.
   below,
 }
 

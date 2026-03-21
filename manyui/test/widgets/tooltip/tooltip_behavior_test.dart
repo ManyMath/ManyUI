@@ -7,6 +7,7 @@ import 'package:manyui_testing/manyui_testing.dart';
 
 const Duration _kShowDelay = Duration(milliseconds: 500);
 const Duration _kHideDelay = Duration(milliseconds: 0);
+const Key _kTooltipSurfaceKey = ValueKey<String>('MTooltip.surface');
 
 /// A keyed anchor child used so tests can find and tap it.
 Widget _anchor({Key? key, String label = 'anchor'}) {
@@ -43,6 +44,50 @@ Future<void> _pumpTooltip(
     installOverlay: true,
   );
   await tester.pump();
+}
+
+Future<TestGesture> _showTooltip(WidgetTester tester, Finder anchor) async {
+  final TestGesture gesture = await tester.createGesture(
+    kind: PointerDeviceKind.mouse,
+  );
+  await gesture.addPointer(location: tester.getCenter(anchor));
+  await tester.pump();
+  return gesture;
+}
+
+Future<void> _pumpEdgeTooltip(
+  WidgetTester tester, {
+  required Alignment alignment,
+  required MTooltipPlacement placement,
+  required String message,
+  Size viewport = const Size(320, 240),
+}) async {
+  await tester.binding.setSurfaceSize(viewport);
+  addTearDown(() => tester.binding.setSurfaceSize(null));
+  await pumpManyApp(
+    tester,
+    Align(
+      alignment: alignment,
+      child: MTooltip(
+        message: message,
+        placement: placement,
+        modality: MInputModality.mouse,
+        style: const MTooltipStyleDelta(
+          maxWidth: 180,
+          showDelay: Duration.zero,
+        ),
+        child: _anchor(key: const ValueKey<String>('edge-anchor')),
+      ),
+    ),
+    viewport: viewport,
+    modality: MInputModality.mouse,
+    installOverlay: true,
+  );
+  final TestGesture gesture = await _showTooltip(
+    tester,
+    find.byKey(const ValueKey<String>('edge-anchor')),
+  );
+  addTearDown(gesture.removePointer);
 }
 
 void main() {
@@ -206,6 +251,90 @@ void main() {
   });
 
   group('MTooltip placement', () {
+    testWidgets('top collision flips preferred-above tooltip below', (
+      WidgetTester tester,
+    ) async {
+      await _pumpEdgeTooltip(
+        tester,
+        alignment: Alignment.topCenter,
+        placement: MTooltipPlacement.above,
+        message: 'Header action',
+      );
+
+      final Rect anchor = tester.getRect(
+        find.byKey(const ValueKey<String>('edge-anchor')),
+      );
+      final Rect surface = tester.getRect(find.byKey(_kTooltipSurfaceKey));
+      expect(surface.top, greaterThanOrEqualTo(anchor.bottom));
+      expect(surface.top, greaterThanOrEqualTo(8));
+    });
+
+    testWidgets('bottom collision flips preferred-below tooltip above', (
+      WidgetTester tester,
+    ) async {
+      await _pumpEdgeTooltip(
+        tester,
+        alignment: Alignment.bottomCenter,
+        placement: MTooltipPlacement.below,
+        message: 'Footer action',
+      );
+
+      final Rect anchor = tester.getRect(
+        find.byKey(const ValueKey<String>('edge-anchor')),
+      );
+      final Rect surface = tester.getRect(find.byKey(_kTooltipSurfaceKey));
+      expect(surface.bottom, lessThanOrEqualTo(anchor.top));
+      expect(surface.bottom, lessThanOrEqualTo(232));
+    });
+
+    testWidgets('left collision shifts tooltip inside viewport', (
+      WidgetTester tester,
+    ) async {
+      await _pumpEdgeTooltip(
+        tester,
+        alignment: Alignment.centerLeft,
+        placement: MTooltipPlacement.above,
+        message: 'A wider tooltip at the leading edge',
+      );
+
+      final Rect surface = tester.getRect(find.byKey(_kTooltipSurfaceKey));
+      expect(surface.left, closeTo(8, 0.01));
+      expect(surface.right, lessThanOrEqualTo(312));
+    });
+
+    testWidgets('right collision shifts tooltip inside viewport', (
+      WidgetTester tester,
+    ) async {
+      await _pumpEdgeTooltip(
+        tester,
+        alignment: Alignment.centerRight,
+        placement: MTooltipPlacement.above,
+        message: 'A wider tooltip at the trailing edge',
+      );
+
+      final Rect surface = tester.getRect(find.byKey(_kTooltipSurfaceKey));
+      expect(surface.left, greaterThanOrEqualTo(8));
+      expect(surface.right, closeTo(312, 0.01));
+    });
+
+    testWidgets('constrains a large tooltip to all viewport bounds', (
+      WidgetTester tester,
+    ) async {
+      await _pumpEdgeTooltip(
+        tester,
+        alignment: Alignment.topLeft,
+        placement: MTooltipPlacement.above,
+        message: List<String>.filled(20, 'viewport-aware').join(' '),
+        viewport: const Size(160, 120),
+      );
+
+      final Rect surface = tester.getRect(find.byKey(_kTooltipSurfaceKey));
+      expect(surface.left, greaterThanOrEqualTo(8));
+      expect(surface.top, greaterThanOrEqualTo(8));
+      expect(surface.right, lessThanOrEqualTo(152));
+      expect(surface.bottom, lessThanOrEqualTo(112));
+    });
+
     testWidgets('below places tooltip beneath the anchor', (
       WidgetTester tester,
     ) async {
@@ -294,7 +423,7 @@ void main() {
   });
 
   group('MTooltip semantics', () {
-    testWidgets('anchor exposes the message as Semantics.tooltip', (
+    testWidgets('exposes one anchor tooltip while excluding visual duplicate', (
       WidgetTester tester,
     ) async {
       final SemanticsHandle handle = tester.ensureSemantics();
@@ -302,15 +431,31 @@ void main() {
         tester,
         message: 'Click me',
         child: _anchor(key: const ValueKey<String>('a')),
+        style: const MTooltipStyleDelta(showDelay: Duration.zero),
       );
 
       expect(
-        find.bySemanticsLabel('Click me').evaluate().isNotEmpty ||
-            tester
-                .widgetList<Semantics>(find.byType(Semantics))
-                .any((Semantics s) => s.properties.tooltip == 'Click me'),
-        isTrue,
-        reason: 'Semantics tree should carry tooltip: "Click me"',
+        tester.getSemantics(find.byKey(const ValueKey<String>('a'))),
+        matchesSemantics(label: 'anchor', tooltip: 'Click me'),
+      );
+
+      final TestGesture gesture = await _showTooltip(
+        tester,
+        find.byKey(const ValueKey<String>('a')),
+      );
+      addTearDown(gesture.removePointer);
+      expect(
+        find.semantics.byPredicate(
+          (SemanticsNode node) => node.tooltip == 'Click me',
+        ),
+        findsOne,
+      );
+      expect(
+        find.ancestor(
+          of: find.text('Click me'),
+          matching: find.byType(ExcludeSemantics),
+        ),
+        findsOneWidget,
       );
       handle.dispose();
     });
