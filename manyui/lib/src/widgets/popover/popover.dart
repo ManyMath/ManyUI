@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -81,7 +83,8 @@ class MPopoverController extends ChangeNotifier {
 /// );
 /// ```
 ///
-/// The popover opens below the anchor and does not auto-flip on overflow.
+/// The popover prefers to open below the anchor, flips above when that side
+/// has more usable room, and clamps its surface inside the viewport.
 class MPopover extends StatefulWidget {
   /// Builds a popover.
   const MPopover({
@@ -147,6 +150,12 @@ class _MPopoverState extends State<MPopover> {
   final FocusNode _anchorFocusNode = FocusNode(debugLabel: 'MPopover anchor');
 
   double _anchorWidth = 0;
+  double _anchorHeight = 0;
+  double _anchorLeft = 0;
+  double _anchorTop = 0;
+  double _viewportWidth = 0;
+  double _viewportHeight = 0;
+  int _geometryWatchGeneration = 0;
 
   @override
   void initState() {
@@ -194,19 +203,75 @@ class _MPopoverState extends State<MPopover> {
     final bool wantOpen = _controller.isOpen;
     if (wantOpen && !_anchor.isOpen) {
       _measureAnchor();
+      _startGeometryWatch();
       _anchor.open(anchorFocusNode: _anchorFocusNode);
       if (mounted) setState(() {});
     } else if (!wantOpen && _anchor.isOpen) {
+      _stopGeometryWatch();
       _anchor.close();
       widget.onClose?.call();
       if (mounted) setState(() {});
     }
   }
 
-  void _measureAnchor() {
+  bool _measureAnchor() {
     final RenderBox? box = context.findRenderObject() as RenderBox?;
-    _anchorWidth = (box != null && box.hasSize) ? box.size.width : 0;
+    if (box == null || !box.hasSize) return false;
+
+    final double anchorWidth = box.size.width;
+    final double anchorHeight = box.size.height;
+    late final double viewportWidth;
+    late final double viewportHeight;
+    late final Offset origin;
+
+    final RenderBox? overlayBox =
+        Overlay.maybeOf(context)?.context.findRenderObject() as RenderBox?;
+    if (overlayBox != null && overlayBox.hasSize) {
+      viewportWidth = overlayBox.size.width;
+      viewportHeight = overlayBox.size.height;
+      origin = box.localToGlobal(Offset.zero, ancestor: overlayBox);
+    } else {
+      final Size viewport = MediaQuery.sizeOf(context);
+      viewportWidth = viewport.width;
+      viewportHeight = viewport.height;
+      origin = box.localToGlobal(Offset.zero);
+    }
+
+    final bool changed =
+        _anchorWidth != anchorWidth ||
+        _anchorHeight != anchorHeight ||
+        _anchorLeft != origin.dx ||
+        _anchorTop != origin.dy ||
+        _viewportWidth != viewportWidth ||
+        _viewportHeight != viewportHeight;
+    _anchorWidth = anchorWidth;
+    _anchorHeight = anchorHeight;
+    _anchorLeft = origin.dx;
+    _anchorTop = origin.dy;
+    _viewportWidth = viewportWidth;
+    _viewportHeight = viewportHeight;
+    return changed;
   }
+
+  void _startGeometryWatch() {
+    final int generation = ++_geometryWatchGeneration;
+
+    void measureAfterFrame(Duration _) {
+      if (!mounted ||
+          generation != _geometryWatchGeneration ||
+          !_controller.isOpen) {
+        return;
+      }
+      if (_measureAnchor()) setState(() {});
+      // This callback does not request a frame. It observes scroll, resize,
+      // layout, and animation frames the app was already going to produce.
+      WidgetsBinding.instance.addPostFrameCallback(measureAfterFrame);
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback(measureAfterFrame);
+  }
+
+  void _stopGeometryWatch() => _geometryWatchGeneration += 1;
 
   void _handleDismiss() {
     // Outside tap on the modal barrier — drive close through the controller
@@ -231,6 +296,7 @@ class _MPopoverState extends State<MPopover> {
 
   @override
   void dispose() {
+    _stopGeometryWatch();
     _unbindController();
     _anchor.dispose();
     _anchorFocusNode.dispose();
@@ -267,11 +333,31 @@ class _MPopoverState extends State<MPopover> {
     final Widget portal = MOverlayAnchor(
       controller: _anchor,
       anchor: anchor,
-      overlayOffset: Offset(0, _measuredAnchorHeight() + resolved.gap),
+      // Normalize the follower to the overlay viewport. The layout delegate
+      // then positions the measured surface relative to the anchor rect in a
+      // single frame, so a bottom-edge menu never flashes offscreen first.
+      overlayOffset: Offset(-_anchorLeft, -_anchorTop),
       onDismiss: _handleDismiss,
       onKeyEvent: _onKeyEvent,
-      overlayBuilder: (BuildContext overlayContext) =>
-          _buildOverlay(overlayContext, resolved),
+      overlayBuilder: (BuildContext overlayContext) {
+        final Widget overlay = _buildOverlay(overlayContext, resolved);
+        return SizedBox(
+          width: _viewportWidth,
+          height: _viewportHeight,
+          child: CustomSingleChildLayout(
+            delegate: _PopoverPositionDelegate(
+              anchorRect: Rect.fromLTWH(
+                _anchorLeft,
+                _anchorTop,
+                _anchorWidth,
+                _anchorHeight,
+              ),
+              gap: resolved.gap,
+            ),
+            child: overlay,
+          ),
+        );
+      },
     );
 
     return Semantics(
@@ -280,12 +366,6 @@ class _MPopoverState extends State<MPopover> {
       expanded: _controller.isOpen,
       child: portal,
     );
-  }
-
-  double _measuredAnchorHeight() {
-    final RenderBox? box = context.findRenderObject() as RenderBox?;
-    if (box == null || !box.hasSize) return 0;
-    return box.size.height;
   }
 
   Widget _buildOverlay(BuildContext overlayContext, MPopoverStyle s) {
@@ -328,5 +408,71 @@ class _MPopoverState extends State<MPopover> {
     }
 
     return surface;
+  }
+}
+
+class _PopoverPositionDelegate extends SingleChildLayoutDelegate {
+  const _PopoverPositionDelegate({required this.anchorRect, required this.gap});
+
+  static const double _edgeInset = 8;
+
+  final Rect anchorRect;
+  final double gap;
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
+    final double maxUsableHeight = math.max(
+      0,
+      constraints.maxHeight - (_edgeInset * 2),
+    );
+    final double above = (anchorRect.top - gap - _edgeInset).clamp(
+      0,
+      maxUsableHeight,
+    );
+    final double below =
+        (constraints.maxHeight - anchorRect.bottom - gap - _edgeInset).clamp(
+          0,
+          maxUsableHeight,
+        );
+    return BoxConstraints(
+      maxWidth: math.max(0, constraints.maxWidth - (_edgeInset * 2)),
+      maxHeight: math.max(above, below),
+    );
+  }
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) {
+    final double roomAbove = math.max(0, anchorRect.top - gap - _edgeInset);
+    final double roomBelow = math.max(
+      0,
+      size.height - anchorRect.bottom - gap - _edgeInset,
+    );
+    final bool placeBelow =
+        childSize.height <= roomBelow || roomBelow >= roomAbove;
+
+    double top = placeBelow
+        ? anchorRect.bottom + gap
+        : anchorRect.top - gap - childSize.height;
+    final double maxTop = math.max(
+      _edgeInset,
+      size.height - _edgeInset - childSize.height,
+    );
+    top = top.clamp(_edgeInset, maxTop);
+
+    final bool alignTrailing = anchorRect.center.dx > size.width / 2;
+    double left = alignTrailing
+        ? anchorRect.right - childSize.width
+        : anchorRect.left;
+    final double maxLeft = math.max(
+      _edgeInset,
+      size.width - _edgeInset - childSize.width,
+    );
+    left = left.clamp(_edgeInset, maxLeft);
+    return Offset(left, top);
+  }
+
+  @override
+  bool shouldRelayout(covariant _PopoverPositionDelegate oldDelegate) {
+    return anchorRect != oldDelegate.anchorRect || gap != oldDelegate.gap;
   }
 }

@@ -19,6 +19,348 @@ Widget _content({String text = 'Popover body'}) {
 
 void main() {
   group('MPopover open/close', () {
+    testWidgets('opens above a bottom anchor and stays inside the viewport', (
+      WidgetTester tester,
+    ) async {
+      final MPopoverController c = MPopoverController();
+      addTearDown(c.dispose);
+      await tester.binding.setSurfaceSize(const Size(320, 240));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      const anchorKey = ValueKey<String>('bottom-anchor');
+      const popoverKey = ValueKey<String>('bottom-popover');
+
+      await pumpManyApp(
+        tester,
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: MPopover(
+              controller: c,
+              popoverBuilder: (BuildContext context, VoidCallback close) =>
+                  const SizedBox(key: popoverKey, width: 180, height: 80),
+              child: _anchor(key: anchorKey),
+            ),
+          ),
+        ),
+        viewport: const Size(320, 240),
+        installOverlay: true,
+      );
+
+      c.open();
+      await tester.pump();
+
+      final Rect anchor = tester.getRect(find.byKey(anchorKey));
+      final Rect popover = tester.getRect(find.byKey(popoverKey));
+      expect(popover.bottom, lessThan(anchor.top));
+      expect(popover.top, greaterThanOrEqualTo(0));
+      expect(popover.bottom, lessThanOrEqualTo(240));
+    });
+
+    testWidgets('keeps a top-anchor popover below the anchor', (
+      WidgetTester tester,
+    ) async {
+      final MPopoverController c = MPopoverController();
+      addTearDown(c.dispose);
+      await tester.binding.setSurfaceSize(const Size(320, 240));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      const anchorKey = ValueKey<String>('top-anchor');
+      const popoverKey = ValueKey<String>('top-popover');
+
+      await pumpManyApp(
+        tester,
+        Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: MPopover(
+              controller: c,
+              popoverBuilder: (BuildContext context, VoidCallback close) =>
+                  const SizedBox(key: popoverKey, width: 180, height: 80),
+              child: _anchor(key: anchorKey),
+            ),
+          ),
+        ),
+        viewport: const Size(320, 240),
+        installOverlay: true,
+      );
+
+      c.open();
+      await tester.pump();
+
+      final Rect anchor = tester.getRect(find.byKey(anchorKey));
+      final Rect popover = tester.getRect(find.byKey(popoverKey));
+      expect(popover.top, greaterThan(anchor.bottom));
+      expect(popover.bottom, lessThanOrEqualTo(240));
+    });
+
+    testWidgets('repositions after its scroll ancestor moves the anchor', (
+      WidgetTester tester,
+    ) async {
+      final MPopoverController c = MPopoverController();
+      final ScrollController scroll = ScrollController();
+      addTearDown(c.dispose);
+      addTearDown(scroll.dispose);
+      await tester.binding.setSurfaceSize(const Size(320, 240));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      const anchorKey = ValueKey<String>('scroll-anchor');
+      const popoverKey = ValueKey<String>('scroll-popover');
+
+      await pumpManyApp(
+        tester,
+        ListView(
+          controller: scroll,
+          children: <Widget>[
+            const SizedBox(height: 150),
+            MPopover(
+              controller: c,
+              popoverBuilder: (BuildContext context, VoidCallback close) =>
+                  const SizedBox(key: popoverKey, width: 180, height: 80),
+              child: _anchor(key: anchorKey),
+            ),
+            const SizedBox(height: 400),
+          ],
+        ),
+        viewport: const Size(320, 240),
+        installOverlay: true,
+      );
+
+      c.open();
+      await tester.pump();
+      expect(
+        tester.getRect(find.byKey(popoverKey)).bottom,
+        lessThan(tester.getRect(find.byKey(anchorKey)).top),
+      );
+
+      scroll.jumpTo(140);
+      await tester.pump();
+      await tester.pump();
+
+      final Rect movedAnchor = tester.getRect(find.byKey(anchorKey));
+      final Rect movedPopover = tester.getRect(find.byKey(popoverKey));
+      expect(movedPopover.top, greaterThan(movedAnchor.bottom));
+      expect(movedPopover.top, greaterThanOrEqualTo(0));
+      expect(movedPopover.bottom, lessThanOrEqualTo(240));
+    });
+
+    testWidgets('repositions when an outer nested scroll ancestor moves', (
+      WidgetTester tester,
+    ) async {
+      final MPopoverController c = MPopoverController();
+      final ScrollController outerScroll = ScrollController();
+      final ScrollController innerScroll = ScrollController();
+      addTearDown(c.dispose);
+      addTearDown(outerScroll.dispose);
+      addTearDown(innerScroll.dispose);
+      await tester.binding.setSurfaceSize(const Size(320, 240));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      const anchorKey = ValueKey<String>('nested-scroll-anchor');
+      const popoverKey = ValueKey<String>('nested-scroll-popover');
+
+      await pumpManyApp(
+        tester,
+        SingleChildScrollView(
+          controller: outerScroll,
+          child: Column(
+            children: <Widget>[
+              const SizedBox(height: 150),
+              SizedBox(
+                height: 200,
+                child: ListView(
+                  controller: innerScroll,
+                  children: <Widget>[
+                    MPopover(
+                      controller: c,
+                      popoverBuilder:
+                          (BuildContext context, VoidCallback close) =>
+                              const SizedBox(
+                                key: popoverKey,
+                                width: 180,
+                                height: 80,
+                              ),
+                      child: _anchor(key: anchorKey),
+                    ),
+                    const SizedBox(height: 400),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 400),
+            ],
+          ),
+        ),
+        viewport: const Size(320, 240),
+        installOverlay: true,
+      );
+
+      c.open();
+      await tester.pump();
+      expect(
+        tester.getRect(find.byKey(popoverKey)).bottom,
+        lessThan(tester.getRect(find.byKey(anchorKey)).top),
+      );
+
+      outerScroll.jumpTo(140);
+      await tester.pump();
+      await tester.pump();
+
+      final Rect movedAnchor = tester.getRect(find.byKey(anchorKey));
+      final Rect movedPopover = tester.getRect(find.byKey(popoverKey));
+      expect(movedPopover.top, greaterThan(movedAnchor.bottom));
+      expect(movedPopover.top, greaterThanOrEqualTo(0));
+      expect(movedPopover.bottom, lessThanOrEqualTo(240));
+    });
+
+    testWidgets('reclamps after the viewport is resized while open', (
+      WidgetTester tester,
+    ) async {
+      final MPopoverController c = MPopoverController();
+      addTearDown(c.dispose);
+      await tester.binding.setSurfaceSize(const Size(800, 400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      const popoverKey = ValueKey<String>('resized-popover');
+
+      await pumpManyApp(
+        tester,
+        Align(
+          alignment: Alignment.centerRight,
+          child: MPopover(
+            controller: c,
+            popoverBuilder: (BuildContext context, VoidCallback close) =>
+                const SizedBox(key: popoverKey, width: 240, height: 80),
+            child: _anchor(),
+          ),
+        ),
+        viewport: const Size(800, 400),
+        installOverlay: true,
+      );
+
+      c.open();
+      await tester.pump();
+      await tester.binding.setSurfaceSize(const Size(360, 240));
+      await tester.pump();
+      await tester.pump();
+
+      final Rect popover = tester.getRect(find.byKey(popoverKey));
+      expect(popover.left, greaterThanOrEqualTo(0));
+      expect(popover.right, lessThanOrEqualTo(360));
+      expect(popover.top, greaterThanOrEqualTo(0));
+      expect(popover.bottom, lessThanOrEqualTo(240));
+    });
+
+    testWidgets('remeasures an anchor whose size changes while open', (
+      WidgetTester tester,
+    ) async {
+      final MPopoverController c = MPopoverController();
+      final ValueNotifier<double> height = ValueNotifier<double>(36);
+      addTearDown(c.dispose);
+      addTearDown(height.dispose);
+      const anchorKey = ValueKey<String>('resized-anchor');
+      const popoverKey = ValueKey<String>('anchor-size-popover');
+
+      await pumpManyApp(
+        tester,
+        Align(
+          alignment: Alignment.topCenter,
+          child: ValueListenableBuilder<double>(
+            valueListenable: height,
+            builder: (BuildContext context, double value, Widget? child) =>
+                MPopover(
+                  controller: c,
+                  popoverBuilder: (BuildContext context, VoidCallback close) =>
+                      const SizedBox(key: popoverKey, width: 180, height: 80),
+                  child: SizedBox(key: anchorKey, width: 120, height: value),
+                ),
+          ),
+        ),
+        installOverlay: true,
+      );
+
+      c.open();
+      await tester.pump();
+      height.value = 72;
+      await tester.pump();
+      await tester.pump();
+
+      final Rect anchor = tester.getRect(find.byKey(anchorKey));
+      final Rect popover = tester.getRect(find.byKey(popoverKey));
+      expect(popover.top, greaterThan(anchor.bottom));
+    });
+
+    testWidgets('caps a tall surface for a partially offscreen anchor', (
+      WidgetTester tester,
+    ) async {
+      final MPopoverController c = MPopoverController();
+      addTearDown(c.dispose);
+      await tester.binding.setSurfaceSize(const Size(320, 240));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      const popoverKey = ValueKey<String>('offscreen-popover');
+
+      await pumpManyApp(
+        tester,
+        Transform.translate(
+          offset: const Offset(0, -50),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: MPopover(
+              controller: c,
+              popoverBuilder: (BuildContext context, VoidCallback close) =>
+                  const SizedBox(key: popoverKey, width: 180, height: 400),
+              child: _anchor(),
+            ),
+          ),
+        ),
+        viewport: const Size(320, 240),
+        installOverlay: true,
+      );
+
+      c.open();
+      await tester.pump();
+
+      final Rect popover = tester.getRect(find.byKey(popoverKey));
+      expect(popover.top, greaterThanOrEqualTo(0));
+      expect(popover.bottom, lessThanOrEqualTo(240));
+    });
+
+    testWidgets('keeps wide content inside the trailing viewport edge', (
+      WidgetTester tester,
+    ) async {
+      final MPopoverController c = MPopoverController();
+      addTearDown(c.dispose);
+      await tester.binding.setSurfaceSize(const Size(320, 240));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await pumpManyApp(
+        tester,
+        Align(
+          alignment: Alignment.topRight,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 16, right: 8),
+            child: MPopover(
+              controller: c,
+              popoverBuilder: (BuildContext context, VoidCallback close) =>
+                  const SizedBox(
+                    key: ValueKey<String>('wide-popover'),
+                    width: 220,
+                    height: 80,
+                  ),
+              child: _anchor(),
+            ),
+          ),
+        ),
+        viewport: const Size(320, 240),
+        installOverlay: true,
+      );
+
+      c.open();
+      await tester.pump();
+
+      final Rect rect = tester.getRect(
+        find.byKey(const ValueKey<String>('wide-popover')),
+      );
+      expect(rect.left, greaterThanOrEqualTo(0));
+      expect(rect.right, lessThanOrEqualTo(320));
+    });
+
     testWidgets('controller.open shows the popover surface', (
       WidgetTester tester,
     ) async {
