@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../foundation/input_modality.dart';
@@ -161,37 +162,42 @@ class MWidgetsApp extends StatelessWidget {
                     pageBuilder: (BuildContext context, _, __) =>
                         builder(context),
                   ),
-          builder: !selectableText
-              ? builder
-              : (BuildContext context, Widget? child) {
-                  // SelectableRegion needs an Overlay ancestor for its
-                  // selection handles; builder runs above the Navigator's
-                  // Overlay, so provide one.
-                  final Widget wrapped = Overlay.wrap(
-                    child: SelectableRegion(
-                      contextMenuBuilder:
-                          (BuildContext context, SelectableRegionState state) {
-                            return _buildSelectableRegionContextMenu(
-                              context,
-                              state,
-                              theme: resolved,
-                              modality: MInputModality.defaultForPlatform(
-                                resolved.platform,
-                              ),
-                            );
-                          },
-                      selectionControls: _manyuiSelectionControls,
-                      child: DefaultSelectionStyle.merge(
-                        cursorColor: resolved.colors.foreground,
-                        selectionColor: resolved.colors.ring.withValues(
-                          alpha: 0.25,
-                        ),
-                        child: child ?? const SizedBox.shrink(),
-                      ),
+          builder: (BuildContext context, Widget? child) {
+            Widget wrapped = child ?? const SizedBox.shrink();
+            if (selectableText) {
+              // SelectableRegion needs an Overlay ancestor for its
+              // selection handles; builder runs above the Navigator's
+              // Overlay, so provide one.
+              wrapped = Overlay.wrap(
+                child: SelectableRegion(
+                  contextMenuBuilder:
+                      (BuildContext context, SelectableRegionState state) {
+                        return _buildSelectableRegionContextMenu(
+                          context,
+                          state,
+                          theme: resolved,
+                          modality: MInputModality.defaultForPlatform(
+                            resolved.platform,
+                          ),
+                        );
+                      },
+                  selectionControls: _manyuiSelectionControls,
+                  child: DefaultSelectionStyle.merge(
+                    cursorColor: resolved.colors.foreground,
+                    selectionColor: resolved.colors.ring.withValues(
+                      alpha: 0.25,
                     ),
-                  );
-                  return builder == null ? wrapped : builder!(context, wrapped);
-                },
+                    child: wrapped,
+                  ),
+                ),
+              );
+            }
+            // Flutter web can focus its view before the first layout pass.
+            // Temporarily excluding descendants prevents reading-order focus
+            // traversal from querying RenderBox geometry before it exists.
+            if (kIsWeb) wrapped = _MInitialFocusGuard(child: wrapped);
+            return builder == null ? wrapped : builder!(context, wrapped);
+          },
           title: title,
           color: color,
           textStyle: resolved.typography
@@ -208,6 +214,32 @@ class MWidgetsApp extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _MInitialFocusGuard extends StatefulWidget {
+  const _MInitialFocusGuard({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_MInitialFocusGuard> createState() => _MInitialFocusGuardState();
+}
+
+class _MInitialFocusGuardState extends State<_MInitialFocusGuard> {
+  bool _laidOut = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() => _laidOut = true);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ExcludeFocus(excluding: !_laidOut, child: widget.child);
   }
 }
 
