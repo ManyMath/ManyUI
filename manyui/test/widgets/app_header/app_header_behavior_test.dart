@@ -12,6 +12,7 @@ void main() {
       MAppHeader(
         leading: const Text('Back'),
         title: 'ManyKee',
+        headingLevel: 1,
         subtitle: 'Passwords.kdbx',
         status: const MBadge(child: Text('Open')),
         actions: <Widget>[MButton(onPressed: () {}, child: const Text('Lock'))],
@@ -27,6 +28,7 @@ void main() {
       tester.getSemantics(find.text('ManyKee')),
       matchesSemantics(label: 'ManyKee', isHeader: true),
     );
+    expect(tester.getSemantics(find.text('ManyKee')).headingLevel, 1);
   });
 
   testWidgets('keeps actions on the title row when width is expanded', (
@@ -47,6 +49,48 @@ void main() {
     final titleTop = tester.getTopLeft(find.text('ManyTier')).dy;
     final actionTop = tester.getTopLeft(find.text('Connections')).dy;
     expect((actionTop - titleTop).abs(), lessThan(12));
+  });
+
+  testWidgets('expanded actions do not truncate the product title', (
+    WidgetTester tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1280, 220));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await pumpManyApp(
+      tester,
+      MAppHeader(
+        leading: const SizedBox(width: 32, height: 32),
+        title: 'ManyTier Console',
+        status: const MBadge(child: Text('Pairing required')),
+        actions: <Widget>[
+          MIconButton(
+            icon: MIconData.network,
+            label: 'Connections',
+            onPressed: () {},
+          ),
+          MIconButton(
+            icon: MIconData.lock,
+            label: 'Disconnect',
+            onPressed: () {},
+          ),
+          MIconButton(icon: MIconData.moon, label: 'Theme', onPressed: () {}),
+        ],
+      ),
+      viewport: const Size(1280, 220),
+    );
+
+    final title = tester.widget<Text>(find.text('ManyTier Console'));
+    final renderBox = tester.renderObject<RenderBox>(
+      find.text('ManyTier Console'),
+    );
+    final naturalTitle = TextPainter(
+      text: TextSpan(text: title.data, style: title.style),
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+    )..layout();
+
+    expect(renderBox.size.width, greaterThanOrEqualTo(naturalTitle.width));
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('stacks status and wrapping actions at compact widths', (

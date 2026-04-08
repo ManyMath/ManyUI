@@ -19,12 +19,16 @@ class MAppHeader extends StatelessWidget {
     this.leading,
     this.status,
     this.actions = const <Widget>[],
+    this.headingLevel,
     this.compactBreakpoint = 640,
     this.spacing = 12,
     this.actionSpacing = 8,
     this.runSpacing = 8,
     super.key,
-  });
+  }) : assert(
+         headingLevel == null || (headingLevel >= 1 && headingLevel <= 6),
+         'headingLevel must be between 1 and 6.',
+       );
 
   /// Product/app name shown as the primary header label.
   final String title;
@@ -40,6 +44,9 @@ class MAppHeader extends StatelessWidget {
 
   /// Header actions. They wrap as needed and align to the trailing edge.
   final List<Widget> actions;
+
+  /// Structural level for the product title when it heads the current screen.
+  final int? headingLevel;
 
   /// Width below which status/actions stack under the identity row.
   final double compactBreakpoint;
@@ -73,7 +80,13 @@ class MAppHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Expanded(
-          child: _Identity(title: title, subtitle: subtitle, leading: leading),
+          flex: 3,
+          child: _Identity(
+            title: title,
+            subtitle: subtitle,
+            leading: leading,
+            headingLevel: headingLevel,
+          ),
         ),
         if (status != null) ...<Widget>[
           SizedBox(width: spacing),
@@ -105,7 +118,12 @@ class MAppHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        _Identity(title: title, subtitle: subtitle, leading: leading),
+        _Identity(
+          title: title,
+          subtitle: subtitle,
+          leading: leading,
+          headingLevel: headingLevel,
+        ),
         if (status != null) ...<Widget>[
           SizedBox(height: runSpacing),
           Align(alignment: Alignment.centerLeft, child: status),
@@ -130,11 +148,17 @@ class MAppHeader extends StatelessWidget {
 }
 
 class _Identity extends StatelessWidget {
-  const _Identity({required this.title, this.subtitle, this.leading});
+  const _Identity({
+    required this.title,
+    this.subtitle,
+    this.leading,
+    this.headingLevel,
+  });
 
   final String title;
   final String? subtitle;
   final Widget? leading;
+  final int? headingLevel;
 
   @override
   Widget build(BuildContext context) {
@@ -147,6 +171,10 @@ class _Identity extends StatelessWidget {
           fit: FlexFit.loose,
           child: Semantics(
             header: true,
+            headingLevel: headingLevel,
+            container: true,
+            excludeSemantics: true,
+            label: title,
             child: Text(
               title,
               style: theme.typography.title,

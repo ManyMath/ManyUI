@@ -171,6 +171,9 @@ class _TitleBlock extends StatelessWidget {
       children: <Widget>[
         Semantics(
           header: true,
+          container: true,
+          excludeSemantics: true,
+          label: header.title,
           child: Text(
             header.title,
             style: titleStyle,

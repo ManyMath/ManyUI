@@ -99,6 +99,9 @@ class MDialogContent extends StatelessWidget {
         children: <Widget>[
           Semantics(
             header: true,
+            container: true,
+            excludeSemantics: true,
+            label: title,
             child: Text(
               title,
               style:
