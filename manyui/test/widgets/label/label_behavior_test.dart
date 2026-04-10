@@ -301,6 +301,29 @@ void main() {
       expect(semantics.excludeSemantics, isTrue);
       handle.dispose();
     });
+
+    testWidgets('focus-routing labels are not announced as buttons', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
+      final FocusNode node = FocusNode();
+      addTearDown(node.dispose);
+      await pumpManyApp(
+        tester,
+        Center(child: MLabel('Database', focusNode: node)),
+      );
+
+      final Semantics semantics = tester.widget<Semantics>(
+        find.descendant(
+          of: find.byType(MLabel),
+          matching: find.byType(Semantics),
+        ),
+      );
+      expect(semantics.properties.label, 'Database');
+      expect(semantics.properties.button, isNull);
+      expect(semantics.properties.onTap, isNull);
+      handle.dispose();
+    });
   });
 
   group('MLabel theme integration', () {

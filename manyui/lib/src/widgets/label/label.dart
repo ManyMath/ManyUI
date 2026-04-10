@@ -82,17 +82,16 @@ class MLabel extends StatelessWidget {
         ? resolved.textStyle
         : resolved.textStyle.copyWith(color: resolved.disabledColor);
 
-    final Widget label = Semantics(
+    final bool tappable = enabled && focusNode != null;
+    final Widget gesture = Semantics(
       label: semanticLabel ?? text,
       excludeSemantics: true,
-      child: Text(text, style: effectiveStyle),
-    );
-
-    final bool tappable = enabled && focusNode != null;
-    final Widget gesture = GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: tappable ? () => focusNode!.requestFocus() : null,
-      child: label,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        excludeFromSemantics: true,
+        onTap: tappable ? () => focusNode!.requestFocus() : null,
+        child: Text(text, style: effectiveStyle),
+      ),
     );
 
     if (child == null) {
