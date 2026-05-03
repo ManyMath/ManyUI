@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:manyui/manyui.dart';
 import 'package:manyui_testing/manyui_testing.dart';
@@ -75,9 +76,64 @@ void main() {
           isButton: true,
           isSelected: true,
           hasSelectedState: true,
+          isFocusable: true,
           hasTapAction: true,
+          hasFocusAction: true,
         ),
       );
+    });
+
+    testWidgets('uses the visible title as its default accessible name', (
+      WidgetTester tester,
+    ) async {
+      await pumpManyApp(
+        tester,
+        MListTile(title: const Text('Readable row'), onTap: () {}),
+      );
+
+      expect(find.bySemanticsLabel('Readable row'), findsOneWidget);
+    });
+
+    testWidgets('non-interactive selected rows expose selected state', (
+      WidgetTester tester,
+    ) async {
+      await pumpManyApp(
+        tester,
+        const MListTile(title: Text('Current connection'), selected: true),
+      );
+
+      final Semantics semantics = tester.widget<Semantics>(
+        find
+            .descendant(
+              of: find.byType(MListTile),
+              matching: find.byType(Semantics),
+            )
+            .first,
+      );
+      expect(semantics.properties.selected, isTrue);
+      expect(find.bySemanticsLabel('Current connection'), findsOneWidget);
+    });
+
+    testWidgets('activates with Enter and Space when focused', (
+      WidgetTester tester,
+    ) async {
+      int taps = 0;
+      await pumpManyApp(
+        tester,
+        MListTile(
+          title: const Text('Keyboard row'),
+          autofocus: true,
+          onTap: () => taps += 1,
+        ),
+        modality: MInputModality.keyboard,
+      );
+
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pump();
+
+      expect(taps, 2);
     });
   });
 

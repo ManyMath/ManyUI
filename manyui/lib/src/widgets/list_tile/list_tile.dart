@@ -1,5 +1,7 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../foundation/focus_ring.dart';
 import '../../theme/theme.dart';
 import '../../theme/theme_data.dart';
 import 'list_tile_style.dart';
@@ -22,7 +24,7 @@ import 'list_tile_style.dart';
 ///   onTap: () => select(room),
 /// )
 /// ```
-class MListTile extends StatelessWidget {
+class MListTile extends StatefulWidget {
   /// Builds a list tile.
   const MListTile({
     required this.title,
@@ -33,6 +35,8 @@ class MListTile extends StatelessWidget {
     this.onTap,
     this.semanticLabel,
     this.style,
+    this.autofocus = false,
+    this.focusNode,
     super.key,
   });
 
@@ -64,6 +68,29 @@ class MListTile extends StatelessWidget {
   /// Field-wise overrides for the theme-resolved [MListTileStyle].
   final MListTileStyleDelta? style;
 
+  /// Whether this row requests keyboard focus on first build.
+  final bool autofocus;
+
+  /// Optional caller-owned focus node.
+  final FocusNode? focusNode;
+
+  @override
+  State<MListTile> createState() => _MListTileState();
+}
+
+class _MListTileState extends State<MListTile> {
+  bool _focused = false;
+  bool _hovered = false;
+
+  late final Map<Type, Action<Intent>> _actions = <Type, Action<Intent>>{
+    ActivateIntent: CallbackAction<ActivateIntent>(
+      onInvoke: (_) {
+        widget.onTap?.call();
+        return null;
+      },
+    ),
+  };
+
   @override
   Widget build(BuildContext context) {
     final MThemeData theme = MTheme.of(context);
@@ -73,24 +100,27 @@ class MListTile extends StatelessWidget {
           typography: theme.typography.inheritFromContext(context),
           radius: theme.radius,
         )
-        .applyDelta(style);
+        .applyDelta(widget.style);
 
-    final Color foreground = selected
+    final Color foreground = widget.selected
         ? resolved.selectedForegroundColor
         : resolved.foregroundColor;
+    final Color background = widget.selected
+        ? resolved.selectedBackgroundColor
+        : _hovered
+        ? resolved.selectedBackgroundColor.withValues(alpha: 0.55)
+        : resolved.backgroundColor;
 
     final Widget content = Container(
       padding: resolved.padding,
       decoration: BoxDecoration(
-        color: selected
-            ? resolved.selectedBackgroundColor
-            : resolved.backgroundColor,
+        color: background,
         borderRadius: resolved.radius,
       ),
       child: Row(
         children: <Widget>[
-          if (leading != null) ...<Widget>[
-            leading!,
+          if (widget.leading != null) ...<Widget>[
+            widget.leading!,
             SizedBox(width: resolved.horizontalGap),
           ],
           Expanded(
@@ -100,41 +130,65 @@ class MListTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Semantics(excludeSemantics: true, child: title),
-                  if (subtitle != null)
+                  if (widget.semanticLabel == null)
+                    widget.title
+                  else
+                    ExcludeSemantics(child: widget.title),
+                  if (widget.subtitle != null)
                     DefaultTextStyle.merge(
                       style: resolved.subtitleStyle.copyWith(
                         color: resolved.subtitleColor,
                       ),
-                      child: Semantics(
-                        excludeSemantics: true,
-                        child: subtitle!,
-                      ),
+                      child: widget.semanticLabel == null
+                          ? widget.subtitle!
+                          : ExcludeSemantics(child: widget.subtitle!),
                     ),
                 ],
               ),
             ),
           ),
-          if (trailing != null) ...<Widget>[
+          if (widget.trailing != null) ...<Widget>[
             SizedBox(width: resolved.horizontalGap),
-            trailing!,
+            widget.trailing!,
           ],
         ],
       ),
     );
 
-    if (onTap == null) {
-      return Semantics(container: true, label: semanticLabel, child: content);
+    if (widget.onTap == null) {
+      return Semantics(
+        container: true,
+        selected: widget.selected,
+        label: widget.semanticLabel,
+        child: content,
+      );
     }
 
     return Semantics(
       button: true,
-      selected: selected,
-      label: semanticLabel,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: content,
+      selected: widget.selected,
+      label: widget.semanticLabel,
+      child: FocusableActionDetector(
+        autofocus: widget.autofocus,
+        focusNode: widget.focusNode,
+        onShowFocusHighlight: (bool value) {
+          if (_focused != value) setState(() => _focused = value);
+        },
+        onShowHoverHighlight: (bool value) {
+          if (_hovered != value) setState(() => _hovered = value);
+        },
+        mouseCursor: SystemMouseCursors.click,
+        shortcuts: const <ShortcutActivator, Intent>{
+          SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.numpadEnter): ActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+        },
+        actions: _actions,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: widget.onTap,
+          child: MFocusRing(focused: _focused, child: content),
+        ),
       ),
     );
   }

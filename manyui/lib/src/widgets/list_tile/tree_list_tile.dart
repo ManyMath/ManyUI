@@ -1,9 +1,13 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../foundation/focus_ring.dart';
+import '../../foundation/input_modality.dart';
 import '../../theme/theme.dart';
 import '../../theme/theme_data.dart';
-import '../icon/icon.dart';
 import '../icon/icon_data.dart';
+import '../icon_button/icon_button.dart';
+import '../button/button_style.dart';
 import 'list_tile_style.dart';
 
 /// A tappable, depth-indented row with an optional expand/collapse chevron.
@@ -23,7 +27,7 @@ import 'list_tile_style.dart';
 ///   onToggle: group.children.isEmpty ? null : () => toggle(group.uuid),
 /// )
 /// ```
-class MTreeListTile extends StatelessWidget {
+class MTreeListTile extends StatefulWidget {
   /// Builds a tree list tile.
   const MTreeListTile({
     required this.title,
@@ -34,6 +38,8 @@ class MTreeListTile extends StatelessWidget {
     this.onToggle,
     this.semanticLabel,
     this.style,
+    this.autofocus = false,
+    this.focusNode,
     super.key,
   });
 
@@ -65,8 +71,31 @@ class MTreeListTile extends StatelessWidget {
   /// Field-wise overrides for the theme-resolved [MListTileStyle].
   final MListTileStyleDelta? style;
 
+  /// Whether this row requests keyboard focus on first build.
+  final bool autofocus;
+
+  /// Optional caller-owned focus node for the row action.
+  final FocusNode? focusNode;
+
   static const double _indentStep = 16;
-  static const double _chevronSlotWidth = 20;
+  static const double _chevronSlotWidth = 28;
+
+  @override
+  State<MTreeListTile> createState() => _MTreeListTileState();
+}
+
+class _MTreeListTileState extends State<MTreeListTile> {
+  bool _focused = false;
+  bool _hovered = false;
+
+  late final Map<Type, Action<Intent>> _actions = <Type, Action<Intent>>{
+    ActivateIntent: CallbackAction<ActivateIntent>(
+      onInvoke: (_) {
+        widget.onTap?.call();
+        return null;
+      },
+    ),
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -77,44 +106,59 @@ class MTreeListTile extends StatelessWidget {
           typography: theme.typography.inheritFromContext(context),
           radius: theme.radius,
         )
-        .applyDelta(style);
+        .applyDelta(widget.style);
 
-    final Color foreground = selected
+    final Color foreground = widget.selected
         ? resolved.selectedForegroundColor
         : resolved.foregroundColor;
+    final Color background = widget.selected
+        ? resolved.selectedBackgroundColor
+        : _hovered
+        ? resolved.selectedBackgroundColor.withValues(alpha: 0.55)
+        : resolved.backgroundColor;
 
-    final EdgeInsets padding = resolved.padding.resolve(
-      Directionality.of(context),
-    );
+    final TextDirection textDirection = Directionality.of(context);
+    final EdgeInsets padding = resolved.padding.resolve(textDirection);
+    final double startPadding = textDirection == TextDirection.ltr
+        ? padding.left
+        : padding.right;
+    final double endPadding = textDirection == TextDirection.ltr
+        ? padding.right
+        : padding.left;
+    final bool touch =
+        MInputModalityScope.resolve(context, null) == MInputModality.touch;
+    final String? titleLabel = widget.semanticLabel ?? _textLabel(widget.title);
+    final String toggleLabel = <String>[
+      widget.expanded ? 'Collapse' : 'Expand',
+      if (titleLabel != null && titleLabel.isNotEmpty) titleLabel,
+    ].join(' ');
 
     final Widget chevronSlot = SizedBox(
-      width: _chevronSlotWidth,
-      child: onToggle == null
+      width: touch ? 44 : MTreeListTile._chevronSlotWidth,
+      child: widget.onToggle == null
           ? null
-          : GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: onToggle,
-              child: Center(
-                child: MIcon(
-                  expanded ? MIconData.chevronDown : MIconData.chevronRight,
-                  size: 14,
-                  color: resolved.subtitleColor,
-                ),
+          : Align(
+              alignment: Alignment.centerLeft,
+              child: MIconButton(
+                icon: widget.expanded
+                    ? MIconData.chevronDown
+                    : MIconData.chevronRight,
+                label: toggleLabel,
+                size: touch ? MButtonSize.md : MButtonSize.xs,
+                onPressed: widget.onToggle,
               ),
             ),
     );
 
     final Widget content = Container(
       padding: EdgeInsetsDirectional.only(
-        start: padding.left + depth * _indentStep,
+        start: startPadding + widget.depth * MTreeListTile._indentStep,
         top: padding.top,
         bottom: padding.bottom,
-        end: padding.right,
+        end: endPadding,
       ),
       decoration: BoxDecoration(
-        color: selected
-            ? resolved.selectedBackgroundColor
-            : resolved.backgroundColor,
+        color: background,
         borderRadius: resolved.radius,
       ),
       child: Row(
@@ -123,26 +167,55 @@ class MTreeListTile extends StatelessWidget {
           Expanded(
             child: DefaultTextStyle.merge(
               style: resolved.titleStyle.copyWith(color: foreground),
-              child: Semantics(excludeSemantics: true, child: title),
+              child: widget.semanticLabel == null
+                  ? widget.title
+                  : ExcludeSemantics(child: widget.title),
             ),
           ),
         ],
       ),
     );
 
-    if (onTap == null) {
-      return Semantics(container: true, label: semanticLabel, child: content);
+    if (widget.onTap == null) {
+      return Semantics(
+        container: true,
+        selected: widget.selected,
+        label: widget.semanticLabel,
+        child: content,
+      );
     }
 
     return Semantics(
       button: true,
-      selected: selected,
-      label: semanticLabel,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: content,
+      selected: widget.selected,
+      label: widget.semanticLabel,
+      child: FocusableActionDetector(
+        autofocus: widget.autofocus,
+        focusNode: widget.focusNode,
+        onShowFocusHighlight: (bool value) {
+          if (_focused != value) setState(() => _focused = value);
+        },
+        onShowHoverHighlight: (bool value) {
+          if (_hovered != value) setState(() => _hovered = value);
+        },
+        mouseCursor: SystemMouseCursors.click,
+        shortcuts: const <ShortcutActivator, Intent>{
+          SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.numpadEnter): ActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+        },
+        actions: _actions,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: widget.onTap,
+          child: MFocusRing(focused: _focused, child: content),
+        ),
       ),
     );
+  }
+
+  String? _textLabel(Widget title) {
+    if (title is Text) return title.data;
+    return null;
   }
 }
