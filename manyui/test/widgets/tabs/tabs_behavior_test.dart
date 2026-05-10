@@ -48,7 +48,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await pumpManyApp(tester, MTabs(tabs: _threeTabs(), initialId: 'two'));
-      // IndexedStack keeps all children mounted; we assert by reading the
+      // MTabs keeps all children mounted; we assert by reading the
       // controller via UI selection instead. Use a controller for clarity.
       final MTabsController c = MTabsController('two');
       addTearDown(c.dispose);
@@ -159,6 +159,28 @@ void main() {
   });
 
   group('MTabs programmatic selection', () {
+    testWidgets('controller changes notify onChanged exactly once', (
+      WidgetTester tester,
+    ) async {
+      final MTabsController c = MTabsController('one');
+      addTearDown(c.dispose);
+      final List<String> reports = <String>[];
+      await pumpManyApp(
+        tester,
+        MTabs(tabs: _threeTabs(), controller: c, onChanged: reports.add),
+      );
+
+      c.value = 'two';
+      await tester.pump();
+
+      expect(reports, <String>['two']);
+
+      await tester.tap(_tabFinder('Three'));
+      await tester.pump();
+
+      expect(reports, <String>['two', 'three']);
+    });
+
     testWidgets('controller.value = id activates the matching tab', (
       WidgetTester tester,
     ) async {
@@ -328,7 +350,7 @@ void main() {
 
   group('MTabs content state persistence', () {
     testWidgets(
-      'IndexedStack keeps EditableText contents across tab switches',
+      'mounted panes keep EditableText contents across tab switches',
       (WidgetTester tester) async {
         final MTabsController c = MTabsController('one');
         addTearDown(c.dispose);
@@ -375,10 +397,93 @@ void main() {
         await tester.pump();
 
         // The same EditableText instance survived the swap because the content
-        // panes all stay mounted under IndexedStack.
+        // panes all stay mounted while offstage.
         expect(text.text, 'hello');
       },
     );
+
+    testWidgets('inactive panes stay mounted but cannot receive focus', (
+      WidgetTester tester,
+    ) async {
+      final MTabsController controller = MTabsController('one');
+      final FocusNode firstPane = FocusNode();
+      final FocusNode secondPane = FocusNode();
+      addTearDown(controller.dispose);
+      addTearDown(firstPane.dispose);
+      addTearDown(secondPane.dispose);
+
+      await pumpManyApp(
+        tester,
+        MTabs(
+          controller: controller,
+          tabs: <MTab>[
+            MTab(
+              id: 'one',
+              title: const Text('One'),
+              content: Focus(focusNode: firstPane, child: const Text('First')),
+            ),
+            MTab(
+              id: 'two',
+              title: const Text('Two'),
+              content: Focus(
+                focusNode: secondPane,
+                child: const Text('Second'),
+              ),
+            ),
+          ],
+        ),
+      );
+
+      expect(firstPane.canRequestFocus, isTrue);
+      expect(secondPane.canRequestFocus, isFalse);
+
+      controller.value = 'two';
+      await tester.pump();
+      expect(firstPane.canRequestFocus, isFalse);
+      expect(secondPane.canRequestFocus, isTrue);
+    });
+  });
+
+  group('MTabs overflow', () {
+    testWidgets('programmatic selection reveals an off-screen tab', (
+      WidgetTester tester,
+    ) async {
+      final MTabsController controller = MTabsController('tab-1');
+      addTearDown(controller.dispose);
+      final tabs = <MTab>[
+        for (int i = 1; i <= 8; i += 1)
+          MTab(
+            id: 'tab-$i',
+            title: Text('Section $i'),
+            content: Text('Pane $i'),
+          ),
+      ];
+
+      await pumpManyApp(
+        tester,
+        SizedBox(
+          width: 240,
+          child: MTabs(controller: controller, tabs: tabs),
+        ),
+      );
+
+      final Finder scroller = find.descendant(
+        of: find.byType(MTabs),
+        matching: find.byType(SingleChildScrollView),
+      );
+      final Rect viewport = tester.getRect(scroller);
+      expect(
+        tester.getRect(_tabFinder('Section 8')).left,
+        greaterThan(viewport.right),
+      );
+
+      controller.value = 'tab-8';
+      await tester.pumpAndSettle();
+
+      final Rect revealed = tester.getRect(_tabFinder('Section 8'));
+      expect(revealed.left, greaterThanOrEqualTo(viewport.left));
+      expect(revealed.right, lessThanOrEqualTo(viewport.right));
+    });
   });
 
   group('MTabs style', () {

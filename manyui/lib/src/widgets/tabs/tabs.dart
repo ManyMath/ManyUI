@@ -10,8 +10,9 @@ import 'tabs_style.dart';
 
 /// A single tab declaration consumed by [MTabs].
 ///
-/// All `content` widgets stay mounted for the lifetime of [MTabs] via
-/// [IndexedStack], so tab-local state survives switching.
+/// All `content` widgets stay mounted for the lifetime of [MTabs], so
+/// tab-local state survives switching without inactive panes determining the
+/// active pane's height.
 @immutable
 class MTab {
   /// Builds a tab declaration.
@@ -152,6 +153,8 @@ class _MTabsState extends State<MTabs> {
   // One FocusNode per tab. Built lazily; rebuilt on tabs-list change. Keyed
   // by tab id so a reorder doesn't dispose nodes whose tabs survived.
   final Map<String, FocusNode> _focusNodes = <String, FocusNode>{};
+  final Map<String, GlobalKey> _tabKeys = <String, GlobalKey>{};
+  final ScrollController _stripController = ScrollController();
 
   @override
   void initState() {
@@ -188,7 +191,10 @@ class _MTabsState extends State<MTabs> {
   }
 
   void _onControllerChanged() {
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    setState(() {});
+    _ensureTabVisible(_controller.value);
+    widget.onChanged?.call(_controller.value);
   }
 
   void _syncFocusNodes() {
@@ -198,13 +204,30 @@ class _MTabsState extends State<MTabs> {
         .toList();
     for (final String id in stale) {
       _focusNodes.remove(id)?.dispose();
+      _tabKeys.remove(id);
     }
     for (final MTab tab in widget.tabs) {
       _focusNodes.putIfAbsent(
         tab.id,
         () => FocusNode(debugLabel: 'MTab(${tab.id})'),
       );
+      _tabKeys.putIfAbsent(tab.id, GlobalKey.new);
     }
+  }
+
+  void _ensureTabVisible(String id) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final BuildContext? tabContext = _tabKeys[id]?.currentContext;
+      final RenderObject? tabRenderObject = tabContext?.findRenderObject();
+      if (tabRenderObject == null || !_stripController.hasClients) return;
+      _stripController.position.ensureVisible(
+        tabRenderObject,
+        alignment: 0.5,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOutCubic,
+      );
+    });
   }
 
   @override
@@ -214,6 +237,7 @@ class _MTabsState extends State<MTabs> {
       node.dispose();
     }
     _focusNodes.clear();
+    _stripController.dispose();
     super.dispose();
   }
 
@@ -228,9 +252,9 @@ class _MTabsState extends State<MTabs> {
     if (!_effectiveEnabledFor(tab)) return;
     // Move focus to the tab so subsequent keyboard nav from this row works.
     _focusNodes[tab.id]?.requestFocus();
+    _ensureTabVisible(tab.id);
     if (_controller.value == tab.id) return;
     _controller.value = tab.id;
-    widget.onChanged?.call(tab.id);
   }
 
   void _moveFocus(_MoveDirection direction) {
@@ -301,6 +325,7 @@ class _MTabsState extends State<MTabs> {
       final MTab tab = widget.tabs[i];
       stripChildren.add(
         _MTabButton(
+          key: _tabKeys[tab.id],
           tab: tab,
           isActive: i == active,
           enabled: _effectiveEnabledFor(tab),
@@ -311,8 +336,8 @@ class _MTabsState extends State<MTabs> {
       );
     }
 
-    // The IndexedStack needs a non-negative index even when the controller
-    // points to no matching tab. Clamp to 0 in that case; the surface still
+    // The active stack index needs to stay non-negative even when the
+    // controller points to no matching tab. Clamp to 0 in that case; the surface still
     // shows tab[0]'s content but no strip tab is highlighted.
     final int stackIndex = active < 0 ? 0 : active;
 
@@ -336,9 +361,13 @@ class _MTabsState extends State<MTabs> {
                     color: resolved.stripDividerColor,
                   ),
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: stripChildren,
+                SingleChildScrollView(
+                  controller: _stripController,
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: stripChildren,
+                  ),
                 ),
               ],
             ),
@@ -349,14 +378,24 @@ class _MTabsState extends State<MTabs> {
 
     final Widget content = Padding(
       padding: resolved.contentPadding,
-      child: IndexedStack(
-        index: stackIndex,
-        sizing: StackFit.loose,
+      child: Stack(
+        fit: StackFit.loose,
         children: <Widget>[
-          for (final MTab tab in widget.tabs)
-            KeyedSubtree(
-              key: ValueKey<String>('m-tab-content-${tab.id}'),
-              child: tab.content,
+          for (int index = 0; index < widget.tabs.length; index += 1)
+            Offstage(
+              offstage: index != stackIndex,
+              child: ExcludeFocus(
+                excluding: index != stackIndex,
+                child: TickerMode(
+                  enabled: index == stackIndex,
+                  child: KeyedSubtree(
+                    key: ValueKey<String>(
+                      'm-tab-content-${widget.tabs[index].id}',
+                    ),
+                    child: widget.tabs[index].content,
+                  ),
+                ),
+              ),
             ),
         ],
       ),
@@ -387,6 +426,7 @@ class _MTabButton extends StatefulWidget {
     required this.style,
     required this.focusNode,
     required this.onActivate,
+    super.key,
   });
 
   final MTab tab;
