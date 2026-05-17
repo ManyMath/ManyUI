@@ -2,8 +2,9 @@ import 'package:flutter/widgets.dart';
 
 import '../../foundation/controller.dart';
 import '../../foundation/input_modality.dart';
-import '../icon/icon.dart';
+import '../button/button_style.dart';
 import '../icon/icon_data.dart';
+import '../icon_button/icon_button.dart';
 import 'text_field.dart';
 import 'text_field_style.dart';
 
@@ -32,6 +33,7 @@ class MSecretField extends StatefulWidget {
     this.placeholder,
     this.enabled = true,
     this.maxLength,
+    this.autofillHints = const <String>[],
     this.error = false,
     this.helperText,
     this.errorText,
@@ -65,6 +67,11 @@ class MSecretField extends StatefulWidget {
 
   /// A hard cap on the number of characters accepted.
   final int? maxLength;
+
+  /// Semantic roles used by platform autofill services and password managers.
+  ///
+  /// See [MTextField.autofillHints].
+  final Iterable<String>? autofillHints;
 
   /// Whether the field is in an error state.
   final bool error;
@@ -113,6 +120,7 @@ class _MSecretFieldState extends State<MSecretField> {
       enabled: widget.enabled,
       obscureText: !_revealed,
       maxLength: widget.maxLength,
+      autofillHints: widget.autofillHints,
       error: widget.error,
       helperText: widget.helperText,
       errorText: widget.errorText,
@@ -122,22 +130,14 @@ class _MSecretFieldState extends State<MSecretField> {
       semanticLabel: widget.semanticLabel,
       autofocus: widget.autofocus,
       focusNode: widget.focusNode,
-      trailing: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: widget.enabled
+      trailing: MIconButton(
+        icon: _revealed ? MIconData.eyeOff : MIconData.eye,
+        label: _revealed ? 'Hide password' : 'Show password',
+        size: MButtonSize.sm,
+        modality: widget.modality,
+        onPressed: widget.enabled
             ? () => setState(() => _revealed = !_revealed)
             : null,
-        child: Semantics(
-          button: true,
-          // Overrides MIcon's own default label ("Show"/"Hide") rather than
-          // wrapping it in a second Semantics node -- two merge-eligible
-          // labels in the same group concatenate ("Show password\nShow"),
-          // which breaks exact-match label finders/screen readers alike.
-          child: MIcon(
-            _revealed ? MIconData.eyeOff : MIconData.eye,
-            semanticLabel: _revealed ? 'Hide password' : 'Show password',
-          ),
-        ),
       ),
     );
   }

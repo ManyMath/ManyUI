@@ -1,3 +1,6 @@
+import 'dart:ui' as ui;
+
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,6 +28,7 @@ Future<void> _pumpField(
   bool readOnly = false,
   bool error = false,
   bool obscureText = false,
+  String? semanticLabel,
   int? maxLength,
   Widget? leading,
   Widget? trailing,
@@ -45,6 +49,7 @@ Future<void> _pumpField(
         readOnly: readOnly,
         error: error,
         obscureText: obscureText,
+        semanticLabel: semanticLabel,
         maxLength: maxLength,
         leading: leading,
         trailing: trailing,
@@ -61,6 +66,36 @@ Future<void> _pumpField(
 
 void main() {
   group('MTextField typing', () {
+    testWidgets('forwards autofill hints to EditableText', (
+      WidgetTester tester,
+    ) async {
+      await pumpManyApp(
+        tester,
+        _hosted(
+          const MTextField(autofillHints: <String>[AutofillHints.username]),
+        ),
+      );
+
+      final editable = tester.widget<EditableText>(find.byType(EditableText));
+      expect(editable.autofillHints, <String>[AutofillHints.username]);
+    });
+
+    testWidgets('distinguishes empty autofill hints from a disabled client', (
+      WidgetTester tester,
+    ) async {
+      await pumpManyApp(tester, _hosted(const MTextField()));
+      expect(
+        tester.widget<EditableText>(find.byType(EditableText)).autofillHints,
+        isEmpty,
+      );
+
+      await pumpManyApp(tester, _hosted(const MTextField(autofillHints: null)));
+      expect(
+        tester.widget<EditableText>(find.byType(EditableText)).autofillHints,
+        isNull,
+      );
+    });
+
     testWidgets('entering text propagates to controller and onChanged', (
       WidgetTester tester,
     ) async {
@@ -121,6 +156,23 @@ void main() {
       controller.value = '';
       await tester.pump();
       expect(find.text('enter something'), findsOneWidget);
+    });
+
+    testWidgets('placeholder is visual copy, not a duplicate text field', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
+      await pumpManyApp(
+        tester,
+        const MTextField(
+          placeholder: 'Password',
+          semanticLabel: 'Master password',
+        ),
+      );
+
+      expect(find.bySemanticsLabel('Master password'), findsOneWidget);
+      expect(find.bySemanticsLabel('Password'), findsNothing);
+      handle.dispose();
     });
 
     testWidgets('maxLength caps the entered text', (WidgetTester tester) async {
@@ -387,64 +439,95 @@ void main() {
   });
 
   group('MTextField semantics', () {
-    testWidgets('reports textField, enabled, label, and value', (
+    testWidgets('has one labeled editable node that accepts a11y text', (
       WidgetTester tester,
     ) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
+      final MController<String> controller = MController<String>('visible');
+      addTearDown(controller.dispose);
+      final List<String> changes = <String>[];
       await _pumpField(
         tester,
-        initialValue: 'visible',
+        controller: controller,
+        onChanged: changes.add,
         placeholder: 'unused-here',
+        semanticLabel: 'Account name',
       );
 
-      final Semantics s =
-          tester.widget(
-                find
-                    .descendant(
-                      of: find.byType(MTextField),
-                      matching: find.byType(Semantics),
-                    )
-                    .first,
-              )
-              as Semantics;
-      expect(s.properties.textField, true);
-      expect(s.properties.enabled, true);
-      expect(s.properties.value, 'visible');
+      final Finder labelled = find.bySemanticsLabel('Account name');
+      expect(labelled, findsOneWidget);
+      SemanticsNode node = tester.getSemantics(labelled);
+      SemanticsData data = node.getSemanticsData();
+      expect(data.label, 'Account name');
+      expect(data.value, 'visible');
+      expect(data.flagsCollection.isTextField, isTrue);
+      expect(data.hasAction(ui.SemanticsAction.tap), isTrue);
+
+      await tester.tap(find.byType(MTextField));
+      await tester.pump();
+      node = tester.getSemantics(labelled);
+      data = node.getSemanticsData();
+      expect(data.label, 'Account name');
+      expect(data.value, 'visible');
+      expect(data.flagsCollection.isTextField, isTrue);
+      expect(data.hasAction(ui.SemanticsAction.setText), isTrue);
+      expect(data.hasAction(ui.SemanticsAction.setSelection), isTrue);
+
+      node.owner!.performAction(
+        node.id,
+        ui.SemanticsAction.setText,
+        'edited accessibly',
+      );
+      await tester.pump();
+
+      expect(controller.value, 'edited accessibly');
+      expect(changes, contains('edited accessibly'));
+      expect(find.bySemanticsLabel('Account name'), findsOneWidget);
+      handle.dispose();
     });
 
-    testWidgets('disabled field reports enabled=false', (
+    testWidgets('disabled field is labeled and non-editable', (
       WidgetTester tester,
     ) async {
-      await _pumpField(tester, enabled: false);
+      final SemanticsHandle handle = tester.ensureSemantics();
+      await _pumpField(tester, enabled: false, semanticLabel: 'Disabled field');
 
-      final Semantics s =
-          tester.widget(
-                find
-                    .descendant(
-                      of: find.byType(MTextField),
-                      matching: find.byType(Semantics),
-                    )
-                    .first,
-              )
-              as Semantics;
-      expect(s.properties.enabled, false);
+      expect(
+        tester.getSemantics(find.bySemanticsLabel('Disabled field')),
+        matchesSemantics(
+          label: 'Disabled field',
+          isTextField: true,
+          hasEnabledState: true,
+          isReadOnly: true,
+          isFocusable: true,
+        ),
+      );
+      handle.dispose();
     });
 
     testWidgets('obscureText is reflected in semantics', (
       WidgetTester tester,
     ) async {
-      await _pumpField(tester, obscureText: true);
+      final SemanticsHandle handle = tester.ensureSemantics();
+      await _pumpField(
+        tester,
+        obscureText: true,
+        semanticLabel: 'Secret field',
+      );
 
-      final Semantics s =
-          tester.widget(
-                find
-                    .descendant(
-                      of: find.byType(MTextField),
-                      matching: find.byType(Semantics),
-                    )
-                    .first,
-              )
-              as Semantics;
-      expect(s.properties.obscured, true);
+      expect(
+        tester.getSemantics(find.bySemanticsLabel('Secret field')),
+        matchesSemantics(
+          label: 'Secret field',
+          isTextField: true,
+          isObscured: true,
+          hasEnabledState: true,
+          isEnabled: true,
+          isFocusable: true,
+          hasTapAction: true,
+        ),
+      );
+      handle.dispose();
     });
   });
 

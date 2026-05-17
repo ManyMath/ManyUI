@@ -42,6 +42,7 @@ class MTextField extends StatefulWidget {
     this.minLines,
     this.keyboardType,
     this.textInputAction,
+    this.autofillHints = const <String>[],
     this.inputFormatters,
     this.error = false,
     this.helperText,
@@ -127,6 +128,13 @@ class MTextField extends StatefulWidget {
   /// The action button the OS should show on the keyboard's bottom-right
   /// (e.g. `TextInputAction.search`, `TextInputAction.done`).
   final TextInputAction? textInputAction;
+
+  /// Semantic roles used by platform autofill services and password managers.
+  ///
+  /// Fields that belong together should be wrapped in an [AutofillGroup].
+  /// An empty iterable, the default, supplies no semantic role. Passing null
+  /// disables the field's autofill client entirely.
+  final Iterable<String>? autofillHints;
 
   /// Per-keystroke filters applied before the text reaches the controller.
   ///
@@ -328,39 +336,44 @@ class _MTextFieldState extends State<MTextField> {
     final bool showPlaceholder =
         empty && (widget.placeholder?.isNotEmpty ?? false);
 
-    final Widget editable = EditableText(
-      controller: _editing,
-      focusNode: _focusNode,
-      readOnly: widget.readOnly || !widget.enabled,
-      obscureText: widget.obscureText,
-      autocorrect: !widget.obscureText,
-      enableSuggestions: !widget.obscureText,
-      maxLines: widget.maxLines,
-      minLines: widget.minLines,
-      keyboardType:
-          widget.keyboardType ??
-          (widget.obscureText
-              ? TextInputType.visiblePassword
-              : TextInputType.text),
-      textInputAction: widget.textInputAction,
-      inputFormatters: <TextInputFormatter>[
-        if (widget.maxLength != null)
-          LengthLimitingTextInputFormatter(widget.maxLength),
-        ...?widget.inputFormatters,
-      ],
-      style: textStyle,
-      cursorColor: resolved.cursorColor,
-      backgroundCursorColor: resolved.cursorColor,
-      selectionColor: resolved.selectionColor,
-      undoController: _undo,
-      onSubmitted: widget.onSubmitted,
-      // Toolbar deliberately omitted in v0.1 — the AdaptiveTextSelectionToolbar
-      // lives in Flutter's Material/Cupertino layers, which manyui's core
-      // does not depend on. Keyboard shortcuts still work.
-      contextMenuBuilder: null,
-      rendererIgnoresPointer: false,
-      enableInteractiveSelection: widget.enabled,
-      autofocus: widget.autofocus,
+    final Widget editable = Semantics(
+      label: widget.semanticLabel,
+      enabled: widget.enabled,
+      child: EditableText(
+        controller: _editing,
+        focusNode: _focusNode,
+        readOnly: widget.readOnly || !widget.enabled,
+        obscureText: widget.obscureText,
+        autocorrect: !widget.obscureText,
+        enableSuggestions: !widget.obscureText,
+        maxLines: widget.maxLines,
+        minLines: widget.minLines,
+        keyboardType:
+            widget.keyboardType ??
+            (widget.obscureText
+                ? TextInputType.visiblePassword
+                : TextInputType.text),
+        textInputAction: widget.textInputAction,
+        autofillHints: widget.autofillHints,
+        inputFormatters: <TextInputFormatter>[
+          if (widget.maxLength != null)
+            LengthLimitingTextInputFormatter(widget.maxLength),
+          ...?widget.inputFormatters,
+        ],
+        style: textStyle,
+        cursorColor: resolved.cursorColor,
+        backgroundCursorColor: resolved.cursorColor,
+        selectionColor: resolved.selectionColor,
+        undoController: _undo,
+        onSubmitted: widget.onSubmitted,
+        // Toolbar deliberately omitted in v0.1 — the AdaptiveTextSelectionToolbar
+        // lives in Flutter's Material/Cupertino layers, which manyui's core
+        // does not depend on. Keyboard shortcuts still work.
+        contextMenuBuilder: null,
+        rendererIgnoresPointer: false,
+        enableInteractiveSelection: widget.enabled,
+        autofocus: widget.autofocus,
+      ),
     );
 
     final bool multiline = widget.maxLines != 1;
@@ -377,11 +390,13 @@ class _MTextFieldState extends State<MTextField> {
             child: IgnorePointer(
               child: Align(
                 alignment: textAlignment,
-                child: Text(
-                  widget.placeholder!,
-                  style: textStyle.copyWith(color: resolved.placeholderColor),
-                  maxLines: multiline ? null : 1,
-                  overflow: multiline ? null : TextOverflow.ellipsis,
+                child: ExcludeSemantics(
+                  child: Text(
+                    widget.placeholder!,
+                    style: textStyle.copyWith(color: resolved.placeholderColor),
+                    maxLines: multiline ? null : 1,
+                    overflow: multiline ? null : TextOverflow.ellipsis,
+                  ),
                 ),
               ),
             ),
@@ -389,6 +404,23 @@ class _MTextFieldState extends State<MTextField> {
         Align(alignment: textAlignment, child: editable),
       ],
     );
+
+    // Single-line decorations use the field's full inner height. Keep the
+    // vertical inset around the editable content itself so a practical icon
+    // button does not add its height *plus* the text padding to the surface.
+    // Multiline decorations retain the original top-aligned inset.
+    final EdgeInsets editablePadding = multiline
+        ? EdgeInsets.zero
+        : EdgeInsets.only(
+            top: resolved.padding.top,
+            bottom: resolved.padding.bottom,
+          );
+    final EdgeInsets surfacePadding = multiline
+        ? resolved.padding
+        : EdgeInsets.only(
+            left: resolved.padding.left,
+            right: resolved.padding.right,
+          );
 
     final List<Widget> row = <Widget>[
       if (widget.leading != null) ...<Widget>[
@@ -398,7 +430,9 @@ class _MTextFieldState extends State<MTextField> {
         ),
         SizedBox(width: resolved.decorationGap),
       ],
-      Expanded(child: content),
+      Expanded(
+        child: Padding(padding: editablePadding, child: content),
+      ),
       if (widget.trailing != null) ...<Widget>[
         SizedBox(width: resolved.decorationGap),
         IconTheme.merge(
@@ -417,7 +451,7 @@ class _MTextFieldState extends State<MTextField> {
           border: Border.all(color: border, width: resolved.borderWidth),
         ),
         child: Padding(
-          padding: resolved.padding,
+          padding: surfacePadding,
           // heightFactor: 1 collapses the surface to its row height so the
           // field doesn't stretch vertically when its parent is taller than
           // minHeight (e.g. inside an OverlayEntry's tall Stack slot).
@@ -466,20 +500,11 @@ class _MTextFieldState extends State<MTextField> {
 
     final Widget ringed = MFocusRing(focused: _focused, child: tappable);
 
-    final Widget field = Semantics(
-      textField: true,
-      enabled: widget.enabled,
-      readOnly: widget.readOnly,
-      obscured: widget.obscureText,
-      label: widget.semanticLabel,
-      value: _editing.text,
-      container: true,
-      child: MouseRegion(
-        cursor: widget.enabled
-            ? SystemMouseCursors.text
-            : SystemMouseCursors.basic,
-        child: ringed,
-      ),
+    final Widget field = MouseRegion(
+      cursor: widget.enabled
+          ? SystemMouseCursors.text
+          : SystemMouseCursors.basic,
+      child: ringed,
     );
 
     // errorText takes over from helperText whenever the field is flagged in
