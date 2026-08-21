@@ -1,8 +1,8 @@
 name: manyui_board
-description: Kanban board widget for manyui. Ported from appflowy_board under MPL-2.0. File-level copyleft only — the rest of manyui stays MIT.
+description: Kanban board widget for manyui, ported from appflowy_board under MPL-2.0. The rest of manyui is MIT-licensed.
 version: 0.1.0-dev
-homepage: https://github.com/sneurlax/manyui
-repository: https://github.com/sneurlax/manyui
+homepage: https://github.com/ManyMath/ManyUI
+repository: https://github.com/ManyMath/ManyUI
 
 environment:
   flutter: ">=3.38.0"

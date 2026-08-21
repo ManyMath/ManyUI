@@ -1,3 +1,5 @@
 # manyui_assets
 
-Optional fonts and icons for [manyui](https://github.com/sneurlax/manyui). Core `manyui` ships with no required font; this package is opt-in.
+Optional Latin Modern Roman, Inter, and JetBrains Mono fonts for
+[manyui](https://github.com/ManyMath/ManyUI). Add this package to use the
+ManyMath typefaces; core `manyui` does not require them.

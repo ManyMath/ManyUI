@@ -1,9 +1,9 @@
 name: manyui
-description: A Flutter UI component library that works on web, mobile, and desktop with minimal dependencies and no required MaterialApp.
+description: Flutter UI components for web, mobile, and desktop, with few dependencies. Works without MaterialApp.
 version: 0.1.1
-homepage: https://github.com/sneurlax/manyui
-repository: https://github.com/sneurlax/manyui
-issue_tracker: https://github.com/sneurlax/manyui/issues
+homepage: https://github.com/ManyMath/ManyUI
+repository: https://github.com/ManyMath/ManyUI
+issue_tracker: https://github.com/ManyMath/ManyUI/issues
 
 environment:
   flutter: ">=3.38.0"

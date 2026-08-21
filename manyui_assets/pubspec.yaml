@@ -1,8 +1,8 @@
 name: manyui_assets
-description: Optional fonts (Inter, Geist) and icons for manyui. Opt-in — core manyui ships with no required font.
+description: Optional Latin Modern Roman, Inter, and JetBrains Mono fonts for manyui apps.
 version: 0.1.0-dev
-homepage: https://github.com/sneurlax/manyui
-repository: https://github.com/sneurlax/manyui
+homepage: https://github.com/ManyMath/ManyUI
+repository: https://github.com/ManyMath/ManyUI
 
 environment:
   flutter: ">=3.38.0"
@@ -19,3 +19,24 @@ dev_dependencies:
 
 flutter:
   uses-material-design: false
+  fonts:
+    - family: Latin Modern Roman
+      fonts:
+        - asset: fonts/latinmodern/lmroman10-regular.otf
+        - asset: fonts/latinmodern/lmroman10-bold.otf
+          weight: 700
+        - asset: fonts/latinmodern/lmroman10-italic.otf
+          style: italic
+        - asset: fonts/latinmodern/lmroman10-bolditalic.otf
+          weight: 700
+          style: italic
+    - family: Inter
+      fonts:
+        - asset: fonts/inter/inter-var.ttf
+        - asset: fonts/inter/inter-var-italic.ttf
+          style: italic
+    - family: JetBrains Mono
+      fonts:
+        - asset: fonts/jetbrains-mono/jetbrains-mono-var.ttf
+        - asset: fonts/jetbrains-mono/jetbrains-mono-var-italic.ttf
+          style: italic

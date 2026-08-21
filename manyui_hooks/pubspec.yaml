@@ -1,8 +1,8 @@
 name: manyui_hooks
-description: flutter_hooks adapters for manyui controllers. Never required by core manyui.
+description: Optional flutter_hooks adapters for manyui controllers.
 version: 0.1.0-dev
-homepage: https://github.com/sneurlax/manyui
-repository: https://github.com/sneurlax/manyui
+homepage: https://github.com/ManyMath/ManyUI
+repository: https://github.com/ManyMath/ManyUI
 
 environment:
   flutter: ">=3.38.0"

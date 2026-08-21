@@ -1,8 +1,8 @@
 name: manyui_compat_forui
-description: Optional F* → M* re-export shim for migrating projects from forui to manyui. Not required for new code.
+description: Optional compatibility exports for migrating from forui to manyui. New projects can use manyui directly.
 version: 0.1.0-dev
-homepage: https://github.com/sneurlax/manyui
-repository: https://github.com/sneurlax/manyui
+homepage: https://github.com/ManyMath/ManyUI
+repository: https://github.com/ManyMath/ManyUI
 
 environment:
   flutter: ">=3.38.0"

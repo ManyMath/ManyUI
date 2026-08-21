@@ -1,8 +1,8 @@
 name: manyui_testing
-description: Golden test harness, finders, and the pumpManyApp helper for manyui. Dev dependency only.
+description: Golden test tools, finders, and the pumpManyApp helper for manyui. Add as a dev dependency.
 version: 0.1.0-dev
-homepage: https://github.com/sneurlax/manyui
-repository: https://github.com/sneurlax/manyui
+homepage: https://github.com/ManyMath/ManyUI
+repository: https://github.com/ManyMath/ManyUI
 
 environment:
   flutter: ">=3.38.0"
