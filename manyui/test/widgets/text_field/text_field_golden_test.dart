@@ -34,7 +34,7 @@ const List<_Case> _cases = <_Case>[
 
 Widget _scene(MThemeData theme, _Case c) {
   // Seed text so the idle/focused/error variants render the text style, not
-  // the placeholder; disabled is intentionally rendered with placeholder
+  // the placeholder; disabled is rendered with placeholder
   // text to show the dimmed state across both surfaces.
   final bool showsPlaceholder = c.variant == _Variant.disabled;
   // MTextField, like its underlying EditableText, expands to fill its

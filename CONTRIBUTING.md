@@ -30,7 +30,7 @@ manyui uses Dart 3 idioms throughout.
 
 - **Use records, patterns, sealed classes, and switch expressions.** Avoid older equivalents when a Dart 3 form is clearer.
 - **No `dynamic`** except at clearly-marked boundaries (e.g., decoding untyped JSON). Mark those boundaries with a comment.
-- **No `late`** unless genuinely needed. Prefer `?` and explicit null checks.
+- **No `late`** unless needed. Prefer `?` and explicit null checks.
 - **Public APIs are documented** with `///` doc comments. Each public class or top-level function includes at least one example.
 - **Prefer composition over inheritance.** Never extend a widget class from another widget class in this library.
 - **Widget files include their golden test list as a comment** so reviewers can verify coverage at a glance.

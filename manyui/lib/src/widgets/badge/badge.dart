@@ -6,9 +6,8 @@ import 'badge_style.dart';
 
 /// A small, non-interactive label for tagging or status indication.
 ///
-/// Pills a small piece of content (usually a `Text`) with a colored surface
-/// derived from the chosen [variant]. Sizes itself to its content — wrap it
-/// in `Align` or a `Row` to position.
+/// Places content, usually `Text`, on a background colored by [variant].
+/// Sizes itself to its content; use `Align` or a `Row` to position it.
 ///
 /// ```dart
 /// MBadge(variant: MBadgeVariant.destructive, child: Text('Beta'))

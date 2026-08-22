@@ -17,7 +17,7 @@ enum MPropertyRowLayout {
 ///
 /// `MPropertyRow` standardizes the common "label, value/helper copy, trailing
 /// action/control" shape used by account facts, settings rows, status fields,
-/// and metadata panels. It is intentionally non-interactive; put buttons,
+/// and metadata panels. It is non-interactive; put buttons,
 /// switches, or copy controls in [trailing].
 class MPropertyRow extends StatelessWidget {
   /// Builds a property row.

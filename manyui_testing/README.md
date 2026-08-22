@@ -35,14 +35,14 @@ await tester.enterText(find.byType(EditableText), 'hello');
 await tester.pump();
 ```
 
-If a widget uses an overlay-backed editor affordance, pass
+If a widget opens an editor control in an overlay, pass
 `installOverlay: true` to `pumpManyApp`.
 
 ### Indeterminate Progress
 
-Do not use an unbounded `pumpAndSettle()` while an indeterminate progress
-indicator is mounted. The animation intentionally keeps scheduling frames, so
-the settle loop can time out. Pump a bounded number of frames instead.
+Do not use `pumpAndSettle()` while an indeterminate progress
+indicator is mounted. The animation keeps scheduling frames, so
+the settle loop can time out. Pump a fixed number of frames instead.
 
 ```dart
 await tester.pump();

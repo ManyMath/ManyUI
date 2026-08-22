@@ -85,7 +85,7 @@ class MTypography {
 
   /// A slightly more generous typography set for desktop and mobile product
   /// workspaces. It uses a humanist system-font stack and zero letter spacing
-  /// so dense tools remain calm and readable across platforms.
+  /// to keep text readable in dense layouts across platforms.
   const MTypography.workbench()
     : displayLarge = const TextStyle(
         fontSize: 46,

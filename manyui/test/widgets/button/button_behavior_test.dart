@@ -157,7 +157,7 @@ void main() {
       // Programmatically traverse forward — focus should jump past the
       // disabled middle button to land on lastNode. (We invoke the traversal
       // policy directly rather than sending a Tab keystroke because the
-      // pumpManyApp harness intentionally omits the WidgetsApp Shortcuts
+      // pumpManyApp harness omits the WidgetsApp Shortcuts
       // defaults that wire Tab to NextFocusIntent — that responsibility
       // belongs to MWidgetsApp, not the per-widget test.)
       firstNode.nextFocus();

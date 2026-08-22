@@ -129,7 +129,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     content: const Padding(
                       padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
                       child: Text(
-                        'A Flutter UI library with no required MaterialApp, ≤4 runtime deps, and parity across web, mobile, and desktop.',
+                        'Flutter widgets for web, mobile, and desktop. You can use them without MaterialApp.',
                       ),
                     ),
                   ),
@@ -139,7 +139,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     content: const Padding(
                       padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
                       child: Text(
-                        'Yes — and this example app proves it. Run flutter run -d chrome.',
+                        'Yes. Run this example with flutter run -d chrome.',
                       ),
                     ),
                   ),
@@ -149,7 +149,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     content: const Padding(
                       padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
                       child: Text(
-                        'Pass MThemeData.light() or .dark() to MWidgetsApp.theme and .darkTheme, then drive themeMode.',
+                        'Set MWidgetsApp.theme and .darkTheme with MThemeData.light() and .dark(). Choose the active theme with themeMode.',
                       ),
                     ),
                   ),

@@ -292,7 +292,7 @@ void main() {
       await tester.pump();
 
       // Try to type — IgnorePointer should swallow it. Use the IME path so
-      // we don't depend on focus actually landing.
+      // we don't depend on focus landing.
       final Finder editable = find.byType(EditableText);
       // EditableText is still in the tree but should be unfocused.
       final EditableText et = tester.widget(editable);

@@ -1,8 +1,5 @@
-/// Bespoke date parsing/formatting for [MDateField].
-///
-/// v0.1 deliberately ships without `intl` to keep the runtime-deps budget at
-/// 3/4. The accepted-input set is narrow but covers the three most common
-/// keyboard idioms a user types into a date field:
+/// Date parsing and formatting for [MDateField], without an `intl`
+/// dependency. Accepts three input formats:
 ///
 /// - **ISO** — `2026-05-13`. Month and day are zero-padded.
 /// - **US slash** — `5/13/2026` or `05/13/2026`. Month-first; the year is

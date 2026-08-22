@@ -14,7 +14,7 @@ enum MLoadingStateAlignment {
 
 /// A compact loading or in-progress placeholder.
 ///
-/// `MLoadingState` is intentionally unframed so it can sit inside panes,
+/// `MLoadingState` is unframed so it can sit inside panes,
 /// cards, lists, and centered viewports without adding another surface.
 class MLoadingState extends StatelessWidget {
   /// Builds a loading state.

@@ -13,7 +13,7 @@ enum MEmptyStateAlignment {
 
 /// A compact empty, placeholder, or zero-result state.
 ///
-/// `MEmptyState` is intentionally unframed so apps can place it inside an
+/// `MEmptyState` is unframed so apps can place it inside an
 /// existing pane, card, list, or centered viewport without creating nested
 /// surfaces. Actions wrap automatically at narrow widths.
 class MEmptyState extends StatelessWidget {

@@ -463,9 +463,8 @@ class _DragToDismissState extends State<_DragToDismiss> {
 
 /// Internal helper that closes the route on Escape.
 ///
-/// `PopupRoute.barrierDismissible` already handles the scrim-tap dismiss and
-/// installs the modal focus trap. The Escape-key dismiss is a separate beat —
-/// we listen on a [Focus] that wraps the sheet and pop the route ourselves.
+/// `PopupRoute.barrierDismissible` handles outside taps and modal focus.
+/// This wrapper listens for Escape and closes the route.
 class _EscapeDismiss extends StatelessWidget {
   const _EscapeDismiss({required this.child});
 

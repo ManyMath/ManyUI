@@ -13,4 +13,4 @@ dependencies:
 import 'package:manyui/manyui.dart';
 ```
 
-See the [workspace README](../README.md) for the project pitch, design principles, and quickstart.
+See the [workspace README](../README.md) for an overview and design goals.

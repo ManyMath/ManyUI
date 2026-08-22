@@ -37,7 +37,7 @@ class MButtonStyles {
   /// [modality] picks the hit-target scale: a touch-mode `md` button is
   /// 44 px tall, a mouse-mode `md` button is 36 px. The literal DECISIONS
   /// contract used `platform` here; we switched to `modality` because
-  /// modality is what actually drives sizing — `platform` is just one of
+  /// modality is what drives sizing — `platform` is just one of
   /// the inputs that feeds modality resolution. See the
   /// `MButtonStyles.resolve takes modality` note in DECISIONS.md.
   MButtonStyle resolve({

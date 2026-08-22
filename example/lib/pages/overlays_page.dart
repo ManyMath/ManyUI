@@ -166,7 +166,7 @@ class _OverlaysPageState extends State<OverlaysPage> {
             ),
             const SizedBox(height: 8),
             const Text(
-              'Modal surface anchored to a viewport edge. Drag-handle, focus trap, and Escape-dismiss are built in.',
+              'A panel that opens from a screen edge. It keeps keyboard focus inside and supports dismissal with Escape or the drag handle.',
             ),
             const SizedBox(height: 16),
             MButton(

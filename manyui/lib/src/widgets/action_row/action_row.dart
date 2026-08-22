@@ -2,9 +2,8 @@ import 'package:flutter/widgets.dart';
 
 /// Standard wrapping row for groups of action controls.
 ///
-/// `MActionRow` is the shared layout for button groups and other compact
-/// controls that should keep a horizontal rhythm on wide surfaces but wrap
-/// cleanly in compact panes.
+/// Arranges buttons and other compact controls in a row, wrapping them
+/// when the available width is too small.
 class MActionRow extends StatelessWidget {
   /// Builds an action row.
   const MActionRow({

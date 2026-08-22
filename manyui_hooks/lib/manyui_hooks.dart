@@ -28,7 +28,7 @@ MController<T> useMController<T>(
 ///
 /// This is useful when a manyui widget requires an `MController<T>` but the
 /// app's state is already exposed as a [ValueListenable]. Assigning to the
-/// returned controller is intentionally ignored; [source] remains authoritative.
+/// returned controller is ignored; [source] remains authoritative.
 MController<T> useMControllerFromValueListenable<T>(ValueListenable<T> source) {
   final MController<T> controller = useMemoized(
     () => MController.fromValueListenable<T>(source),

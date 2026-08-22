@@ -366,7 +366,7 @@ class _MTextFieldState extends State<MTextField> {
         selectionColor: resolved.selectionColor,
         undoController: _undo,
         onSubmitted: widget.onSubmitted,
-        // Toolbar deliberately omitted in v0.1 — the AdaptiveTextSelectionToolbar
+        // Toolbar omitted in v0.1 — the AdaptiveTextSelectionToolbar
         // lives in Flutter's Material/Cupertino layers, which manyui's core
         // does not depend on. Keyboard shortcuts still work.
         contextMenuBuilder: null,
@@ -508,7 +508,7 @@ class _MTextFieldState extends State<MTextField> {
     );
 
     // errorText takes over from helperText whenever the field is flagged in
-    // error and an errorText was actually supplied, so a caller can pass both
+    // error and an errorText was supplied, so a caller can pass both
     // and let the field switch rather than swapping the child itself.
     final String? footer = (widget.error && widget.errorText != null)
         ? widget.errorText

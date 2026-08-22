@@ -6,9 +6,8 @@ import 'tooltip_style.dart';
 
 /// The resolution table for [MTooltip].
 ///
-/// Lives on `MThemeData.tooltip`. The default style is a small dark surface
-/// with light text — shadcn's `popover` tokens get loud against backgrounds,
-/// so tooltips invert: `foreground` background with `background` text.
+/// Available through `MThemeData.tooltip`. The default inverts the page
+/// colors: `foreground` for the tooltip background and `background` for text.
 ///
 /// ```dart
 /// final MTooltipStyle style = theme.tooltip.resolve(

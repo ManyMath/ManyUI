@@ -2,11 +2,9 @@ import 'package:flutter/widgets.dart';
 
 /// The fully-resolved visual style for an [MContextMenu].
 ///
-/// Mirrors [MMenuBarStyle]'s popover-surface and item fields so a context
-/// menu sits comfortably next to a pulldown menu — same surface, same item
-/// chrome, same hover/focus treatment. Differs from [MPopoverStyle] in
-/// that it also carries the per-item styling, since context menus always
-/// render a list of [MMenuItem]s rather than caller-supplied content.
+/// Uses the same popover and item fields as [MMenuBarStyle] for consistent
+/// menu styling. Includes per-item styles, unlike [MPopoverStyle], because
+/// context menus display a list of [MMenuItem]s.
 @immutable
 class MContextMenuStyle {
   /// Builds a context-menu style with every field specified.

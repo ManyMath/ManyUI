@@ -333,7 +333,7 @@ class _MMenuBarState extends State<MMenuBar> {
         in _anchors.entries) {
       final bool shouldBeOpen = entry.key == wantOpen;
       if (shouldBeOpen && !entry.value.isOpen) {
-        // Intentionally do not pass anchorFocusNode — return-focus is
+        // do not pass anchorFocusNode — return-focus is
         // handled explicitly by `_closeFromPopover` so it doesn't fire
         // during menu-to-menu swaps and steal focus back to the old title.
         entry.value.open(autofocus: false);
