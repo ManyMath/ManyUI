@@ -1,3 +1,9 @@
+## 0.1.1
+
+- Export `MBrandColors` with the shared ManyMath light and dark color constants.
+- Provide optional bundled brand fonts through the companion `manyui_assets`
+  package; system fonts remain the default.
+
 ## 0.1.0-dev
 
 - Initial scaffold. No widgets yet.
