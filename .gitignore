@@ -25,3 +25,7 @@ coverage/
 
 # FVM Version Cache
 .fvm/
+
+# Python verification helpers
+__pycache__/
+*.pyc

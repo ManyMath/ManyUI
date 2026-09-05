@@ -19,6 +19,14 @@ dev_dependencies:
 
 flutter:
   uses-material-design: false
+  assets:
+    - NOTICE
+    - fonts/inter/OFL.txt
+    - fonts/inter/PROVENANCE.json
+    - fonts/jetbrains-mono/OFL.txt
+    - fonts/jetbrains-mono/PROVENANCE.json
+    - fonts/latinmodern/GUST-FONT-LICENSE.txt
+    - fonts/latinmodern/NOTICE-LatinModern-fonts.txt
   fonts:
     - family: Latin Modern Roman
       fonts:

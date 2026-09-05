@@ -1,0 +1,146 @@
+name: Private ManyUI validation
+on:
+  push:
+    branches: [main, 'maintenance/**']
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_sdk_floor:
+        description: 'Run only after a dedicated Flutter 3.38 runner is provisioned'
+        required: false
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  DASH__SUPPRESS_ANALYTICS: 'true'
+  FLUTTER_SUPPRESS_ANALYTICS: 'true'
+  CI: 'true'
+  DO_NOT_TRACK: '1'
+jobs:
+  analyze:
+    runs-on: manymath-maintenance-linux-x64
+    timeout-minutes: 30
+    steps:
+      - name: Require private primary forge
+        env:
+          PRIMARY_SERVER: ${{ github.server_url }}
+        run: test "$PRIMARY_SERVER" = https://git.manymath.com
+      - uses: actions/checkout@v4
+      - name: Verify provisioned SDK
+        run: |
+          flutter --version | grep -F 'Flutter 3.47.2 '
+          dart --version 2>&1 | grep -F 'Dart SDK version: 3.13.2 '
+      - name: Resolve workspace
+        run: dart pub get
+      - run: dart analyze --fatal-infos
+  test:
+    runs-on: manymath-maintenance-linux-x64
+    timeout-minutes: 30
+    steps:
+      - name: Require private primary forge
+        env:
+          PRIMARY_SERVER: ${{ github.server_url }}
+        run: test "$PRIMARY_SERVER" = https://git.manymath.com
+      - uses: actions/checkout@v4
+      - name: Select separately provisioned original golden SDK
+        run: |
+          golden_sdk="$HOME/.local/share/manymath-maintenance/task-sdks/manyui-flutter-3.41.0/flutter"
+          test -x "$golden_sdk/bin/flutter"
+          "$golden_sdk/bin/flutter" --version | grep -F 'Flutter 3.41.0 '
+          printf '%s\n' "$golden_sdk/bin" >> "$GITHUB_PATH"
+      - name: Resolve workspace
+        run: dart pub get
+      - name: Test behavior independently of golden qualification
+        run: |
+          (cd manyui && flutter test --no-pub --exclude-tags=golden)
+          for package in manyui_testing manyui_hooks manyui_riverpod; do
+            (cd "$package" && flutter test --no-pub)
+          done
+      - name: Record board test disposition
+        run: |
+          test ! -d manyui_board/test
+          echo 'manyui_board currently contains only an empty library declaration. No runtime/API test claim; analyzer and package validation still cover the scaffold.'
+  golden-baseline-diagnostic:
+    name: Golden baseline comparison (known baseline failures)
+    runs-on: manymath-maintenance-linux-x64
+    timeout-minutes: 30
+    steps:
+      - name: Require private primary forge
+        env:
+          PRIMARY_SERVER: ${{ github.server_url }}
+        run: test "$PRIMARY_SERVER" = https://git.manymath.com
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Select separately provisioned original golden SDK
+        run: |
+          golden_sdk="$HOME/.local/share/manymath-maintenance/task-sdks/manyui-flutter-3.41.0/flutter"
+          test -x "$golden_sdk/bin/flutter"
+          "$golden_sdk/bin/flutter" --version | grep -F 'Flutter 3.41.0 '
+          printf '%s\n' "$golden_sdk/bin" >> "$GITHUB_PATH"
+      - name: Compare fresh immutable baseline and candidate golden failures
+        run: |
+          python3 -m unittest discover -s tool/tests -v
+          evidence_root="$(mktemp -d)"
+          python3 tool/golden_diagnostic.py --output "$evidence_root/golden-diagnostic"
+          echo 'Matching known failures are not golden approval; inspect KNOWN_BASELINE_FAILURE and the retained evidence.'
+  publish-dry-run:
+    runs-on: manymath-maintenance-linux-x64
+    timeout-minutes: 30
+    steps:
+      - name: Require private primary forge
+        env:
+          PRIMARY_SERVER: ${{ github.server_url }}
+        run: test "$PRIMARY_SERVER" = https://git.manymath.com
+      - uses: actions/checkout@v4
+      - name: Verify provisioned SDK
+        run: |
+          flutter --version | grep -F 'Flutter 3.47.2 '
+          dart --version 2>&1 | grep -F 'Dart SDK version: 3.13.2 '
+      - name: Resolve workspace
+        run: dart pub get
+      - name: Validate all existing package candidates without publication
+        run: |
+          for package in manyui manyui_assets manyui_board manyui_cli manyui_compat_forui manyui_hooks manyui_riverpod manyui_testing; do
+            (cd "$package" && dart pub publish --dry-run)
+          done
+  font-payload:
+    runs-on: manymath-maintenance-linux-x64
+    timeout-minutes: 30
+    steps:
+      - name: Require private primary forge
+        env:
+          PRIMARY_SERVER: ${{ github.server_url }}
+        run: test "$PRIMARY_SERVER" = https://git.manymath.com
+      - uses: actions/checkout@v4
+      - name: Verify provisioned SDK
+        run: |
+          flutter --version | grep -F 'Flutter 3.47.2 '
+          dart --version 2>&1 | grep -F 'Dart SDK version: 3.13.2 '
+      - name: Resolve workspace
+        run: dart pub get
+      - name: Verify actual archive and Flutter consumer font assets
+        run: |
+          evidence_root="$(mktemp -d)"
+          python3 tool/verify_font_payload.py --output "$evidence_root/font-payload"
+          echo "Private package and asset-bundle evidence retained at $evidence_root/font-payload"
+  floor-check:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_sdk_floor == true }}
+    runs-on: manymath-flutter-3-38
+    timeout-minutes: 30
+    steps:
+      - name: Require private primary forge
+        env:
+          PRIMARY_SERVER: ${{ github.server_url }}
+        run: test "$PRIMARY_SERVER" = https://git.manymath.com
+      - uses: actions/checkout@v4
+      - name: Verify separately provisioned SDK floor
+        run: flutter --version | grep -F 'Flutter 3.38.'
+      - run: dart pub get
+      - run: dart analyze
+      - run: flutter test --no-pub --exclude-tags=golden
+        working-directory: manyui

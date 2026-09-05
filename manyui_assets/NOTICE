@@ -1,0 +1,19 @@
+manyui_assets font notices
+
+The repository/package MIT license covers its original integration code. The
+bundled font software retains its own licenses:
+
+Inter: copyright 2016 The Inter Project Authors; SIL Open Font License 1.1.
+See fonts/inter/OFL.txt and PROVENANCE.json.
+
+JetBrains Mono: copyright 2020 The JetBrains Mono Project Authors; SIL Open
+Font License 1.1. See fonts/jetbrains-mono/OFL.txt and PROVENANCE.json.
+
+Latin Modern Roman: copyright 2003, 2009 B. Jackowski and J. M. Nowacki,
+on behalf of TeX users groups; GUST Font License. See
+fonts/latinmodern/GUST-FONT-LICENSE.txt and NOTICE-LatinModern-fonts.txt.
+
+These exact license texts and notices are declared Flutter assets so application
+bundles retain them along with the fonts. No font binary is changed by this
+maintenance update. Historical source retrieval limitations are recorded in the
+per-family provenance; no new first-party or third-party license grant is made.
